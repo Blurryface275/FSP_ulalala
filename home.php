@@ -7,6 +7,15 @@
     <title>Document</title>
 </head>
 <body>
+    <nav>
+        <!-- ini buat navbar yaaa, bebas nanti ccssnya mo ditaruh di atas or samping -->
+        <ul>
+            <li><a href="dosen.php">Data Dosen</a></li>
+            <li><a href="mahasiswa.php">Data Mahasiswa</a></li>
+            <li><a href="insert-dosen.php">Tambah Data Dosen</a></li>
+            <li><a href="insert-mahasiswa.php">Tambah Data Mahasiswa</a></li>
+        </ul>
+    </nav>
     <!-- isi di sini ya hehe -->
     <a href="">Lupa password?</a>
 </body>

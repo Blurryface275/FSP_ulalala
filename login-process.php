@@ -1,5 +1,8 @@
 <?php
-    $mysqli = mysqli_connect("localhost", "root", "", "fullstack");
+   $mysqli = new mysqli("localhost", "root", "", "fullstack");
+   if ($mysqli->connect_errno) {
+       echo "Failed to connect to MySQL: " . $mysqli->connect_error;
+   }
 
     if (isset($_POST['login'])){
         $username = $_POST['username'];
