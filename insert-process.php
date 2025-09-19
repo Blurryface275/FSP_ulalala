@@ -29,6 +29,6 @@
     }
 
     
-    header("Location: insert-dosen.php");
+    header("Location: data-dosen.php");
     exit;
 ?>

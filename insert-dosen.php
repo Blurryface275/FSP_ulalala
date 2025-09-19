@@ -22,6 +22,7 @@
             <input type="file" name="foto" id="foto">
         </p>
         <button type="submit" name="insert">Insert</button>
+        
     </form>
 </body>
 </html>
