@@ -25,7 +25,7 @@
         $stmt->execute();
         $res=$stmt->get_result();
 
-        echo "<table border=1 cell-spacing=0><th>Foto</th> <th>Nama</th> <th>NPK</th>";
+        echo "<table border=1 cell-spacing=0><th>Foto</th> <th>Nama</th> <th>NPK</th> <th colspan='2'>Aksi</th>";
 
         while($row = $res->fetch_assoc()) {
             echo "<tr>";
@@ -44,7 +44,9 @@
             
         echo "<td>".$row['nama']."</td>";
         echo "<td>".$row['npk']."</td>" ; 
-        
+        echo "<td><a href='edit-dosen.php?npk=".$row['npk']."'>Edit</a></td>";
+        echo"<td><a href='delete-dosen.php?npk=".$row['npk']."'>Delete</a></td>";
+        echo "<input type='hidden' name='npk_lama' value='".$row['npk']."'>";
         echo"</tr>";
         }
 
