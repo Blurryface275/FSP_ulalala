@@ -7,16 +7,15 @@
     <title>Document</title>
 </head>
 <body>
-    <form action="login-process.php" method="post">
-        <p><label for="username">Username : </label>
-        <input type="text" name="username" id="username" placeholder="Enter your username">
-        </p>    
-
-        <p>
-        <label for="password">Password : </label>
-        <input type="password" name="password" id="password" placeholder="Enter your password"><br>
-        </p>
-        <button type="submit" name="login">Masuk</button>
-    </form>
+    <nav>
+        <!-- ini buat navbar yaaa, bebas nanti ccssnya mo ditaruh di atas or samping -->
+        <ul>
+            <li><a href="data-dosen.php">Data Dosen</a></li>
+            <li><a href="data-mahasiswa.php">Data Mahasiswa</a></li>
+            <li><a href="insert-dosen.php">Tambah Data Dosen</a></li>
+            <li><a href="insert-mahasiswa.php">Tambah Data Mahasiswa</a></li>
+        </ul>
+    </nav>
+    
 </body>
 </html>
