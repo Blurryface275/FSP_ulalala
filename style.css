@@ -1,0 +1,110 @@
+/* Warna sunset palette */
+:root {
+    --coklat: #493129;
+    --ungu: #8b597b;
+    --pink: #efa3a0;
+    --peach: #ffdce7;
+    --cream: #ffe2db;
+}
+
+/* Reset sederhana */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    height: 100vh;
+    background: var(--cream);
+}
+
+/* Sidebar */
+.sidebar {
+    width: 220px;
+    background: var(--coklat);
+    color: var(--cream);
+    transition: width 0.3s;
+    padding: 20px 0;
+    flex-shrink: 0;
+    overflow: hidden;
+}
+
+.sidebar.collapsed {
+    width: 70px;
+}
+
+.sidebar .logo {
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 20px;
+    color: var(--peach);
+}
+
+.sidebar ul {
+    list-style: none;
+}
+
+.sidebar ul li {
+    margin: 15px 0;
+}
+
+.sidebar ul li a {
+    display: flex;
+    align-items: center;
+    color: var(--cream);
+    text-decoration: none;
+    padding: 10px 20px;
+    transition: background 0.3s, padding 0.3s;
+}
+
+.sidebar ul li a i {
+    margin-right: 10px;
+    width: 20px;
+    text-align: center;
+}
+
+.sidebar ul li a:hover {
+    background: var(--ungu);
+    color: var(--peach);
+    border-radius: 6px;
+}
+
+.sidebar.collapsed ul li a span {
+    display: none;
+}
+
+/* Main content */
+.main-content {
+    flex: 1;
+    padding: 20px;
+    transition: margin-left 0.3s;
+}
+
+header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+header h1 {
+    margin-left: 10px;
+    font-size: 24px;
+    color: var(--coklat);
+}
+
+.toggle-btn {
+    font-size: 22px;
+    cursor: pointer;
+    color: var(--coklat);
+}
+
+section p {
+    font-size: 16px;
+    color: var(--coklat);
+    background: var(--peach);
+    padding: 15px;
+    border-radius: 8px;
+}

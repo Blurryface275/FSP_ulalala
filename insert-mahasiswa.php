@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tambah Dosen</title>
+    <title>Tambah Mahasiswa</title>
     <link rel="stylesheet" href="style.css">
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -19,8 +19,8 @@
             <input type="text" name="nama" id="nama">
         </p>
         <p>
-            <label for="NPK">NPK : </label>
-            <input type="text" name="NPK" id="NPK">
+            <label for="NRP">NPK : </label>
+            <input type="text" name="NRP" id="NRP">
         </p>
         <p>
             <label for="foto">Foto : </label>
