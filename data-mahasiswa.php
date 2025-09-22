@@ -25,13 +25,13 @@
 $mysqli = new mysqli("localhost", "root", "", "fullstack");
 if ($mysqli->connect_errno) {
     die("Failed to connect to MySQL: " . $mysqli->connect_error);
-}
+}//ini buat mastiin koenksinya nyambung
 
 $sql = "select * from mahasiswa";
 
 $stmt = $mysqli->prepare($sql);
 
-// Check if the prepare() call failed
+// kukasih if buat ngecek
 if ($stmt === false) {
     die("Error preparing statement: " . $mysqli->error);
 }
@@ -57,15 +57,13 @@ while ($row = $res->fetch_assoc()) {
 
     echo "<td>" . $row['nama'] . "</td>";
     echo "<td>" . $row['nrp'] . "</td>";
-    echo "<td><a href='edit-mahasiswa.php?npk=" . $row['nrp'] . "'>Edit</a></td>";
-    echo "<td><a href='delete-mahasiswa.php?npk=" . $row['nrp'] . "' onclick='return confirm(\"Yakin ingin menghapus mahasiswa ini?\");'>Delete</a></td>";
+    echo "<td><a href='edit-mahasiswa.php?nrp=" . $row['nrp'] . "'>Edit</a></td>";
+    echo "<td><a href='delete-mahasiswa.php?nrp=" . $row['nrp'] . "' onclick='return confirm(\"Yakin ingin menghapus mahasiswa ini?\");'>Delete</a></td>";
     echo "<input type='hidden' name='nrp_lama' value='" . $row['nrp'] . "'>";
     echo "</tr>";
 }
 
 echo "</table>";
-
-// Close the statement and connection
 $stmt->close();
 $mysqli->close();
 ?>
