@@ -26,7 +26,7 @@
             <label for="foto">Foto : </label>
             <input type="file" name="foto" id="foto">
         </p>
-        <button type="submit" name="insert">Insert</button>
+        <button type="submit" name="inserts">Insert</button>  <!-- Namanya inserts biar beda sama dosen -->
         
     </form>
 </body>

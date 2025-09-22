@@ -64,8 +64,7 @@ while ($row = $res->fetch_assoc()) {
 }
 
 echo "</table>";
-$stmt->close();
-$mysqli->close();
+
 ?>
 </body>
 
