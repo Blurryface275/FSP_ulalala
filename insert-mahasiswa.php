@@ -22,6 +22,21 @@
             <label for="NRP">NRP : </label>
             <input type="text" name="NRP" id="NRP">
         </p>
+          <p>
+            <label for="gender">Gender : </label> <!-- ini gimana ya cara bikin option gender??? -->
+            <input type="text" name="gender" id="gender">
+        </p>
+
+         <p>
+            <label for="tgl">tanggal_lahir : </label> <!-- ini gimana ya cara bikin kalender??? -->
+            <input type="text" name="tgl" id="tgl">
+        </p>
+
+          <p>
+            <label for="angkatan">angkatan : </label> <!-- ini bener kah? -->
+            <input type="text" name="angkatan" id="angkatan">
+        </p>
+
         <p>
             <label for="foto">Foto : </label>
             <input type="file" name="foto" id="foto">
