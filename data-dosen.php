@@ -15,6 +15,7 @@
         .foto {
             max-width: 150px;
 
+
         }
     </style>
 </head>
