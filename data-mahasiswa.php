@@ -20,7 +20,7 @@
 </head>
 
 <body>
-    <h1>Data Dosen</h1>
+    <h1>Data Mahasiswa</h1>
     <?php
     $mysqli = new mysqli("localhost", "root", "", "fullstack");
     if ($mysqli->connect_errno)
