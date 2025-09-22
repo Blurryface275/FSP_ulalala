@@ -18,7 +18,6 @@
         die("Failed to connect to MySQL: " . $mysqli->connect_error);
     }
     
-    // Check if the form has been submitted
     if ($_SERVER['REQUEST_METHOD'] === "POST") {
         $nama_baru = $_POST['nama'];
         $nrp_baru = $_POST['NRP'];
@@ -26,9 +25,9 @@
         $ext_baru = pathinfo($_FILES['foto']['name'], PATHINFO_EXTENSION);
         $target = "uploads/" . $nrp_baru . "." . $ext_baru;
 
-        // Handle file upload only if a new file is selected
+        // Pastiin file kepilih
         if (!empty($_FILES['foto']['name'])) {
-            // Delete old photo
+            // Ngehapus foto lama
             $stmt_old = $mysqli->prepare("SELECT foto_extension FROM mahasiswa WHERE nrp=?");
             $stmt_old->bind_param("s", $nrp_lama);
             $stmt_old->execute();
@@ -41,10 +40,10 @@
             }
             $stmt_old->close();
 
-            // Move the new file
+            // Mindahin file baru
             move_uploaded_file($_FILES['foto']['tmp_name'], $target);
         } else {
-            // If no new photo, keep the old extension
+            // ini kalau gk ada foto baru, tetap keep file yang lama
             $stmt_ext = $mysqli->prepare("SELECT foto_extension FROM mahasiswa WHERE nrp=?");
             $stmt_ext->bind_param("s", $nrp_lama);
             $stmt_ext->execute();
@@ -52,12 +51,12 @@
             $stmt_ext->close();
         }
         
-        // Update database record
+        // Ini buat ngeupdate database
         $sql = "UPDATE mahasiswa SET nrp=?, nama=?, foto_extension=? WHERE nrp=?";
         $stmt = $mysqli->prepare($sql);
         $stmt->bind_param("ssss", $nrp_baru, $nama_baru, $ext_baru, $nrp_lama);
         if ($stmt->execute()) {
-            // Rename the photo file if NRP has changed
+            // Nama fotonya direname kalo nrpnya berubah
             if ($nrp_lama !== $nrp_baru) {
                 rename("uploads/" . $nrp_lama . "." . $ext_baru, $target);
             }
@@ -68,7 +67,6 @@
         }
     }
     
-    // This block runs on the initial page load via GET request
     if (isset($_GET['nrp'])) {
         $nrp_to_edit = $_GET['nrp'];
         $stmt = $mysqli->prepare("SELECT * FROM mahasiswa WHERE nrp = ?");
