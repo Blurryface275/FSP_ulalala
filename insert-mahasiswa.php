@@ -19,7 +19,7 @@
             <input type="text" name="nama" id="nama">
         </p>
         <p>
-            <label for="NRP">NPK : </label>
+            <label for="NRP">NRP : </label>
             <input type="text" name="NRP" id="NRP">
         </p>
         <p>
