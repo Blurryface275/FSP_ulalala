@@ -1,38 +1,50 @@
 <?php
     $mysqli = new mysqli("localhost", "root", "", "fullstack");
     if ($mysqli->connect_errno) {
-       die("Failed to connect to MySQL: " . $mysqli->connect_error);
+        die("Koneksi gagal: " . $mysqli->connect_error);
     }
 
-    if (isset($_POST['inserts'])){//ini 'inserts' sesuai yang insert mhs namanya
-        $nama = $_POST['nama']; // nama mhs
-        $NRP = $_POST['NRP']; // nrp
+    if (isset($_POST['submit'])){
+            // Ambil data dari form
+        $nrp    = $_POST['nrp'];
+        $nama   = $_POST['nama'];
+        $angkatan = $_POST['angkatan'];
+        $tgl_lahir  = $_POST['tgl'];
+        $gender = $_POST['gender']; // Tambahan gender
+
+        // Tangkap file foto
+        $valid_extension = ['jpg', 'jpeg', 'png'];
+        $ext  = strtolower(pathinfo($_FILES['foto']['name'], PATHINFO_EXTENSION));
+
+        if (!in_array($ext, $valid_extension)) {
+            die("Ekstensi file tidak valid! Hanya jpg/jpeg/png.");
+        }
+
+        // Nama file disimpan dengan format: NRP.extension
+        $namaFileBaru = $nrp.".". $ext;
+        $targetFile   = "uploads/" . $namaFileBaru;
+
+        // Pindahkan file ke folder uploads
+        if (move_uploaded_file($_FILES['foto']['tmp_name'], $targetFile)) {
+            // Simpan data ke database
+            $sql = "INSERT INTO mahasiswa (nrp, nama, gender, tanggal_lahir, angkatan, foto_extention) 
+                    VALUES (?, ?, ?, ?, ?, ?)";
+            $stmt = $mysqli->prepare($sql);
+            $stmt->bind_param("ssssss", $nrp, $nama, $gender, $tgl_lahir, $angkatan, $ext);
+
+            if ($stmt->execute()) {
+                echo "<script>alert('Data berhasil disimpan!');</script>";
+            } else {
+                header("Location : insert-mahasiswa.php");
+                echo "Error saat insert: " . $stmt->error;
+            }
+        } else {
+            echo "Gagal upload file!";
+        }
     }
-  
-    $foto = $_FILES['foto'];
-    $sql = "insert into mahasiswa (nrp, nama, gender, tanggal_lahir, angkatan, foto_extension) values(?,?,?,?,?,?)";
-
-    $ext = pathinfo($_FILES['foto']['name'], PATHINFO_EXTENSION);
-    $target = "uploads/" . $NRP . "." . $ext; //kasih nama pakai nrp dan extension
-
-    // Pindahkan file ke folder uploads
-    if (move_uploaded_file($_FILES['foto']['tmp_name'], $target)) {
-        // Simpan ke database
-        $sql = "INSERT INTO mahasiswa (nrp, nama, gender, tanggal_lahir, angkatan, foto_extention) VALUES (?,?,?,?,?,?)";
-        $stmt = $mysqli->prepare($sql);
-        $stmt->bind_param("ssedss", $NPK, $nama, $ext);//ini enum sebutannnya e kah?
-        $stmt->execute();
-
-        echo "Data Mahasiswa berhasil disimpan!";
-        header("Location: data-mahasiswa.php");
-        exit;
-    } else {
-        echo "Gagal upload foto!";
-    }
-
     
-   
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -55,17 +67,17 @@
             <input type="text" name="nama" id="nama">
         </p>
         <p>
-            <label for="NRP">NRP : </label>
-            <input type="text" name="NRP" id="NRP">
+            <label for="nrp">NRP : </label>
+            <input type="text" name="nrp" id="nrp">
         </p>
-          <p>
-            <label for="gender">Gender : </label> <!-- ini gimana ya cara bikin option gender??? -->
+        <p>
+            <label for="gender">Gender : </label> 
+            <input type="radio" name="gender" id="pria" value="Pria">
             <label for="pria">Pria</label>
-            <input type="radio" name="pria" id="pria">
-            <label for="wanita">Wanita</label>
-            <input type="radio" name="wanita" id="wanita">
-        </p>
 
+            <input type="radio" name="gender" id="wanita" value="Wanita">
+            <label for="wanita">Wanita</label>
+        </p>
          <p>
             <label for="tgl">Tanggal lahir : </label> <!-- ini gimana ya cara bikin kalender??? -->
             <input type="date" name="tgl" id="tgl">
@@ -80,7 +92,7 @@
             <label for="foto">Foto : </label>
             <input type="file" name="foto" id="foto">
         </p>
-        <button type="submit" name="inserts">Insert</button>  <!-- Namanya inserts biar beda sama dosen -->
+        <button type="submit" name="submit">Insert</button>  <!-- Namanya inserts biar beda sama dosen -->
         
     </form>
 </body>
