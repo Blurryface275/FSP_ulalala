@@ -12,25 +12,9 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        table {
-            border-collapse: collapse;
-            margin: 10px auto 0 auto; /* tengah + kasih jarak atas */
-            text-align: center;
-        }
-
         .foto {
             max-width: 150px;
-            object-fit: cover;
-            display: block;
-            margin: auto;
         }
-
-        h1 {
-            margin: 20px 0;
-            text-align: center;
-        }
-
-
     </style>
 </head>
 
@@ -54,7 +38,7 @@ if ($stmt === false) {
 $stmt->execute();
 $res = $stmt->get_result();
 
-echo "<table border=1 cell-spacing=0><th>Foto</th> <th>Nama</th> <th>NRP</th> <th colspan='2'>Aksi</th>";
+echo "<table border=1 cell-spacing=0><th>Foto</th> <th>Nama</th> <th>NRP</th> <th>Angkatan</th> <th colspan='2'>Aksi</th>";
 
 while ($row = $res->fetch_assoc()) {
     echo "<tr>";
@@ -72,6 +56,7 @@ while ($row = $res->fetch_assoc()) {
 
     echo "<td>" . $row['nama'] . "</td>";
     echo "<td>" . $row['nrp'] . "</td>";
+    echo "<td>" . $row['angkatan'] . "</td>";
     echo "<td><a href='edit-mahasiswa.php?nrp=" . $row['nrp'] . "'>Edit</a></td>";
     echo "<td><a href='delete-mahasiswa.php?nrp=" . $row['nrp'] . "' onclick='return confirm(\"Yakin ingin menghapus mahasiswa ini?\");'>Delete</a></td>";
     echo "<input type='hidden' name='nrp_lama' value='" . $row['nrp'] . "'>";
