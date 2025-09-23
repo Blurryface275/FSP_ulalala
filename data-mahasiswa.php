@@ -12,10 +12,25 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        table {
+            border-collapse: collapse;
+            margin: 10px auto 0 auto; /* tengah + kasih jarak atas */
+            text-align: center;
+        }
+
         .foto {
             max-width: 150px;
-
+            object-fit: cover;
+            display: block;
+            margin: auto;
         }
+
+        h1 {
+            margin: 20px 0;
+            text-align: center;
+        }
+
+
     </style>
 </head>
 
@@ -45,7 +60,7 @@ while ($row = $res->fetch_assoc()) {
     echo "<tr>";
     echo "<td>";
 
-    $fotoMhs = "uploads/" . $row['nrp'] . "." . $row['foto_extension'];
+    $fotoMhs = "uploads/" . $row['nrp'] . "." . $row['foto_extention'];
 
     if (file_exists($fotoMhs)) {
         echo "<img class='foto' src='" . $fotoMhs . "' alt='poster'>";
