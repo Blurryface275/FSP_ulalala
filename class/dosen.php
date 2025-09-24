@@ -41,10 +41,10 @@ class dosen
         }
 
         // Simpan ke database
-        $sql = "INSERT INTO dosen (npk, nama, gender, tanggal_lahir, angkatan, foto_extension) 
-                VALUES (?, ?, ?, ?, ?, ?)";
+        $sql = "INSERT INTO dosen (npk, nama,foto_extension) 
+                VALUES (?, ?, ?)";
         $stmt = $this->mysqli->prepare($sql);
-        $stmt->bind_param("ssssss", $npk, $nama, $gender, $tgl_lahir, $angkatan, $ext);
+        $stmt->bind_param("sss", $npk, $nama,$ext);
 
         if (!$stmt->execute()) {
             throw new Exception("Error saat insert: " . $stmt->error);
