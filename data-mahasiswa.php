@@ -19,6 +19,15 @@
 </head>
 
 <body>
+<div id="sidebar" class="sidebar">
+        <h2 class="logo"><i class="fa-solid fa-sun"></i> Sunset</h2>
+        <ul>
+            <li><a href="data-dosen.php"><i class="fa-solid fa-user-tie"></i><span> Data Dosen</span></a></li>
+            <li><a href="data-mahasiswa.php"><i class="fa-solid fa-user-graduate"></i><span> Data Mahasiswa</span></a></li>
+            <li><a href="insert-dosen.php"><i class="fa-solid fa-user-plus"></i><span> Tambah Dosen</span></a></li>
+            <li><a href="insert-mahasiswa.php"><i class="fa-solid fa-user-plus"></i><span> Tambah Mahasiswa</span></a></li>
+        </ul>
+    </div>
     <h1>Data Mahasiswa</h1>
   <?php
 $mysqli = new mysqli("localhost", "root", "", "fullstack");
