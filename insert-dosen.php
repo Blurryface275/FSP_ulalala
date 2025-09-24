@@ -1,68 +1,92 @@
 <?php
-    $mysqli = new mysqli("localhost", "root", "", "fullstack");
-    if ($mysqli->connect_errno) {
-       die("Failed to connect to MySQL: " . $mysqli->connect_error);
+$mysqli = new mysqli("localhost", "root", "", "fullstack");
+if ($mysqli->connect_errno) {
+    die("Koneksi gagal: " . $mysqli->connect_error);
+}
+
+if (isset($_POST['submit'])) {
+    // Ambil data dari form
+    $nrp    = $_POST['nrp'];
+    $nama   = $_POST['nama'];
+    $angkatan = $_POST['angkatan'];
+    $tgl_lahir  = $_POST['tgl'];
+    $gender = $_POST['gender']; // Tambahan gender
+
+    // Tangkap file foto
+    $valid_extension = ['jpg', 'jpeg', 'png'];
+    $ext  = strtolower(pathinfo($_FILES['foto']['name'], PATHINFO_EXTENSION));
+
+    if (!in_array($ext, $valid_extension)) {
+        die("Ekstensi file tidak valid! Hanya jpg/jpeg/png.");
     }
 
-    if (isset($_POST['insert'])){
-        $nama = $_POST['nama']; // nama dosen
-        $NPK = $_POST['NPK']; // NPK dosen
-    }
-  
-    $foto = $_FILES['foto'];
-    $sql = "insert into dosen (npk, nama, foto_extension) values(?,?,?)";
-
-    $ext = pathinfo($_FILES['foto']['name'], PATHINFO_EXTENSION);
-    $target = "uploads/" . $NPK . "." . $ext; //kasih nama pakai npk dan extension
+    // Nama file disimpan dengan format: NRP.extension
+    $namaFileBaru = $nrp . "." . $ext;
+    $targetFile   = "uploads/" . $namaFileBaru;
 
     // Pindahkan file ke folder uploads
-    if (move_uploaded_file($_FILES['foto']['tmp_name'], $target)) {
-        // Simpan ke database
-        $sql = "INSERT INTO dosen (npk, nama, foto_extension) VALUES (?, ?, ?)";
+    if (move_uploaded_file($_FILES['foto']['tmp_name'], $targetFile)) {
+        // Simpan data ke database
+        $sql = "INSERT INTO mahasiswa (nrp, nama, gender, tanggal_lahir, angkatan, foto_extention) 
+                    VALUES (?, ?, ?, ?, ?, ?)";
         $stmt = $mysqli->prepare($sql);
-        $stmt->bind_param("sss", $NPK, $nama, $ext);
-        $stmt->execute();
+        $stmt->bind_param("ssssss", $nrp, $nama, $gender, $tgl_lahir, $angkatan, $ext);
 
-        echo "Data dosen berhasil disimpan!";
+        if ($stmt->execute()) {
+            echo "<script>alert('Data berhasil disimpan!');</script>";
+        } else {
+            header("Location : insert-mahasiswa.php");
+            echo "Error saat insert: " . $stmt->error;
+        }
     } else {
-        echo "Gagal upload foto!";
+        echo "Gagal upload file!";
     }
+}
 
-    
-    header("Location: data-dosen.php");
-    exit;
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tambah Dosen</title>
+    <title>Tambah Mahasiswa</title>
     <link rel="stylesheet" href="style.css">
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body>
-<form action="" method="POST" enctype="multipart/form-data">
 
+<body>
+    <form action="" method="POST" enctype="multipart/form-data">
         <p>
             <label for="nama">Nama : </label>
             <input type="text" name="nama" id="nama">
         </p>
         <p>
-            <label for="NPK">NPK : </label>
-            <input type="text" name="NPK" id="NPK">
+            <label for="npk">NPK : </label>
+            <input type="text" name="npk" id="npk">
+        </p>
+        <p>
+            <label for="gender">Gender : </label>
+            <input type="radio" name="gender" id="pria" value="Pria">
+            <label for="pria">Pria</label>
+
+            <input type="radio" name="gender" id="wanita" value="Wanita">
+            <label for="wanita">Wanita</label>
+        </p>
+        <p>
+            <label for="tgl">Tanggal lahir : </label> <!-- ini gimana ya cara bikin kalender??? -->
+            <input type="date" name="tgl" id="tgl">
         </p>
         <p>
             <label for="foto">Foto : </label>
             <input type="file" name="foto" id="foto">
         </p>
-        <button type="submit" name="insert">Insert</button>
-        
+        <button type="submit" name="submit">Insert</button> <!-- Namanya inserts biar beda sama dosen -->
     </form>
 </body>
+
 </html>
