@@ -68,19 +68,7 @@ if (isset($_POST['submit'])) {
         <p>
             <label for="npk">NPK : </label>
             <input type="text" name="npk" id="npk">
-        </p>
-        <p>
-            <label for="gender">Gender : </label>
-            <input type="radio" name="gender" id="pria" value="Pria">
-            <label for="pria">Pria</label>
-
-            <input type="radio" name="gender" id="wanita" value="Wanita">
-            <label for="wanita">Wanita</label>
-        </p>
-        <p>
-            <label for="tgl">Tanggal lahir : </label> <!-- ini gimana ya cara bikin kalender??? -->
-            <input type="date" name="tgl" id="tgl">
-        </p>
+</p>
         <p>
             <label for="foto">Foto : </label>
             <input type="file" name="foto" id="foto">
