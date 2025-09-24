@@ -8,23 +8,21 @@
     <link rel="stylesheet" href="style.css">
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 
 <body>
-    <div class="card">
+    <div class="box">
         <h1>Daftar Akun</h1>
-        <p class="lead">Buat akun baru sebagai mahasiswa, dosen, atau admin.</p>
+        <h6 class="lead">Buat akun baru sebagai mahasiswa, dosen, atau admin.</h6><br>
 
         <!-- form kirim ke register-process.php -->
         <form id="regForm" autocomplete="off" method="POST" action="register-process.php">
             <label for="username">Username</label>
             <input id="username" name="username" type="text" required>
-
+            <br>
             <label for="password">Password</label>
             <input id="password" name="password" type="password" required>
-
+            <br>
             <label for="role">Role</label>
             <select id="role" name="role" required>
                 <option value="">- Pilih role -</option>

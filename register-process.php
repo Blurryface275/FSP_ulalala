@@ -32,7 +32,6 @@ if (isset($_POST['action']) && $_POST['action'] === 'register') {
         $sql = "INSERT INTO akun (username, password, nrp_mahasiswa, isadmin) VALUES (?, ?, ?, ?)";
         $stmt = $mysqli->prepare($sql);
         $stmt->bind_param("sssi", $username, $password, $id, $isadmin);
-
     } elseif ($role === "dosen") {
         $cek_dsn = $mysqli->prepare("SELECT npk FROM dosen WHERE npk=?");
         $cek_dsn->bind_param("s", $id);
@@ -44,7 +43,6 @@ if (isset($_POST['action']) && $_POST['action'] === 'register') {
         $sql = "INSERT INTO akun (username, password, npk_dosen, isadmin) VALUES (?, ?, ?, ?)";
         $stmt = $mysqli->prepare($sql);
         $stmt->bind_param("sssi", $username, $password, $id, $isadmin);
-
     } else {
         die("Role tidak valid!");
     }
@@ -57,6 +55,8 @@ if (isset($_POST['action']) && $_POST['action'] === 'register') {
         die("Gagal registrasi: " . $stmt->error);
     }
 } else {
+    // redirect ke register
+    header("Location: register.php");
+    exit;
     die("Akses tidak valid!");
 }
-?>

@@ -28,7 +28,8 @@ if (isset($_POST['login'])) {
         exit;
     } else {
         // gagal login
-        echo "Username atau password salah!";
+        header("Location: index.php");
+        exit;
     }
 }
 ?>

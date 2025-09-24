@@ -68,7 +68,7 @@ if (isset($_POST['submit'])) {
         <p>
             <label for="npk">NPK : </label>
             <input type="text" name="npk" id="npk">
-</p>
+        </p>
         <p>
             <label for="foto">Foto : </label>
             <input type="file" name="foto" id="foto">
