@@ -1,4 +1,4 @@
-/* Warna Palate */
+/* Color Palette */
 :root {
   --coklat: #493129;
   --ungu: #8b597b;
@@ -7,6 +7,7 @@
   --cream: #ffe2db;
 }
 
+/* Base Styles */
 * {
   margin: 0;
   padding: 0;
@@ -18,34 +19,34 @@ body {
   background: var(--cream);
   min-height: 100vh;
   display: flex;
-  justify-content: center;   /* center horizontal */
-  align-items: center;       /* center vertical */
+  overflow-x: hidden;
 }
 
-
-/* Sidebar (Bagian index.php) */
+/* Sidebar */
 .sidebar {
   width: 220px;
   background: var(--coklat);
   color: var(--cream);
   padding: 20px 0;
-  flex-shrink: 0;
-  overflow: hidden;
-  transition: width 0.3s;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  transition: width 0.3s ease-in-out;
+  z-index: 1000;
 }
 
-.sidebar.collapsed { width: 70px; }
-
-.sidebar .logo {
-  text-align: center;
-  margin-bottom: 30px;
-  font-size: 20px;
-  color: var(--peach);
+.sidebar.collapsed {
+  width: 70px;
 }
 
-.sidebar ul { list-style: none; }
+.sidebar ul {
+  list-style: none;
+}
 
-.sidebar ul li { margin: 15px 0; }
+.sidebar ul li {
+  margin: 15px 0;
+}
 
 .sidebar ul li a {
   display: flex;
@@ -68,31 +69,66 @@ body {
   color: var(--peach);
 }
 
-.sidebar.collapsed ul li a span { display: none; }
-
-/* Main content */
-.main-content {
-  flex: 1;
-  padding: 20px;
-  transition: margin-left 0.3s;
-}
-
-header {
-  display: flex;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-header h1 {
-  margin-left: 10px;
-  font-size: 24px;
-  color: var(--coklat);
+.sidebar.collapsed ul li a span {
+  display: none;
 }
 
 .toggle-btn {
   font-size: 22px;
   cursor: pointer;
+  color: var(--cream);
+  padding: 20px 20px 0;
+}
+
+/* Main Content */
+.main-content {
+  flex-grow: 1;
+  padding: 20px;
+  transition: margin-left 0.3s ease-in-out;
+  margin-left: 220px;
+}
+
+.main-content.expanded {
+  margin-left: 70px;
+}
+
+header {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-bottom: 20px;
+  gap: 10px;
+}
+
+header h1 {
+  font-size: 24px;
   color: var(--coklat);
+}
+
+.greeting {
+  margin: 10px 0 20px;
+  padding: 15px;
+  background: var(--pink);
+  color: var(--coklat);
+  border-radius: 8px;
+  font-size: 18px;
+  font-weight: bold;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+  width: 100%;
+}
+
+.content-box {
+  padding: 20px;
+  background: var(--peach);
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  margin: 20px auto;
+  max-width: 1000px;
+}
+
+.content-box h1 {
+  text-align: center;
+  margin-bottom: 20px;
 }
 
 section p {
@@ -103,33 +139,85 @@ section p {
   border-radius: 8px;
 }
 
-/* Button Style */
-button {
-  background: linear-gradient(135deg, #ff9a9e, #fad0c4);
-  border: none;
-  border-radius: 25px;
-  padding: 10px 20px;
-  margin: 5px;
-  color: white;
+/* Table Styling */
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 20px auto;
+  background: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+th,
+td {
+  padding: 12px 15px;
+  text-align: center;
+  border-bottom: 1px solid var(--peach);
+}
+
+th {
+  background: var(--ungu);
+  color: var(--cream);
+  text-transform: uppercase;
+}
+
+tr:nth-child(even) {
+  background: var(--peach);
+}
+
+tr:hover {
+  background: var(--pink);
+  color: var(--coklat);
+}
+
+.foto {
+  max-width: 100px;
+  border-radius: 6px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.teks-merah {
+  color: red;
   font-weight: bold;
+}
+
+/* Button Styles (for aksi) */
+.btn {
+  padding: 8px 12px;
+  margin: 0 3px;
+  border: none;
+  border-radius: 20px;
   font-size: 14px;
   cursor: pointer;
-  transition: all 0.3s ease-in-out;
+  transition: all 0.3s;
+  text-decoration: none;
+  color: white;
+  font-weight: bold;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+  display: inline-block;
 }
 
-button:hover {
-  background: linear-gradient(135deg, #ff6a88, #ff99ac);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.25);
+.btn-edit {
+  background: var(--ungu);
 }
 
-button:active {
-  transform: translateY(1px);
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+.btn-edit:hover {
+  background: #6d4463;
 }
 
-/* Form Layout Keseluruhan */
+.btn-delete {
+  background: var(--pink);
+  color: var(--coklat);
+}
+
+.btn-delete:hover {
+  background: #e26b67;
+  color: white;
+}
+
+/* Form & Box */
 label {
   margin: 5px;
   font-weight: bold;
@@ -143,7 +231,6 @@ input {
   border-radius: 6px;
 }
 
-/* Box/Card */
 .box {
   width: 100%;
   max-width: 400px;
@@ -151,7 +238,41 @@ input {
   background: var(--peach);
   border-radius: 10px;
   text-align: center;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.2),
-              0 6px 20px rgba(0,0,0,0.19);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
+/* Responsive */
+@media (max-width: 768px) {
+  .sidebar {
+    width: 0;
+    overflow: hidden;
+  }
+
+  .sidebar.collapsed {
+    width: 70px;
+  }
+
+  .sidebar.show {
+    width: 220px;
+  }
+
+  .main-content {
+    margin-left: 0;
+    padding-top: 20px;
+  }
+
+  .main-content.expanded {
+    margin-left: 0;
+  }
+
+  .toggle-btn {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    z-index: 1001;
+    background: var(--coklat);
+    color: var(--cream);
+    padding: 5px 10px;
+    border-radius: 5px;
+  }
+}

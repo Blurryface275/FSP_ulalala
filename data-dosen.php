@@ -9,8 +9,6 @@
     <link rel="stylesheet" href="style.css">
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         .foto {
             max-width: 150px;
@@ -19,17 +17,30 @@
 </head>
 
 <body>
+    <div id="sidebar" class="sidebar">
+        <div style="display: flex; align-items: center; gap: 10px; padding: 0 20px; margin-bottom: 20px;">
+            <div class="toggle-btn" id="toggle-btn">☰</div>
+        </div>
+        <ul>
+            <li><a href="data-dosen.php">Data Dosen</a></li>
+            <li><a href="data-mahasiswa.php">Data Mahasiswa</a></li>
+            <li><a href="insert-dosen.php">Tambah Dosen</a></li>
+            <li><a href="insert-mahasiswa.php">Tambah Mahasiswa</a></li>
+        </ul>
+    </div>
+    
+    <div class="content-box">
     <h1>Data Dosen</h1>
     <?php
     $mysqli = new mysqli("localhost", "root", "", "fullstack");
-    if ($mysqli->connect_errno)
+    if ($mysqli->connect_errno){
         die("Failed to connect to MySQL :" . $mysqli->connect_error);
-
-    $sql = "select * from dosen";
-
-    $stmt = $mysqli->prepare($sql);
-    $stmt->execute();
-    $res = $stmt->get_result();
+    }
+    
+    require_once("class/dosen.php");
+    $dosen = new dosen($mysqli);
+    
+    $res = $dosen->displayDosen();
 
     echo "<table border=1 cell-spacing=0><th>Foto</th> <th>Nama</th> <th>NPK</th> <th colspan='2'>Aksi</th>";
 
@@ -59,6 +70,7 @@
 
     echo "</table>";
     ?>
+    </div>
 </body>
 
 </html>

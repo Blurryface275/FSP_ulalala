@@ -4,19 +4,18 @@ if ($mysqli->connect_errno) {
     die("Failed to connect to MySQL: " . $mysqli->connect_error);
 }
 
+require_once("class/akun.php");
+$akun = new akun($mysqli); 
+
 if (isset($_POST['action']) && $_POST['action'] === 'register') {
     $username = trim($_POST['username']);
-    $password = trim($_POST['password']); // plaintext dulu untuk tugas
+    $password = trim($_POST['password']);
     $role     = $_POST['role'];
     $id       = $_POST['id']; // bisa nrp atau npk
     $isadmin  = isset($_POST['isadmin']) ? 1 : 0;
 
     // cek username sudah dipakai atau belum
-    $check = $mysqli->prepare("SELECT username FROM akun WHERE username=?");
-    $check->bind_param("s", $username);
-    $check->execute();
-    $res = $check->get_result();
-    if ($res->num_rows > 0) {
+    if ($akun->usernameExists($username)) {
         die("Username sudah dipakai!");
     }
 
@@ -29,9 +28,10 @@ if (isset($_POST['action']) && $_POST['action'] === 'register') {
             die("NRP tidak ditemukan di tabel mahasiswa!");
         }
 
-        $sql = "INSERT INTO akun (username, password, nrp_mahasiswa, isadmin) VALUES (?, ?, ?, ?)";
-        $stmt = $mysqli->prepare($sql);
-        $stmt->bind_param("sssi", $username, $password, $id, $isadmin);
+        if ($akun->insertMahasiswa($username, $password, $id, $isadmin)) {
+            header("Location: login.php");
+            exit;
+        }
     } elseif ($role === "dosen") {
         $cek_dsn = $mysqli->prepare("SELECT npk FROM dosen WHERE npk=?");
         $cek_dsn->bind_param("s", $id);
@@ -40,9 +40,10 @@ if (isset($_POST['action']) && $_POST['action'] === 'register') {
             die("NPK tidak ditemukan di tabel dosen!");
         }
 
-        $sql = "INSERT INTO akun (username, password, npk_dosen, isadmin) VALUES (?, ?, ?, ?)";
-        $stmt = $mysqli->prepare($sql);
-        $stmt->bind_param("sssi", $username, $password, $id, $isadmin);
+        if ($akun->insertDosen($username, $password, $id, $isadmin)) {
+            header("Location: login.php");
+            exit;
+        }
     } else {
         die("Role tidak valid!");
     }
@@ -58,5 +59,4 @@ if (isset($_POST['action']) && $_POST['action'] === 'register') {
     // redirect ke register
     header("Location: register.php");
     exit;
-    die("Akses tidak valid!");
 }
