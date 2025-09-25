@@ -21,11 +21,11 @@ class dosen
     }
 
     // Insert dosen baru
-    public function insertDosenBaru($npk, $nama, $gender, $tgl_lahir, $angkatan, $fileFoto)
+    public function insertDosenBaru($npk, $nama)
     {
         // Validasi ekstensi foto
         $valid_extension = ['jpg', 'jpeg', 'png'];
-        $ext = strtolower(pathinfo($fileFoto['name'], PATHINFO_EXTENSION));
+        $ext = strtolower(pathinfo($_FILES['foto']['name'], PATHINFO_EXTENSION));
 
         if (!in_array($ext, $valid_extension)) {
             throw new Exception("Ekstensi file tidak valid! Hanya jpg/jpeg/png.");
@@ -36,7 +36,7 @@ class dosen
         $targetFile   = "uploads/" . $namaFileBaru;
 
         // Upload file ke folder
-        if (!move_uploaded_file($fileFoto['tmp_name'], $targetFile)) {
+        if (!move_uploaded_file($_FILES['foto']['tmp_name'], $targetFile)) {
             throw new Exception("Gagal upload file!");
         }
 
