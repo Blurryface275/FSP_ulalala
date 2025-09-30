@@ -74,3 +74,11 @@
 </body>
 
 </html>
+<script>
+        $(function() {
+            $("#toggle-btn").on("click", function() {
+                $("#sidebar").toggleClass("collapsed");
+                $(".main-content").toggleClass("expanded");
+            });
+        });
+    </script>

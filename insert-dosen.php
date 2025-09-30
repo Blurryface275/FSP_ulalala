@@ -54,7 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <label for="foto">Foto : </label>
                 <input type="file" name="foto" id="foto">
             </p>
-            <button type="submit" name="submit">Insert</button> <!-- Namanya inserts biar beda sama dosen -->
+            <button type="submit" name="submit">Insert</button> 
         </form>
     </div>
 </body>
