@@ -72,14 +72,18 @@
         <input type="hidden" name="npk_lama" value="<?php echo $data['npk']; ?>">
         <p>
             <label for="nama">Nama : </label>
-            <input type="text" name="nama" id="nama">
+            <input type="text" name="nama" id="nama" value="<?php echo $data['nama']; ?>">
         </p>
         <p>
             <label for="NPK">NPK : </label>
-            <input type="text" name="NPK" id="NPK">
+            <input type="text" name="NPK" id="NPK" value="<?php echo $data['npk']; ?>">
         </p>
         <p>
-            <label for="foto">Foto : </label>
+            <strong>Foto Saat Ini:</strong><br>
+            <img src="uploads/<?php echo $data['nama'] . '_' . $data['npk'] . '.' . $data['foto_extension']; ?>" width="150">
+        </p>
+        <p>
+            <label for="foto">Edit foto : </label>
             <input type="file" name="foto" id="foto">
         </p>
         <button type="submit" name="insert">Insert</button>

@@ -63,8 +63,8 @@
         echo "<td>" . $row['npk'] . "</td>";
 
         echo "<td><a href='edit-dosen.php?npk=" . $row['npk'] . "'>Edit</a></td>";
-        echo "<td><a href='delete-dosen.php?npk=" . $row['npk'] . "' onclick='return confirm(\"Yakin ingin menghapus dosen ini?\");'>Delete</a></td>";
-        echo "<input type='hidden' name='npk_lama' value='" . $row['npk'] . "'>";
+            echo "<td><a href='delete-dosen.php?npk=" . $row['npk'] . "' onclick='return confirm(\"Yakin ingin menghapus dosen ini?\");'>Delete</a></td>";
+      
         echo "</tr>";
     }
 

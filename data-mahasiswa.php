@@ -63,7 +63,7 @@
         echo "<td>" . $row['angkatan'] . "</td>";
         echo "<td><a href='edit-mahasiswa.php?nrp=" . $row['nrp'] . "'>Edit</a></td>";
         echo "<td><a href='delete-mahasiswa.php?nrp=" . $row['nrp'] . "' onclick='return confirm(\"Yakin ingin menghapus mahasiswa ini?\");'>Delete</a></td>";
-        echo "<input type='hidden' name='nrp_lama' value='" . $row['nrp'] . "'>";
+        
         echo "</tr>";
     }
     echo "</table>";

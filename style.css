@@ -183,6 +183,9 @@ tr:hover {
   font-weight: bold;
 }
 
+.foto{
+  max-width: 15px;
+}
 /* Button Styles (for aksi) */
 .btn {
   padding: 8px 12px;

@@ -30,45 +30,25 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
         $ext_baru = strtolower(pathinfo($_FILES['foto']['name'], PATHINFO_EXTENSION));
         $target   = "uploads/" . $nrp_baru . "." . $ext_baru;
 
-        // Hapus foto lama
-        $stmt_old = $mysqli->prepare("SELECT foto_extention FROM mahasiswa WHERE nrp=?");
-        $stmt_old->bind_param("s", $nrp_lama);
-        $stmt_old->execute();
-        $result = $stmt_old->get_result();
-        if ($row = $result->fetch_assoc()) {
-            $old_photo = "uploads/" . $nrp_lama . "." . $row['foto_extention'];
-            if (file_exists($old_photo)) {
-                unlink($old_photo);
-            }
-        }
-        $stmt_old->close();
-
         move_uploaded_file($_FILES['foto']['tmp_name'], $target);
+
+        $sql = "UPDATE mahasiswa SET nrp=?, nama=?, gender=?, tanggal_lahir=?, angkatan=?, foto_extention=? WHERE nrp=?";
+        $stmt_update = $mysqli->prepare($sql);
+        $stmt_update->bind_param("ssssiss", $nrp_baru, $nama_baru, $gender_baru, $tgl_baru, $angkatan_baru, $ext_baru, $nrp_lama);
     } else {
-        // Kalau tidak ada upload baru → ambil ekstensi lama
-        $stmt_ext = $mysqli->prepare("SELECT foto_extention FROM mahasiswa WHERE nrp=?");
-        $stmt_ext->bind_param("s", $nrp_lama);
-        $stmt_ext->execute();
-        $ext_baru = $stmt_ext->get_result()->fetch_assoc()['foto_extention'];
-        $stmt_ext->close();
+        // Semisalnya ga ada upload baru → ambil ekstensi lama
+        $ext_baru = $data['foto_extention'];
+        
+        $sql = "UPDATE mahasiswa SET nrp=?, nama=?, gender=?, tanggal_lahir=?, angkatan=?, foto_extention=? WHERE nrp=?";
+        $stmt_update = $mysqli->prepare($sql);
+        $stmt_update->bind_param("ssssiss", $nrp_baru, $nama_baru, $gender_baru, $tgl_baru, $angkatan_baru, $ext_baru, $nrp_lama);
     }
 
-    // Update semua kolom
-    $sql = "UPDATE mahasiswa 
-            SET nrp=?, nama=?, gender=?, tanggal_lahir=?, angkatan=?, foto_extention=? 
-            WHERE nrp=?";
-    $stmt = $mysqli->prepare($sql);
-    $stmt->bind_param("sssssss", $nrp_baru, $nama_baru, $gender_baru, $tgl_baru, $angkatan_baru, $ext_baru, $nrp_lama);
-
-    if ($stmt->execute()) {
-        // Rename file kalau NRP berubah
-        if ($nrp_lama !== $nrp_baru && !empty($ext_baru)) {
-            rename("uploads/" . $nrp_lama . "." . $ext_baru, "uploads/" . $nrp_baru . "." . $ext_baru);
-        }
+    if ($stmt_update->execute()) {
         header("Location: data-mahasiswa.php");
         exit;
     } else {
-        echo "Error: " . $stmt->error;
+        echo "Error: " . $stmt_update->error;
     }
 }
 
@@ -88,38 +68,40 @@ if (isset($_GET['nrp'])) {
 }
 ?>
 
-<h2>Edit Mahasiswa</h2>
-<form action="edit-mahasiswa.php" method="post" enctype="multipart/form-data">
-    <input type="hidden" name="nrp_lama" value="<?php echo htmlspecialchars($data['nrp']); ?>">
-    <p>
-        <label for="nama">Nama : </label>
-        <input type="text" name="nama" id="nama" value="<?php echo htmlspecialchars($data['nama']); ?>">
-    </p>
-    <p>
-        <label for="nrp">NRP : </label>
-        <input type="text" name="nrp" id="nrp" value="<?php echo htmlspecialchars($data['nrp']); ?>">
-    </p>
-    <p>
-        <label>Gender : </label>
-        <input type="radio" name="gender" value="Pria" <?php if($data['gender']=="Pria") echo "checked"; ?>> Pria
-        <input type="radio" name="gender" value="Wanita" <?php if($data['gender']=="Wanita") echo "checked"; ?>> Wanita
-    </p>
-    <p>
-        <label for="tgl">Tanggal Lahir : </label>
-        <input type="date" name="tgl" id="tgl" value="<?php echo htmlspecialchars($data['tanggal_lahir']); ?>">
-    </p>
-    <p>
-        <label for="angkatan">Angkatan : </label>
-        <input type="number" name="angkatan" id="angkatan" value="<?php echo htmlspecialchars($data['angkatan']); ?>">
-    </p>
-    <p>
-        <label for="foto">Foto : </label>
-        <input type="file" name="foto" id="foto">
-        <br>
-        Foto sekarang: <img src="uploads/<?php echo $data['nrp'] . "." . $data['foto_extention']; ?>" width="100">
-    </p>
-    <button type="submit" name="submit">Simpan Perubahan</button>
-</form>
+<h2>Edit Data Mahasiswa</h2>
+    <form action="edit-mahasiswa.php?nrp=<?php echo $data['nrp']; ?>" method="post" enctype="multipart/form-data">
+        <input type="hidden" name="nrp_lama" value="<?php echo $data['nrp']; ?>">
+        <p>
+            <label for="nama">Nama : </label>
+            <input type="text" name="nama" id="nama" value="<?php echo $data['nama']; ?>" required>
+        </p>
+        <p>
+            <label for="nrp">NRP : </label>
+            <input type="text" name="nrp" id="nrp" value="<?php echo $data['nrp']; ?>" required>
+        </p>
+        <p>
+            <label>Gender : </label>
+            <input type="radio" name="gender" value="Pria" <?php if($data['gender']=="Pria") echo "checked"; ?> required> Pria
+            <input type="radio" name="gender" value="Wanita" <?php if($data['gender']=="Wanita") echo "checked"; ?>> Wanita
+        </p>
+        <p>
+            <label for="tgl">Tanggal Lahir : </label>
+            <input type="date" name="tgl" id="tgl" value="<?php echo $data['tanggal_lahir']; ?>" required>
+        </p>
+        <p>
+            <label for="angkatan">Angkatan : </label>
+            <input type="number" name="angkatan" id="angkatan" value="<?php echo $data['angkatan']; ?>" required>
+        </p>
+        <p>
+            <label for="foto">Ubah Foto : </label>
+            <input type="file" name="foto" id="foto">
+            <br>
+           <p>
+           Foto sekarang: <img src="uploads/<?php echo $data['nrp'] . '.' . $data['foto_extention']; ?>" style="max-width: 150px;">
+           </p>
+        </p>
+        <button type="submit" name="submit">Simpan Perubahan</button>
+    </form>
 </body>
 </html>
 <script>
