@@ -70,11 +70,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <label for="angkatan">Angkatan : </label>
                 <input type="number" name="angkatan" id="angkatan">
             </p>
-
+        
             <p>
                 <label for="foto">Foto : </label>
                 <input type="file" name="foto" id="foto">
             </p>
+            
             <button type="submit" name="submit">Insert</button> <!-- Namanya inserts biar beda sama dosen -->
 
         </form>

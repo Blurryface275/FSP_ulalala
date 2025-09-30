@@ -32,7 +32,7 @@ class mahasiswa
 
         // Nama file disimpan dengan format: NRP.extension
         $namaFileBaru = $nrp . "." . $ext;
-        $targetFile   = "uploads/" . $namaFileBaru;
+        $targetFile   = "uploads/".$namaFileBaru;
 
         // Pindahkan file ke folder uploads
         if (move_uploaded_file($_FILES['foto']['tmp_name'], $targetFile)) {

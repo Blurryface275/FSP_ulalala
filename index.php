@@ -74,3 +74,11 @@ if (isset($_SESSION['isadmin']) && $_SESSION['isadmin'] == 1) {
 </body>
 
 </html>
+<script>
+        $(function() {
+            $("#toggle-btn").on("click", function() {
+                $("#sidebar").toggleClass("collapsed");
+                $(".main-content").toggleClass("expanded");
+            });
+        });
+    </script>
