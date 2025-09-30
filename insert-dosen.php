@@ -12,12 +12,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
         $npk       = $_POST['npk'];
         $nama      = $_POST['nama'];
-        $angkatan  = $_POST['angkatan'];
-        $tgl_lahir = $_POST['tgl'];
-        $gender    = $_POST['gender'];
         $foto      = $_FILES['foto'];
 
-        $dosen->insertDosenBaru($npk, $nama, $gender, $tgl_lahir, $angkatan, $foto);
+        $dosen->insertDosenBaru($npk, $nama, $foto);
 
         echo "<script>alert('Data berhasil disimpan!'); window.location.href='data-dosen.php';</script>";
     } catch (Exception $e) {
