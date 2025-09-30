@@ -16,6 +16,21 @@ if ($mysqli->connect_errno) {
     die("Failed to connect to MySQL: " . $mysqli->connect_error);
 }
 
+// --- Ambil data lama untuk ditampilkan di form
+if (isset($_GET['nrp'])) {
+    $nrp_to_edit = $_GET['nrp'];
+    $stmt = $mysqli->prepare("SELECT * FROM mahasiswa WHERE nrp = ?");
+    $stmt->bind_param("s", $nrp_to_edit);
+    $stmt->execute();
+    $data = $stmt->get_result()->fetch_assoc();
+    if (!$data) {
+        die("Data mahasiswa tidak ditemukan!");
+    }
+    $stmt->close();
+} else {
+    die("NRP mahasiswa tidak ditemukan!");
+}
+
 if ($_SERVER['REQUEST_METHOD'] === "POST") {
     $nama_baru   = $_POST['nama'];
     $nrp_baru    = $_POST['nrp'];
@@ -52,20 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
     }
 }
 
-// --- Ambil data lama untuk ditampilkan di form
-if (isset($_GET['nrp'])) {
-    $nrp_to_edit = $_GET['nrp'];
-    $stmt = $mysqli->prepare("SELECT * FROM mahasiswa WHERE nrp = ?");
-    $stmt->bind_param("s", $nrp_to_edit);
-    $stmt->execute();
-    $data = $stmt->get_result()->fetch_assoc();
-    if (!$data) {
-        die("Data mahasiswa tidak ditemukan!");
-    }
-    $stmt->close();
-} else {
-    die("NRP mahasiswa tidak ditemukan!");
-}
+
 ?>
 
 <h2>Edit Data Mahasiswa</h2>
