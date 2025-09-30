@@ -39,7 +39,7 @@
         $npk_lama = $_POST['npk_lama'];
         $ext_baru = pathinfo($_FILES['foto']['name'], PATHINFO_EXTENSION);
 
-        $target = "uploads/" . $npk_baru . "." . $ext_baru; //kasih nama pakai npk dan extension
+        $target = "uploads/" . $nama_baru."_".$npk_baru . "." . $ext_baru; //kasih nama pakai npk dan extension
 
         // Pindahkan file ke folder uploads
         move_uploaded_file($_FILES['foto']['tmp_name'], $target);
