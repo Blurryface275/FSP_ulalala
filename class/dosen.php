@@ -21,7 +21,7 @@ class dosen
     }
 
     // Insert dosen baru
-    public function insertDosenBaru($npk, $nama)
+    public function insertDosenBaru($npk, $nama, $foto)
     {
         // Validasi ekstensi foto
         $valid_extension = ['jpg', 'jpeg', 'png'];
@@ -32,7 +32,7 @@ class dosen
         }
 
         // Nama file disimpan dengan format: NPK.extension
-        $namaFileBaru = $npk . "." . $ext;
+        $namaFileBaru = $nama."_".$npk . "." . $ext;
         $targetFile   = "uploads/" . $namaFileBaru;
 
         // Upload file ke folder

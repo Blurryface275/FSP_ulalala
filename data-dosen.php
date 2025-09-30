@@ -48,7 +48,7 @@
         echo "<tr>";
         echo "<td>";
 
-        $fotoDosen = "uploads/" . $row['npk'] . "." . $row['foto_extension'];
+        $fotoDosen = "uploads/".$row['nama']."_". $row['npk'] . "." . $row['foto_extension'];
 
         // cek apakah file benar-benar ada di folder
         if (file_exists($fotoDosen)) {
