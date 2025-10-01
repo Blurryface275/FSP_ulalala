@@ -35,18 +35,29 @@
     // kalo form  edit udah disubmit nanti diarahin ke sini
     if ($_SERVER['REQUEST_METHOD'] == "POST") {
         $nama_baru = $_POST['nama'];
-        $npk_baru = $_POST['NPK'];
-        $npk_lama = $_POST['npk_lama'];
-        $ext_baru = pathinfo($_FILES['foto']['name'], PATHINFO_EXTENSION);
-
-        $target = "uploads/" . $nama_baru."_".$npk_baru . "." . $ext_baru; //kasih nama pakai npk dan extension
-
-        // Pindahkan file ke folder uploads
-        move_uploaded_file($_FILES['foto']['tmp_name'], $target);
-
-        $sql = "UPDATE dosen SET npk=?, nama=?, foto_extension=? WHERE npk=?";
-        $stmt = $mysqli->prepare($sql);
-        $stmt->bind_param("ssss", $npk_baru, $nama_baru, $ext_baru, $npk_lama);
+        $npk_baru  = $_POST['NPK'];
+        $npk_lama  = $_POST['npk_lama'];
+    
+        // Cek apakah ada file foto baru yang diunggah
+        if (!empty($_FILES['foto']['name'])) {
+            $ext_baru = strtolower(pathinfo($_FILES['foto']['name'], PATHINFO_EXTENSION));
+            $target   = "uploads/" . $nama_baru . "_" . $npk_baru . "." . $ext_baru;
+            move_uploaded_file($_FILES['foto']['tmp_name'], $target);
+    
+            $sql = "UPDATE dosen SET npk=?, nama=?, foto_extension=? WHERE npk=?";
+            $stmt = $mysqli->prepare($sql);
+            $stmt->bind_param("ssss", $npk_baru, $nama_baru, $ext_baru, $npk_lama);
+    
+        } else {
+           // kalo misal gada foto baru
+            $target   = "uploads/" . $nama_baru . "_" . $npk_baru . "." . $ext_baru;
+            move_uploaded_file($_FILES['foto']['tmp_name'], $target);
+            $sql = "UPDATE dosen SET npk=?, nama=?, foto_extension=? WHERE npk=?";
+            $stmt = $mysqli->prepare($sql);
+            $stmt->bind_param("sss", $npk_baru, $nama_baru, $ext_baru, $npk_lama);
+        }
+    
+        
         if ($stmt->execute()) {
             header("Location: data-dosen.php");
             exit;
