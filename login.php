@@ -14,6 +14,13 @@
 
 <body>
     <div class="box">
+           <?php
+        // untuk menampilkan pesan error jika ada
+        if (isset($_SESSION['login_error'])) {
+            echo '<p style="color: red; font-weight: bold;">' . $_SESSION['login_error'] . '</p>';
+            unset($_SESSION['login_error']); // Hapus pesan setelah ditampilkan
+        }
+        ?>
         <form action="login-process.php" method="post">
             <p><label for="username">Username : </label>
                 <input type="text" name="username" id="username" placeholder="Enter your username">
@@ -34,10 +41,28 @@
 </html>
 
 <script>
-    $(function() {
+   $(function() {
         $("form[action='login-process.php']").on("submit", function(e) {
-            if ($("#username").val().trim() === "" || $("#password").val().trim() === "") {
-                alert("Isi username dan password dulu ya!");
+            
+            var username = $("#username").val().trim();
+            var password = $("#password").val().trim();
+            // Perhatikan: Anda harus memastikan ada elemen di HTML dengan ID="#login-error"
+            var errorMessage = $("#login-error"); 
+
+            if (username === "" || password === "") {
+                
+                // 1. Mencegah form untuk dikirim dengan mengembalikan false
+                // Ini menggantikan e.preventDefault();
+                errorMessage.show(); 
+                
+                return false; // <--- Perubahan Kunci di sini
+            } else {
+                
+                // 2. Jika input terisi, sembunyikan pesan error dan biarkan form terkirim
+                errorMessage.hide();
+                
+                // Secara implisit mengembalikan true, membiarkan form terkirim.
+                // Anda bisa menambahkan 'return true;' secara eksplisit, tetapi tidak wajib.
             }
         });
     });
