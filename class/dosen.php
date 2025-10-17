@@ -14,8 +14,9 @@ class dosen
     // Ambil semua dosen
     public function displayDosen()
     {
-        $sql = "SELECT * FROM dosen";
+        $sql = "SELECT * FROM dosen  ORDER BY nama asc limit ? offset ?";
         $stmt = $this->mysqli->prepare($sql);
+        $stmt->bind_param("ii", $limit, $offset);
         $stmt->execute();
         return $stmt->get_result();
     }
@@ -51,5 +52,14 @@ class dosen
         }
 
         return true; // kalau berhasil
+    }
+
+    
+    public function getTotalDosen()
+    {
+        $sql = "SELECT COUNT(nrp) as total FROM dosen";
+        $result = $this->mysqli->query($sql);
+        $row = $result->fetch_assoc();
+        return $row['total'];
     }
 }

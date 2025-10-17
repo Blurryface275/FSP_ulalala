@@ -39,8 +39,14 @@
 
     require_once("class/mahasiswa.php");
     $mahasiswa = new mahasiswa($mysqli);
-    
-    $res = $mahasiswa->displayMahasiswa();
+
+    $PER_PAGE = 5; // jumlah mahasiswa per page
+    $page = isset($_GET['page']) && is_numeric($_GET['page']) ? (int)$_GET['page'] : 1; //supaya fix angka
+    $offset = ($page - 1) * $limit;
+    $totalMahasiswa = $mahasiswa->getTotalMahasiswa();
+    $totalPages = ceil($totalMahasiswa / $limit);
+
+    $res = $mahasiswa->displayMahasiswa($limit, $offset);
 
     echo "<table border=1 cell-spacing=0><th>Foto</th> <th>Nama</th> <th>NRP</th> <th>Angkatan</th> <th colspan='2'>Aksi</th>";
 
@@ -67,6 +73,22 @@
         echo "</tr>";
     }
     echo "</table>";
+
+    echo "<div class='pagination'>";
+
+    if ($page > 1) {
+        echo "<a href='data-mahasiswa.php?page=" . ($page - 1) . "'>Prev</a>"; // kalo udah lebih dari 1 biar ada prev button
+    }
+
+    for ($i = 1; $i <= $totalPages; $i++) {
+        echo "<a href='data-mahasiswa.php?page=$i'>$i</a>"; // sellau generate link sesuai dengan julah offset
+    }
+
+    if ($page < $totalPages) {
+        echo "<a href='data-mahasiswa.php?page=" . ($page + 1) . "'>Next</a>"; // nambahin button next selama blom last apge
+        
+    }
+    echo "</div>";
     ?>
     </div>
 </body>

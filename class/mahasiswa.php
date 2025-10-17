@@ -12,10 +12,11 @@ class mahasiswa
     }
 
     // methods
-    public function displayMahasiswa()
+    public function displayMahasiswa($limit, $offset)
     {
-        $sql = "SELECT * FROM mahasiswa";
+        $sql = "SELECT * FROM mahasiswa ORDER BY nama asc limit ? offset ?";
         $stmt = $this->mysqli->prepare($sql);
+        $stmt->bind_param("ii", $limit, $offset);
         $stmt->execute();
         return $stmt->get_result();
     }
@@ -49,5 +50,13 @@ class mahasiswa
 
         return true; // kalau berhasil
 
+    }
+
+    public function getTotalMahasiswa()
+    {
+        $sql = "SELECT COUNT(nrp) as total FROM mahasiswa";
+        $result = $this->mysqli->query($sql);
+        $row = $result->fetch_assoc();
+        return $row['total'];
     }
 }

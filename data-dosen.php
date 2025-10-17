@@ -40,6 +40,12 @@
     require_once("class/dosen.php");
     $dosen = new dosen($mysqli);
     
+    $PER_PAGE = 5; // jumlah dosen per page
+    $page = isset($_GET['page']) && is_numeric($_GET['page']) ? (int)$_GET['page'] : 1; //supaya fix angka
+    $offset = ($page - 1) * $limit;
+    $totalMahasiswa = $dosen->getTotalDosen();
+    $totalPages = ceil($totalMahasiswa / $limit);
+
     $res = $dosen->displayDosen();
 
     echo "<table border=1 cell-spacing=0><th>Foto</th> <th>Nama</th> <th>NPK</th> <th colspan='2'>Aksi</th>";
@@ -69,6 +75,23 @@
     }
 
     echo "</table>";
+
+    
+    echo "<div class='pagination'>"; 
+
+    if ($page > 1) {
+        echo "<a href='data-dosen.php?page=" . ($page - 1) . "'>Prev</a>";
+    }
+
+    for ($i = 1; $i <= $totalPages; $i++) {
+        echo "<a href='data-dosen.php?page=$i'>$i</a>";
+    }
+
+    if ($page < $totalPages) {
+        echo "<a href='data-dosen.php?page=" . ($page + 1) . "'>Next</a>";
+    }
+
+    echo "</div>"; 
     ?>
     </div>
 </body>
