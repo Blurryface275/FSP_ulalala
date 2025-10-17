@@ -7,6 +7,9 @@ if ($mysqli->connect_errno) {
 require_once("class/mahasiswa.php");
 $mahasiswa = new mahasiswa($mysqli);
 
+require_once("class/akun.php");
+$akun = new akun($mysqli);
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try{
     // Ambil data dari form
@@ -15,9 +18,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $angkatan = $_POST['angkatan'];
     $tgl_lahir  = $_POST['tgl'];
     $gender = $_POST['gender']; // Tambahan gender
-
+    $password = $_POST['password'];
     $mahasiswa->insertMahasiswaBaru($nrp, $nama, $gender, $tgl_lahir, $angkatan);
-
+    $akun->insertAkunMahasiswa($password, $nrp);
+    
         echo "<script>alert('Data berhasil disimpan!'); window.location.href='data-mahasiswa.php';</script>";
     } catch (Exception $e) {
         echo "<script>alert('" . $e->getMessage() . "');</script>";
@@ -73,7 +77,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
             <p>
                 <label for="foto">Foto : </label>
-                <input type="file" name="foto" id="foto">
+                <input type="file" name="foto" id="foto"> 
+            </p>
+            <p>
+                <label for="password">Password : </label> <!-- Password juga ditentuin sm admin -->
+                <input type="password" name="password" id="password">
             </p>
             
             <button type="submit" name="submit">Insert</button> <!-- Namanya inserts biar beda sama dosen -->

@@ -32,9 +32,6 @@
             </p>
             <button type="submit" name="login">Masuk</button>
         </form>
-        <form action="register.php" method="post">
-            <button type="submit" name="register">Register</button>
-        </form>
     </div>
 </body>
 

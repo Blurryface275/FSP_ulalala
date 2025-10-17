@@ -36,19 +36,20 @@ classParent
     }
 
 
-    public function insertMahasiswa($username, $password, $nrp, $isadmin = 0)
+    public function insertAkunMahasiswa($password, $nrp, $isadmin = 0)
     {
         $sql = "INSERT INTO akun (username, password, nrp_mahasiswa, isadmin) VALUES (?, ?, ?, ?)";
         $stmt = $this->mysqli->prepare($sql);
-        $stmt->bind_param("sssi", $username, $password, $nrp, $isadmin);
+        $stmt->bind_param("sssi", $nrp, $password, $nrp, $isadmin);
         return $stmt->execute();
     }
 
-    public function insertDosen($username, $password, $npk, $isadmin = 0)
+    public function insertAkunDosen($password, $npk, $isadmin = 0)
     {
+        
         $sql = "INSERT INTO akun (username, password, npk_dosen, isadmin) VALUES (?, ?, ?, ?)";
         $stmt = $this->mysqli->prepare($sql);
-        $stmt->bind_param("sssi", $username, $password, $npk, $isadmin);
+        $stmt->bind_param("sssi", $npk, $password, $npk, $isadmin);
         return $stmt->execute();
     }
 }

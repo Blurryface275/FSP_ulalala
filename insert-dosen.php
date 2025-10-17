@@ -7,15 +7,20 @@ if ($mysqli->connect_errno) {
 require_once("class/dosen.php");
 $dosen = new dosen($mysqli);
 
+require_once("class/akun.php");
+$akun = new akun($mysqli);
+
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
         $npk       = $_POST['npk'];
         $nama      = $_POST['nama'];
         $foto      = $_FILES['foto'];
+        $password  = $_POST['password'];
 
         $dosen->insertDosenBaru($npk, $nama, $foto);
-
+        $akun->insertAkunDosen($password, $npk);
+        
         echo "<script>alert('Data berhasil disimpan!'); window.location.href='data-dosen.php';</script>";
     } catch (Exception $e) {
         echo "<script>alert('" . $e->getMessage() . "');</script>";
@@ -53,6 +58,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <p>
                 <label for="foto">Foto : </label>
                 <input type="file" name="foto" id="foto">
+            </p>
+            <p>
+                <label for="password">Password : </label> <!-- Karena password ditentukan oleh admin -->
+                <input type="password" name="password" id="password">
             </p>
             <button type="submit" name="submit">Insert</button> 
         </form>
