@@ -48,7 +48,7 @@
     $totalMahasiswa = $dosen->getTotalDosen();
     $totalPages = ceil($totalMahasiswa / $limit);
 
-    $res = $dosen->displayDosen();
+    $res = $dosen->displayDosen($limit, $offset);
 
     echo "<table border=1 cell-spacing=0><th>Foto</th> <th>Nama</th> <th>NPK</th> <th colspan='2'>Aksi</th>";
 
