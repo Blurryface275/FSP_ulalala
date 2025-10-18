@@ -45,6 +45,8 @@ if (isset($_SESSION['isadmin']) && $_SESSION['isadmin'] == 1) {
             <li><a href="data-mahasiswa.php">Data Mahasiswa</a></li>
             <li><a href="insert-dosen.php">Tambah Dosen</a></li>
             <li><a href="insert-mahasiswa.php">Tambah Mahasiswa</a></li>
+    <li><a href="change-password.php"> Ubah Password</a></li> 
+    <li><a href="logout.php"> Logout</a></li>
         </ul>
     </div>
 
