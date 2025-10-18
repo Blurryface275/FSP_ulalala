@@ -26,6 +26,8 @@
             <li><a href="data-mahasiswa.php">Data Mahasiswa</a></li>
             <li><a href="insert-dosen.php">Tambah Dosen</a></li>
             <li><a href="insert-mahasiswa.php">Tambah Mahasiswa</a></li>
+                <li><a href="change-password.php"> Ubah Password</a></li> 
+    <li><a href="logout.php"> Logout</a></li>
         </ul>
     </div>
     
@@ -40,7 +42,7 @@
     require_once("class/dosen.php");
     $dosen = new dosen($mysqli);
     
-    $PER_PAGE = 5; // jumlah dosen per page
+    $limit = 5; // jumlah dosen per page
     $page = isset($_GET['page']) && is_numeric($_GET['page']) ? (int)$_GET['page'] : 1; //supaya fix angka
     $offset = ($page - 1) * $limit;
     $totalMahasiswa = $dosen->getTotalDosen();
