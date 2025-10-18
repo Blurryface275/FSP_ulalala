@@ -2,8 +2,7 @@
 
 require_once("parent.php");
 
-class akun extends
-classParent
+class akun extends classParent
 {
     // constractor
     public function __construct()
@@ -22,10 +21,8 @@ classParent
         return $res->num_rows > 0;
     }
 
-   // UNTUK PENGECEKAN DI LOGIN (PERBAIKAN KEAMANAN KRITIS)
     public function getAccount($username, $password)
     {
-        // 1. Ambil semua data akun berdasarkan username SAJA (TANPA PASSWORD)
         $sql = "SELECT username, password, isadmin, nrp_mahasiswa, npk_dosen FROM akun WHERE username=?";
         $stmt = $this->mysqli->prepare($sql);
         $stmt->bind_param("s", $username);
@@ -34,14 +31,12 @@ classParent
         $row = $result->fetch_assoc();
         $stmt->close();
         
-        // 2. Verifikasi password dengan hash yang tersimpan
         if ($row && password_verify($password, $row['password'])) {
             return $row; // Login berhasil
         }
         return null; // Login gagal
     }
 
-    // LOGIKA UPDATE PASSWORD (UNTUK change-password.php)
     public function updatePassword($username, $oldPassword, $newPassword) 
     {
         // 1. Ambil hash password lama
@@ -76,18 +71,20 @@ classParent
 
     public function insertAkunMahasiswa($password, $nrp, $isadmin = 0)
     {
+        $encrypt_pwd = password_hash($password, PASSWORD_DEFAULT);
         $sql = "INSERT INTO akun (username, password, nrp_mahasiswa, isadmin) VALUES (?, ?, ?, ?)";
         $stmt = $this->mysqli->prepare($sql);
-        $stmt->bind_param("sssi", $nrp, $password, $nrp, $isadmin);
+        $stmt->bind_param("sssi", $nrp, $encrypt_pwd, $nrp, $isadmin);
         return $stmt->execute();
     }
 
     public function insertAkunDosen($password, $npk, $isadmin = 0)
     {
-        
+        $encrypt_pwd = password_hash($password, PASSWORD_DEFAULT);
         $sql = "INSERT INTO akun (username, password, npk_dosen, isadmin) VALUES (?, ?, ?, ?)";
         $stmt = $this->mysqli->prepare($sql);
-        $stmt->bind_param("sssi", $npk, $password, $npk, $isadmin);
+        $stmt->bind_param("sssi", $npk, $encrypt_pwd, $npk, $isadmin);
         return $stmt->execute();
     }
 }
+

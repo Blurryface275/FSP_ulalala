@@ -1,16 +1,17 @@
 <?php
 session_start();
 
-// If not logged in, force to login page
+// Jika belum login, arahkan ke login.php
 if (!isset($_SESSION['username'])) {
     header("Location: login.php");
     exit;
 }
 
-// Determine the greeting based on the user's role
-$greeting = "Hallo, ";
+// Tentukan ucapan sesuai role
+$greeting = "Halo, ";
 if (isset($_SESSION['isadmin']) && $_SESSION['isadmin'] == 1) {
     $greeting .= "Admin " . $_SESSION['username'];
+    $isAdmin = true;
 } elseif (isset($_SESSION['role'])) {
     if ($_SESSION['role'] == 'mahasiswa') {
         $greeting .= "Mahasiswa " . $_SESSION['username'];
@@ -19,8 +20,10 @@ if (isset($_SESSION['isadmin']) && $_SESSION['isadmin'] == 1) {
     } else {
         $greeting .= $_SESSION['username'];
     }
+    $isAdmin = false;
 } else {
     $greeting .= $_SESSION['username'];
+    $isAdmin = false;
 }
 ?>
 
@@ -41,12 +44,16 @@ if (isset($_SESSION['isadmin']) && $_SESSION['isadmin'] == 1) {
             <div class="toggle-btn" id="toggle-btn">☰</div>
         </div>
         <ul>
-            <li><a href="data-dosen.php">Data Dosen</a></li>
-            <li><a href="data-mahasiswa.php">Data Mahasiswa</a></li>
-            <li><a href="insert-dosen.php">Tambah Dosen</a></li>
-            <li><a href="insert-mahasiswa.php">Tambah Mahasiswa</a></li>
-    <li><a href="change-password.php"> Ubah Password</a></li> 
-    <li><a href="logout.php"> Logout</a></li>
+            <?php if ($isAdmin): ?>
+                <li><a href="data-dosen.php">Data Dosen</a></li>
+                <li><a href="data-mahasiswa.php">Data Mahasiswa</a></li>
+                <li><a href="insert-dosen.php">Tambah Dosen</a></li>
+                <li><a href="insert-mahasiswa.php">Tambah Mahasiswa</a></li>
+            <?php endif; ?>
+
+            <!-- Semua role bisa ubah password dan logout -->
+            <li><a href="change-password.php">Ubah Password</a></li>
+            <li><a href="logout.php">Logout</a></li>
         </ul>
     </div>
 
@@ -60,9 +67,12 @@ if (isset($_SESSION['isadmin']) && $_SESSION['isadmin'] == 1) {
         </div>
 
         <section>
-            <p>Selamat datang di homepage project Fullstack Programming. Gunakan menu samping untuk mengelola data dosen dan mahasiswa.</p>
+            <?php if ($isAdmin): ?>
+                <p>Selamat datang di dashboard admin. Gunakan menu di samping untuk mengelola data dosen dan mahasiswa.</p>
+            <?php else: ?>
+                <p>Selamat datang di halaman pengguna. Anda hanya dapat mengubah kata sandi Anda.</p>
+            <?php endif; ?>
         </section>
-
     </div>
 
     <script>
@@ -74,13 +84,4 @@ if (isset($_SESSION['isadmin']) && $_SESSION['isadmin'] == 1) {
         });
     </script>
 </body>
-
 </html>
-<script>
-        $(function() {
-            $("#toggle-btn").on("click", function() {
-                $("#sidebar").toggleClass("collapsed");
-                $(".main-content").toggleClass("expanded");
-            });
-        });
-    </script>

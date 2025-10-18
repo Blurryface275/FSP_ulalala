@@ -28,7 +28,7 @@ if (isset($_POST['action']) && $_POST['action'] === 'register') {
             die("NRP tidak ditemukan di tabel mahasiswa!");
         }
 
-        if ($akun->insertMahasiswa($username, $password, $id, $isadmin)) {
+        if ($akun->insertAkunMahasiswa($username, $password, $id, $isadmin)) {
             header("Location: login.php");
             exit;
         }
@@ -40,7 +40,7 @@ if (isset($_POST['action']) && $_POST['action'] === 'register') {
             die("NPK tidak ditemukan di tabel dosen!");
         }
 
-        if ($akun->insertDosen($username, $password, $id, $isadmin)) {
+        if ($akun->insertAkunDosen($username, $password, $id, $isadmin)) {
             header("Location: login.php");
             exit;
         }

@@ -14,5 +14,3 @@ class classParent{
         $this->mysqli->close();
     } 
 }
-
-?>

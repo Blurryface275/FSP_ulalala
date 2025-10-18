@@ -44,30 +44,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 ?>
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ubah Password</title>
-    <link rel="stylesheet" href="style.css"> 
+    <link rel="stylesheet" href="login-style.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    </head>
+</head>
+
 <body>
-    <div class="form-container">
+    <div class="box">
         <h2>Ubah Kata Sandi</h2>
         <?php echo $message; ?>
         <form method="POST">
-            <label for="old_password">Kata Sandi Lama:</label>
-            <input type="password" id="old_password" name="old_password" required>
+            <p>
+                <label for="old_password">Kata Sandi Lama:</label>
+                <input type="password" id="old_password" name="old_password" required>
+            </p>
+            <p>
+                <label for="new_password">Kata Sandi Baru:</label>
+                <input type="password" id="new_password" name="new_password" required>
+            </p>
 
-            <label for="new_password">Kata Sandi Baru:</label>
-            <input type="password" id="new_password" name="new_password" required>
-
-            <label for="confirm_password">Konfirmasi Kata Sandi Baru:</label>
-            <input type="password" id="confirm_password" name="confirm_password" required>
-
+            <p>
+                <label for="confirm_password">Konfirmasi Kata Sandi Baru:</label>
+                <input type="password" id="confirm_password" name="confirm_password" required>
+            </p>
             <button type="submit">Ubah Password</button>
         </form>
         <p style="text-align: center; margin-top: 15px;"><a href="index.php">Kembali ke Homepage</a></p>
     </div>
 </body>
+
 </html>
