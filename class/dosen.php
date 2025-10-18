@@ -12,7 +12,7 @@ class dosen
     }
 
     // Ambil semua dosen
-    public function displayDosen()
+    public function displayDosen($limit, $offset)
     {
         $sql = "SELECT * FROM dosen  ORDER BY nama asc limit ? offset ?";
         $stmt = $this->mysqli->prepare($sql);
