@@ -22,17 +22,55 @@ classParent
         return $res->num_rows > 0;
     }
 
-    //untuk pengecekan di login
+   // UNTUK PENGECEKAN DI LOGIN (PERBAIKAN KEAMANAN KRITIS)
     public function getAccount($username, $password)
     {
-        $sql = "SELECT username, password, isadmin, nrp_mahasiswa, npk_dosen 
-            FROM akun 
-            WHERE username=? AND password=?";
+        // 1. Ambil semua data akun berdasarkan username SAJA (TANPA PASSWORD)
+        $sql = "SELECT username, password, isadmin, nrp_mahasiswa, npk_dosen FROM akun WHERE username=?";
         $stmt = $this->mysqli->prepare($sql);
-        $stmt->bind_param("ss", $username, $password);
+        $stmt->bind_param("s", $username);
         $stmt->execute();
         $result = $stmt->get_result();
-        return $result->fetch_assoc(); // kalau ada -> return row, kalau tidak -> null
+        $row = $result->fetch_assoc();
+        $stmt->close();
+        
+        // 2. Verifikasi password dengan hash yang tersimpan
+        if ($row && password_verify($password, $row['password'])) {
+            return $row; // Login berhasil
+        }
+        return null; // Login gagal
+    }
+
+    // LOGIKA UPDATE PASSWORD (UNTUK change-password.php)
+    public function updatePassword($username, $oldPassword, $newPassword) 
+    {
+        // 1. Ambil hash password lama
+        $stmt = $this->mysqli->prepare("SELECT password FROM akun WHERE username = ?");
+        $stmt->bind_param("s", $username);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        
+        if ($result->num_rows === 0) {
+            return false; 
+        }
+        
+        $row = $result->fetch_assoc();
+        $hashed_old_password = $row['password'];
+        $stmt->close();
+        
+        // 2. Verifikasi password lama
+        if (!password_verify($oldPassword, $hashed_old_password)) {
+            return false; // Password lama salah
+        }
+
+        // 3. Hash password baru
+        $hashed_new_password = password_hash($newPassword, PASSWORD_BCRYPT);
+        
+        // 4. Update password baru di database
+        $stmt_update = $this->mysqli->prepare("UPDATE akun SET password = ? WHERE username = ?");
+        $stmt_update->bind_param("ss", $hashed_new_password, $username);
+        
+        return $stmt_update->execute();
     }
 
 
