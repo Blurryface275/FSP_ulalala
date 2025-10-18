@@ -57,7 +57,7 @@ class dosen
     
     public function getTotalDosen()
     {
-        $sql = "SELECT COUNT(nrp) as total FROM dosen";
+        $sql = "SELECT COUNT(npk) as total FROM dosen";
         $result = $this->mysqli->query($sql);
         $row = $result->fetch_assoc();
         return $row['total'];
