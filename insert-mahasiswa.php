@@ -26,6 +26,8 @@ if (isset($_SESSION['error_message'])) {
     
     <div class="box">
         <h1>Tambah Mahasiswa</h1>
+               <a href="data-mahasiswa.php" class="tombol-panah-img">
+        <img src="93634.png" alt="Ke Data Mahasiswa"> </a>
         <form action="mahasiswa-process.php" method="POST" enctype="multipart/form-data">
 
             <p>
