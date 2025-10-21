@@ -21,7 +21,7 @@ if (isset($_POST['login'])) {
         header("Location: index.php");
         exit;
     } else {
-        $_SESSION['login_error'] = "Username atau password salah!"; // Set pesan error di session
+        $_SESSION['error_message'] = "Username atau password salah!"; // Set pesan error di session
         header("Location: login.php");
         exit;
     }
