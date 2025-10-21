@@ -17,14 +17,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nama   = $_POST['nama'];
     $angkatan = $_POST['angkatan'];
     $tgl_lahir  = $_POST['tgl'];
-    $gender = $_POST['gender']; // Tambahan gender
+    $gender = $_POST['gender']; 
     $password = $_POST['password'];
-    $mahasiswa->insertMahasiswaBaru($nrp, $nama, $gender, $tgl_lahir, $angkatan);
-    $akun->insertAkunMahasiswa($password, $nrp);
     
+    if (empty($nrp) || empty($nama) || empty($angkatan) || empty($tgl_lahir) || empty($password)) {
+        // Lempar Exception agar ditangkap oleh blok catch
+        throw new Exception("Semua field wajib diisi!");
+    }
+    
+    if ($mahasiswa->isNrpExists($nrp)) {
+        // Misal udah ada nrp yg sama, kasih message error di sini
+        throw new Exception("NRP '$nrp' sudah terdaftar. Gunakan NRP lain.");
+    }
+    else{
+        $mahasiswa->insertMahasiswaBaru($nrp, $nama, $gender, $tgl_lahir, $angkatan);
+        $akun->insertAkunMahasiswa($password, $nrp);
         echo "<script>alert('Data berhasil disimpan!'); window.location.href='data-mahasiswa.php';</script>";
+    }
     } catch (Exception $e) {
-        echo "<script>alert('" . $e->getMessage() . "');</script>";
+        echo "<script> alert('" . $e->getMessage() . "'); window.history.back(); </script>"; // window history back di sini biar langsung kembali
     }
 }
 
@@ -84,7 +95,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <input type="password" name="password" id="password">
             </p>
             
-            <button type="submit" name="submit">Insert</button> <!-- Namanya inserts biar beda sama dosen -->
+            <button type="submit" name="submit">Insert</button>
 
         </form>
     </div>

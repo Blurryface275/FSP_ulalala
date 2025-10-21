@@ -59,4 +59,22 @@ class mahasiswa
         $row = $result->fetch_assoc();
         return $row['total'];
     }
+
+    public function isNRPExists($nrp){
+        $sql = "SELECT nrp FROM mahasiswa WHERE nrp = ? LIMIT 1";
+        $stmt = $this->mysqli->prepare($sql);
+
+        $stmt->bind_param("s", $nrp); 
+        
+
+        if (!$stmt->execute()){
+            $stmt->close();
+            throw new Exception("Prepare statement gagal: " . $this->mysqli->error);
+        }
+
+        $stmt->store_result();
+        $count = $stmt->num_rows; // ini buat cek jumlah baris yg direturn dari database
+        $stmt->close();
+        return $count > 0; // kalau misal count > 0 jadi ya nrp udah ada
+    }
 }
