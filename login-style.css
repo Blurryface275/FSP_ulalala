@@ -18,7 +18,8 @@ body {
   background: var(--cream);
   min-height: 100vh;
   display: flex;
-  justify-content: center; /* center horizontal */
+  justify-content: center; /* center horizonvd
+  tal */
   align-items: center; /* center vertical */
 }
 
@@ -108,4 +109,16 @@ input {
   border-radius: 10px;
   text-align: center;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2), 0 6px 20px rgba(0, 0, 0, 0.19);
+}
+.tombol-panah-img {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  max-width: 5px;
+  /* Ganti ukuran gambar sesuai kebutuhan */
+}
+
+.tombol-panah-img img {
+  max-width: 40px;
+  height: auto;
 }
