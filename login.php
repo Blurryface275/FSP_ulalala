@@ -6,8 +6,6 @@ session_start();
 <?php
 if (isset($_SESSION['error_message'])) {
     $error_message = $_SESSION['error_message'] ?? '';
-    
-
     unset($_SESSION['error_message']);
 }
 ?>
