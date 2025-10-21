@@ -1,48 +1,15 @@
 <?php
-$mysqli = new mysqli("localhost", "root", "", "fullstack");
-if ($mysqli->connect_errno) {
-    die("Koneksi gagal: " . $mysqli->connect_error);
-}
-
-require_once("class/mahasiswa.php");
-$mahasiswa = new mahasiswa($mysqli);
-
-require_once("class/akun.php");
-$akun = new akun($mysqli);
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    try{
-    // Ambil data dari form
-    $nrp    = $_POST['nrp'];
-    $nama   = $_POST['nama'];
-    $angkatan = $_POST['angkatan'];
-    $tgl_lahir  = $_POST['tgl'];
-    $gender = $_POST['gender']; 
-    $password = $_POST['password'];
-    
-    if (empty($nrp) || empty($nama) || empty($angkatan) || empty($tgl_lahir) || empty($password)) {
-        // Lempar Exception agar ditangkap oleh blok catch
-        throw new Exception("Semua field wajib diisi!");
-    }
-    
-    if ($mahasiswa->isNrpExists($nrp)) {
-        // Misal udah ada nrp yg sama, kasih message error di sini
-        throw new Exception("NRP '$nrp' sudah terdaftar. Gunakan NRP lain.");
-    }
-    else{
-        $mahasiswa->insertMahasiswaBaru($nrp, $nama, $gender, $tgl_lahir, $angkatan);
-        $akun->insertAkunMahasiswa($password, $nrp);
-        echo "<script>alert('Data berhasil disimpan!'); window.location.href='data-mahasiswa.php';</script>";
-    }
-    } catch (Exception $e) {
-        echo "<script> alert('" . $e->getMessage() . "'); window.history.back(); </script>"; // window history back di sini biar langsung kembali
-    }
-}
-
+    session_start();
 ?>
-
-
 <!DOCTYPE html>
+<?php
+if (isset($_SESSION['error_message'])) {
+    // Tampilkan alert
+    echo "<script>alert('{$_SESSION['error_message']}');</script>";
+    
+    unset($_SESSION['error_message']);
+}
+?>
 <html lang="en">
 
 <head>
@@ -56,9 +23,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 
 <body>
+    
     <div class="box">
         <h1>Tambah Mahasiswa</h1>
-        <form action="" method="POST" enctype="multipart/form-data">
+        <form action="mahasiswa-process.php" method="POST" enctype="multipart/form-data">
 
             <p>
                 <label for="nama">Nama : </label>
@@ -102,3 +70,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </body>
 
 </html>
+<script>
+        $(function() {
+            $("#toggle-btn").on("click", function() {
+                $("#sidebar").toggleClass("collapsed");
+                $(".main-content").toggleClass("expanded");
+            });
+        });
+    </script>

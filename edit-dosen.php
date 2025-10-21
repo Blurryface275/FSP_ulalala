@@ -66,6 +66,7 @@
         if (!$data) die("Data tidak ditemukan!");
     }
     ?>
+    
     <div class="box">
         <h2>Edit Dosen</h2>
 
