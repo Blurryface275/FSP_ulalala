@@ -23,7 +23,6 @@ class mahasiswa
 
     public function insertMahasiswaBaru($nrp, $nama, $gender, $tgl_lahir, $angkatan)
     {
-        // Tangkap file foto
         $valid_extension = ['jpg', 'jpeg', 'png'];
         $ext  = strtolower(pathinfo($_FILES['foto']['name'], PATHINFO_EXTENSION));
 
@@ -35,7 +34,7 @@ class mahasiswa
         $namaFileBaru = $nrp . "." . $ext;
         $targetFile   = "uploads/" . $namaFileBaru;
 
-        // Pindahkan file ke folder uploads
+        // Pindah file ke folder uploads
         if (move_uploaded_file($_FILES['foto']['tmp_name'], $targetFile)) {
             // Simpan data ke database
             $sql = "INSERT INTO mahasiswa (nrp, nama, gender, tanggal_lahir, angkatan, foto_extention) 
@@ -77,7 +76,7 @@ class mahasiswa
             }
         }
 
-        // Cek apakah tidak ada perubahan
+        // Cek ada perubahan ga
         if (
             $nrp_baru == $oldData['nrp'] &&
             $nama_baru == $oldData['nama'] &&

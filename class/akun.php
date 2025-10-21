@@ -39,7 +39,7 @@ class akun extends classParent
 
     public function updatePassword($username, $oldPassword, $newPassword) 
     {
-        // Ambil hash password lama
+        // ngambil hash password lama
         $stmt = $this->mysqli->prepare("SELECT password FROM akun WHERE username = ?");
         $stmt->bind_param("s", $username);
         $stmt->execute();
@@ -53,15 +53,15 @@ class akun extends classParent
         $hashed_old_password = $row['password'];
         $stmt->close();
         
-        // Verifikasi password lama
+        // verifikasi password lama
         if (!password_verify($oldPassword, $hashed_old_password)) {
-            return false; // Password lama salah
+            return false; // ini kalo password lama salah
         }
 
-        // Hash password baru
+        // hash password baru
         $hashed_new_password = password_hash($newPassword, PASSWORD_BCRYPT);
         
-        // Update password baru di database
+        // update password baru di database
         $stmt_update = $this->mysqli->prepare("UPDATE akun SET password = ? WHERE username = ?");
         $stmt_update->bind_param("ss", $hashed_new_password, $username);
         

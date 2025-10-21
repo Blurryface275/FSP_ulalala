@@ -51,7 +51,7 @@ if (isset($_SESSION['isadmin']) && $_SESSION['isadmin'] == 1) {
                 <li><a href="insert-mahasiswa.php">Tambah Mahasiswa</a></li>
             <?php endif; ?>
 
-            <!-- Semua role bisa ubah password dan logout -->
+            <!-- Semua role (admin dan dosen) bisa ubah password dan logout -->
             <li><a href="change-password.php">Ubah Password</a></li>
             <li><a href="logout.php">Logout</a></li>
         </ul>

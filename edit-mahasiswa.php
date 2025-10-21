@@ -52,7 +52,7 @@
         } else {
             $error_message = $hasil;
 
-            // isi ulang data biar form tetap terisi
+            // isi ulang data biar form tetep keisi
             $data['nama'] = $_POST['nama'];
             $data['nrp'] = $_POST['nrp'];
             $data['gender'] = $_POST['gender'];
