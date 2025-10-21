@@ -33,7 +33,7 @@ class dosen
         }
 
         // Nama file disimpan dengan format: NPK.extension
-        $namaFileBaru = $nama."_".$npk . "." . $ext;
+        $namaFileBaru = $nama . "_" . $npk . "." . $ext;
         $targetFile   = "uploads/" . $namaFileBaru;
 
         // Upload file ke folder
@@ -45,7 +45,7 @@ class dosen
         $sql = "INSERT INTO dosen (npk, nama,foto_extension) 
                 VALUES (?, ?, ?)";
         $stmt = $this->mysqli->prepare($sql);
-        $stmt->bind_param("sss", $npk, $nama,$ext);
+        $stmt->bind_param("sss", $npk, $nama, $ext);
 
         if (!$stmt->execute()) {
             throw new Exception("Error saat insert: " . $stmt->error);
@@ -56,29 +56,26 @@ class dosen
 
     public function executeUpdateDosen($postData, $fileData, $oldData)
     {
-        $npk_baru = $postData['nrp'];
+        $npk_baru = $postData['npk'];
         $nama_baru = $postData['nama'];
-        $npk_lama = $postData['nrp_lama'];
+        $npk_lama = $postData['npk_lama'];
+        $ext_lama = $oldData['foto_extension'];
 
-        $ext_lama = $oldData['foto_extention'];
-
-        // Validasi sederhana
         if ($nama_baru == "" || $npk_baru == "") {
             return "Nama dan NPK harus diisi!";
         }
 
         if ($npk_baru != $npk_lama) {
-            $cek = $this->mysqli->prepare("SELECT npk FROM mahasiswa WHERE npk = ?");
+            $cek = $this->mysqli->prepare("SELECT npk FROM dosen WHERE npk = ?");
             $cek->bind_param("s", $npk_baru);
             $cek->execute();
             $hasil = $cek->get_result();
 
             if ($hasil->num_rows > 0) {
-                return "NPK sudah digunakan oleh mahasiswa lain!";
+                return "NPK sudah digunakan oleh dosen lain!";
             }
         }
 
-        // Cek apakah tidak ada perubahan
         if (
             $npk_baru == $oldData['npk'] &&
             $nama_baru == $oldData['nama'] &&
@@ -87,46 +84,52 @@ class dosen
             return "Tidak ada perubahan data.";
         }
 
-        // upload foto baru 
         $ext_baru = $ext_lama;
         if (!empty($fileData['foto']['name'])) {
             $ext = strtolower(pathinfo($fileData['foto']['name'], PATHINFO_EXTENSION));
+
             if ($ext != "jpg" && $ext != "jpeg" && $ext != "png") {
                 return "Format foto harus JPG atau PNG!";
             }
 
             $ext_baru = $ext;
-            $target = "uploads/" . $npk_baru . "." . $ext_baru;
+
+            $nama_file_baru = $nama_baru . "_" . $npk_baru . "." . $ext_baru;
+            $target = "uploads/" . $nama_file_baru;
+
             if (move_uploaded_file($fileData['foto']['tmp_name'], $target)) {
-                // Hapus foto lama kalau NRP berubah
-                $foto_lama = "uploads/" . $npk_lama . "." . $ext_lama;
+
+                $foto_lama = "uploads/" . $oldData['nama'] . "_" . $npk_lama . "." . $ext_lama;
+
                 if (file_exists($foto_lama) && $foto_lama != $target) {
                     unlink($foto_lama);
                 }
             } else {
                 return "Gagal mengupload foto!";
             }
+        } else {
+            $foto_lama = "uploads/" . $oldData['nama'] . "_" . $npk_lama . "." . $ext_lama;
+            $foto_baru = "uploads/" . $nama_baru . "_" . $npk_baru . "." . $ext_lama;
+
+            if (file_exists($foto_lama) && $foto_lama != $foto_baru) {
+                rename($foto_lama, $foto_baru);
+            }
         }
-        $sql = "UPDATE dosen 
-            SET npk=?, nama=?, foto_extention=? 
-            WHERE npk=?";
+
+        $sql = "UPDATE dosen SET npk=?, nama=?, foto_extension=? WHERE npk=?";
         $stmt = $this->mysqli->prepare($sql);
-        $stmt->bind_param(
-            "ssss",
-            $npk_baru,
-            $nama_baru,
-            $ext_baru,
-            $npk_lama
-        );
+        $stmt->bind_param("ssss", $npk_baru, $nama_baru, $ext_baru, $npk_lama);
 
         if ($stmt->execute()) {
             return true;
         } else {
-            return "Gagal update data mahasiswa!";
+            return "Gagal update data dosen!";
         }
     }
 
-        //ambil data berdasarkan npk
+
+
+    //ambil data berdasarkan npk
     public function fetchDosen($npk)
     {
         $stmt = $this->mysqli->prepare("SELECT * FROM dosen WHERE npk = ?");

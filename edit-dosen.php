@@ -69,7 +69,7 @@
             echo '<div class="error-warning">' . $error_message . '</div>';
         }
         ?>
-        <form action="edit-dosen.php?npk=<?php echo $npk; ?>" method="post" enctype="multipart/form-data">
+        <form action="edit-dosen.php?npk=<?php echo $data['npk']; ?>" method="post" enctype="multipart/form-data">
             <input type="hidden" name="npk_lama" value="<?php echo $data['npk']; ?>">
 
             <p>
@@ -78,8 +78,8 @@
             </p>
 
             <p>
-                <label for="NPK">NPK:</label><br>
-                <input type="text" name="NPK" id="NPK" value="<?php echo $data['npk']; ?>" required>
+                <label for="npk">NPK:</label><br>
+                <input type="text" name="npk" id="npk" value="<?php echo $data['npk']; ?>" required>
             </p>
 
             <p>
