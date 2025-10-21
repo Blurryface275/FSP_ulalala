@@ -1,4 +1,15 @@
+<?php
+    session_start();
+?>
 <!DOCTYPE html>
+<?php
+    if (isset($_SESSION['success_message'])) {
+    $success_message = $_SESSION['success_message'] ?? '';
+    
+
+    unset($_SESSION['success_message']);
+}
+?>
 <html lang="en">
 
 <head>
@@ -12,6 +23,15 @@
     <style>
         .foto {
             max-width: 150px;
+        }
+        #error-warning {
+            color: red;
+            border: 1px solid red;
+            padding: 10px;
+            margin-bottom: 20px;
+            background-color: #ffeaea;
+            border-radius: 5px;
+            text-align: center;
         }
     </style>
 </head>
@@ -42,6 +62,10 @@
     require_once("class/dosen.php");
     $dosen = new dosen($mysqli);
     
+    if(!empty($success_message)){
+        echo "<div id='error-warning'>",$success_message,"</div>";
+    }
+    
     $limit = 5; // jumlah dosen per page
     $page = isset($_GET['page']) && is_numeric($_GET['page']) ? (int)$_GET['page'] : 1; //supaya fix angka
     $offset = ($page - 1) * $limit;
@@ -49,7 +73,7 @@
     $totalPages = ceil($totalMahasiswa / $limit);
 
     $res = $dosen->displayDosen($limit, $offset);
-
+    $success_message = $_SESSION['success_message'] ?? '';
     echo "<table border=1 cell-spacing=0><th>Foto</th> <th>Nama</th> <th>NPK</th> <th colspan='2'>Aksi</th>";
 
     while ($row = $res->fetch_assoc()) {

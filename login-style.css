@@ -122,3 +122,11 @@ input {
   max-width: 40px;
   height: auto;
 }
+#error-warning {
+  color: red;
+  border: 1px solid red;
+  padding: 10px;
+  margin-bottom: 20px;
+  background-color: #ffeaea;
+  border-radius: 5px;
+}

@@ -4,8 +4,8 @@ session_start();
 <!DOCTYPE html>
 <?php
 if (isset($_SESSION['error_message'])) {
-    // Tampilkan alert
-    echo "<script>alert('{$_SESSION['error_message']}');</script>";
+    $error_message = $_SESSION['error_message'] ?? '';
+    
 
     unset($_SESSION['error_message']);
 }
@@ -20,11 +20,25 @@ if (isset($_SESSION['error_message'])) {
     <link rel="stylesheet" href="login-style.css">
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        #error-warning {
+            color: red;
+            border: 1px solid red;
+            padding: 10px;
+            margin-bottom: 20px;
+            background-color: #ffeaea;
+            border-radius: 5px;
+        }
+    </style>
 </head>
 
 <body>
 
     <div class="box">
+        <!-- Semisal error message itu ada -->
+        <?php if (!empty($error_message)): ?> 
+            <div class="error-warning"><?= $error_message ?></div>
+        <?php endif; ?>
         <h1>Tambah Mahasiswa</h1>
         <a href="data-mahasiswa.php" id="tombol-panah-img">
             <img src="93634.png" alt="Ke Data Mahasiswa"> </a>
