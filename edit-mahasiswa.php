@@ -71,6 +71,7 @@
 
 
     ?>
+    
     <div class="box">
         <h2>Edit Data Mahasiswa</h2>
         <form action="edit-mahasiswa.php?nrp=<?php echo $data['nrp']; ?>" method="post" enctype="multipart/form-data">

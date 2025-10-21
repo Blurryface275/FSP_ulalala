@@ -1,3 +1,6 @@
+<?php
+    session_start();
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -38,6 +41,13 @@
     if ($mysqli->connect_errno) {
         die("Failed to connect to MySQL: " . $mysqli->connect_error);
     } 
+    if (isset($_SESSION['success_message'])) {
+        // Tampilkan alert sukses
+        echo "<script>alert('{$_SESSION['success_message']}');</script>";
+        
+        // Hapus pesan
+        unset($_SESSION['success_message']);
+    }
 
     require_once("class/mahasiswa.php");
     $mahasiswa = new mahasiswa($mysqli);
