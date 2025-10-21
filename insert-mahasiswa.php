@@ -1,12 +1,12 @@
 <?php
-    session_start();
+session_start();
 ?>
 <!DOCTYPE html>
 <?php
 if (isset($_SESSION['error_message'])) {
     // Tampilkan alert
     echo "<script>alert('{$_SESSION['error_message']}');</script>";
-    
+
     unset($_SESSION['error_message']);
 }
 ?>
@@ -23,11 +23,12 @@ if (isset($_SESSION['error_message'])) {
 </head>
 
 <body>
-    
+
     <div class="box">
         <h1>Tambah Mahasiswa</h1>
-               <a href="data-mahasiswa.php" class="tombol-panah-img">
-        <img src="93634.png" alt="Ke Data Mahasiswa"> </a>
+        <a href="data-mahasiswa.php" id="tombol-panah-img">
+            <img src="93634.png" alt="Ke Data Mahasiswa"> </a>
+
         <form action="mahasiswa-process.php" method="POST" enctype="multipart/form-data">
 
             <p>
@@ -55,16 +56,16 @@ if (isset($_SESSION['error_message'])) {
                 <label for="angkatan">Angkatan : </label>
                 <input type="number" name="angkatan" id="angkatan">
             </p>
-        
+
             <p>
                 <label for="foto">Foto : </label>
-                <input type="file" name="foto" id="foto"> 
+                <input type="file" name="foto" id="foto">
             </p>
             <p>
                 <label for="password">Password : </label> <!-- Password juga ditentuin sm admin -->
                 <input type="password" name="password" id="password">
             </p>
-            
+
             <button type="submit" name="submit">Insert</button>
 
         </form>
@@ -73,10 +74,10 @@ if (isset($_SESSION['error_message'])) {
 
 </html>
 <script>
-        $(function() {
-            $("#toggle-btn").on("click", function() {
-                $("#sidebar").toggleClass("collapsed");
-                $(".main-content").toggleClass("expanded");
-            });
+    $(function() {
+        $("#toggle-btn").on("click", function() {
+            $("#sidebar").toggleClass("collapsed");
+            $(".main-content").toggleClass("expanded");
         });
-    </script>
+    });
+</script>

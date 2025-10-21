@@ -62,9 +62,11 @@
     }
 
     ?>
-    
+
     <div class="box">
         <h2>Edit Data Mahasiswa</h2>
+        <a href="data-mahasiswa.php" id="tombol-panah-img">
+            <img src="93634.png" alt="Ke Data Dosen"> </a>
         <?php
         if (!empty($error_message)) {
             echo '<div class="error-warning">' . $error_message . '</div>';

@@ -56,6 +56,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body>
     <div class="box">
         <h2>Ubah Kata Sandi</h2>
+        <a href="data-dosen.php" id="tombol-panah-img">
+            <img src="93634.png" alt="Ke Data Dosen"> </a>
         <?php echo $message; ?>
         <form method="POST">
             <p>

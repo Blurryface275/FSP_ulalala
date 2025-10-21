@@ -9,6 +9,16 @@
     <link rel="stylesheet" href="login-style.css">
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        .error-warning {
+            color: red;
+            border: 1px solid red;
+            padding: 10px;
+            margin-bottom: 20px;
+            background-color: #ffeaea;
+            border-radius: 5px;
+        }
+    </style>
 </head>
 
 <body>
@@ -17,59 +27,46 @@
     if ($mysqli->connect_errno) {
         die("Failed to connect to MySQL: " . $mysqli->connect_error);
     }
-    // cek apakah ada npk
-    if (!isset($_GET['npk'])) {
-        echo "NPK dosen tidak ditemukan!";
+    require_once("class/mahasiswa.php");
+    $mhs = new mahasiswa($mysqli);
+    $error_message = "";
+    $nrp_to_edit = '';
+    $data = [];
+
+    if (isset($_GET['nrp'])) {
+        $nrp_to_edit = $_GET['nrp'];
+        $data = $mhs->fetchMahasiswa($nrp_to_edit);
+
+        if (!$data) {
+            die("Data mahasiswa tidak ditemukan!");
+        }
+    } else {
+        die("NRP mahasiswa tidak ditemukan!");
     }
 
-    $npk = $_GET['npk'];
+    if ($_SERVER['REQUEST_METHOD'] === "POST") {
+        $hasil = $mhs->executeUpdateMahasiswa($_POST, $_FILES, $data);
 
-    // kalo form  edit udah disubmit nanti diarahin ke sini
-    if ($_SERVER['REQUEST_METHOD'] == "POST") {
-        $nama_baru = $_POST['nama'];
-        $npk_baru  = $_POST['NPK'];
-        $npk_lama  = $_POST['npk_lama'];
-
-        // Cek apakah ada file foto baru yang diunggah
-        if (!empty($_FILES['foto']['name'])) {
-            $ext_baru = strtolower(pathinfo($_FILES['foto']['name'], PATHINFO_EXTENSION));
-            $target   = "uploads/" . $nama_baru . "_" . $npk_baru . "." . $ext_baru;
-            move_uploaded_file($_FILES['foto']['tmp_name'], $target);
-
-            $sql = "UPDATE dosen SET npk=?, nama=?, foto_extension=? WHERE npk=?";
-            $stmt = $mysqli->prepare($sql);
-            $stmt->bind_param("ssss", $npk_baru, $nama_baru, $ext_baru, $npk_lama);
-        } else {
-            // kalo misal gada foto baru
-            $target   = "uploads/" . $nama_baru . "_" . $npk_baru . "." . $ext_baru;
-            move_uploaded_file($_FILES['foto']['tmp_name'], $target);
-            $sql = "UPDATE dosen SET npk=?, nama=?, foto_extension=? WHERE npk=?";
-            $stmt = $mysqli->prepare($sql);
-            $stmt->bind_param("sss", $npk_baru, $nama_baru, $ext_baru, $npk_lama);
-        }
-
-        if ($stmt->execute()) {
-            header("Location: data-dosen.php");
+        if ($hasil === true) {
+            header("Location: data-mahasiswa.php");
             exit;
         } else {
-            echo "Error: " . $stmt->error;
+            $error_message = $hasil;
+
+            // isi ulang data biar form tetap terisi
+            $data['nama'] = $_POST['nama'];
+            $data['nrp'] = $_POST['nrp'];
+            $data['gender'] = $_POST['gender'];
+            $data['tanggal_lahir'] = $_POST['tgl'];
+            $data['angkatan'] = $_POST['angkatan'];
         }
     }
-    if ($_SERVER['REQUEST_METHOD'] == 'GET') {
-        $npk = $_GET['npk'] ?? null;
-        if (!$npk) die("NPK tidak ditemukan!");
-
-        $stmt = $mysqli->prepare("SELECT * FROM dosen WHERE npk=?");
-        $stmt->bind_param("s", $npk);
-        $stmt->execute();
-        $data = $stmt->get_result()->fetch_assoc();
-        if (!$data) die("Data tidak ditemukan!");
-    }
     ?>
-    
+
     <div class="box">
         <h2>Edit Dosen</h2>
-
+        <a href="data-dosen.php" id="tombol-panah-img">
+            <img src="93634.png" alt="Ke Data Dosen"> </a>
         <form action="edit-dosen.php?npk=<?php echo $npk; ?>" method="post" enctype="multipart/form-data">
             <input type="hidden" name="npk_lama" value="<?php echo $data['npk']; ?>">
 

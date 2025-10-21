@@ -48,7 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
    
     <div class="box">
         <h1>Tambah Dosen</h1>
-         <a href="data-dosen.php" class="tombol-panah-img">
+         <a href="data-dosen.php" id="tombol-panah-img">
         <img src="93634.png" alt="Ke Data Dosen"> </a>
        
         <form action="" method="POST" enctype="multipart/form-data">

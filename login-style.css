@@ -110,15 +110,15 @@ input {
   text-align: center;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2), 0 6px 20px rgba(0, 0, 0, 0.19);
 }
-.tombol-panah-img {
+#tombol-panah-img {
   position: absolute;
   top: 20px;
   left: 20px;
-  max-width: 5px;
-  /* Ganti ukuran gambar sesuai kebutuhan */
+  max-width: 40px;
+  height: auto;
 }
 
-.tombol-panah-img img {
+#tombol-panah-img img {
   max-width: 40px;
   height: auto;
 }
