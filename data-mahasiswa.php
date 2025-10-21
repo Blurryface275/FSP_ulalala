@@ -2,6 +2,14 @@
     session_start();
 ?>
 <!DOCTYPE html>
+<?php
+    if (isset($_SESSION['success_message'])) {
+    $success_message = $_SESSION['success_message'] ?? '';
+    
+
+    unset($_SESSION['success_message']);
+}
+?>
 <html lang="en">
 
 <head>
@@ -15,6 +23,15 @@
     <style>
         .foto {
             max-width: 150px;
+        }
+        #error-warning {
+            color: red;
+            border: 1px solid red;
+            padding: 10px;
+            margin-bottom: 20px;
+            background-color: #ffeaea;
+            border-radius: 5px;
+            text-align: center;
         }
     </style>
 </head>
@@ -41,17 +58,14 @@
     if ($mysqli->connect_errno) {
         die("Failed to connect to MySQL: " . $mysqli->connect_error);
     } 
-    if (isset($_SESSION['success_message'])) {
-        // Tampilkan alert sukses
-        echo "<script>alert('{$_SESSION['success_message']}');</script>";
-        
-        // Hapus pesan
-        unset($_SESSION['success_message']);
-    }
+    
 
     require_once("class/mahasiswa.php");
     $mahasiswa = new mahasiswa($mysqli);
 
+    if(!empty($success_message)){
+        echo "<div id='error-warning'>",$success_message,"</div>";
+    }
     $limit = 5; // jumlah mahasiswa per page
     $page = isset($_GET['page']) && is_numeric($_GET['page']) ? (int)$_GET['page'] : 1; //supaya fix angka
     $offset = ($page - 1) * $limit;
@@ -59,7 +73,7 @@
     $totalPages = ceil($totalMahasiswa / $limit);
 
     $res = $mahasiswa->displayMahasiswa($limit, $offset);
-
+    $success_message = $_SESSION['success_message'] ?? '';
     echo "<table border=1 cell-spacing=0><th>Foto</th> <th>Nama</th> <th>NRP</th> <th>Angkatan</th> <th colspan='2'>Aksi</th>";
 
     while ($row = $res->fetch_assoc()) {

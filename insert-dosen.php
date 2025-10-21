@@ -1,36 +1,15 @@
 <?php
-$mysqli = new mysqli("localhost", "root", "", "fullstack");
-if ($mysqli->connect_errno) {
-    die("Koneksi gagal: " . $mysqli->connect_error);
-}
-
-require_once("class/dosen.php");
-$dosen = new dosen($mysqli);
-
-require_once("class/akun.php");
-$akun = new akun($mysqli);
-
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    try {
-        $npk       = $_POST['npk'];
-        $nama      = $_POST['nama'];
-        $foto      = $_FILES['foto'];
-        $password  = $_POST['password'];
-
-        $dosen->insertDosenBaru($npk, $nama, $foto);
-        $akun->insertAkunDosen($password, $npk);
-        
-        echo "<script>alert('Data berhasil disimpan!'); window.location.href='data-dosen.php';</script>";
-    } catch (Exception $e) {
-        echo "<script>alert('" . $e->getMessage() . "');</script>";
-    }
-}
-
+session_start();
 ?>
-
-
 <!DOCTYPE html>
+<?php
+if (isset($_SESSION['error_message'])) {
+    $error_message = $_SESSION['error_message'] ?? '';
+    
+
+    unset($_SESSION['error_message']);
+}
+?>
 <html lang="en">
 
 <head>
@@ -41,17 +20,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="stylesheet" href="login-style.css">
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
+    <style>
+        #error-warning {
+            color: red;
+            border: 1px solid red;
+            padding: 10px;
+            margin-bottom: 20px;
+            background-color: #ffeaea;
+            border-radius: 5px;
+        }
+    </style>
 </head>
 
 <body>
    
     <div class="box">
+         <!-- Semisal error message itu ada -->
+        <?php if (!empty($error_message)): ?> 
+            <div id="error-warning"><?= $error_message ?></div>
+        <?php endif; ?>
         <h1>Tambah Dosen</h1>
          <a href="data-dosen.php" id="tombol-panah-img">
         <img src="93634.png" alt="Ke Data Dosen"> </a>
        
-        <form action="" method="POST" enctype="multipart/form-data">
+        <form action="dosen-process.php" method="POST" enctype="multipart/form-data">
             <p>
                 <label for="nama">Nama : </label>
                 <input type="text" name="nama" id="nama">

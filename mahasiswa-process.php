@@ -7,6 +7,8 @@ session_start();
 require_once("class/mahasiswa.php");
 $mahasiswa = new mahasiswa($mysqli);
 
+$error_message = "";
+
 require_once("class/akun.php");
 $akun = new akun($mysqli);
 
@@ -27,9 +29,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
     
-    else if ($mahasiswa->isNrpExists($nrp)) {
+    else if ($mahasiswa->fetchMahasiswa($nrp)) {
         // Misal udah ada nrp yg sama, kasih message error di sini
-        $_SESSION['error_message'] = "NRP '$nrp' wajib diisi!"; 
+        $_SESSION['error_message'] = "NRP '$nrp' sudah didaftarkan sebelumnya!"; 
 
         header("Location: insert-mahasiswa.php");
         exit;
