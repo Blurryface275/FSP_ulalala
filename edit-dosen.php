@@ -23,6 +23,15 @@
 
 <body>
     <?php
+  session_start();
+       if (!isset($_SESSION['user_logged_in']) || $_SESSION['user_logged_in'] !== true) {
+
+    $_SESSION['error_message'] = "Anda harus login dahulu!";
+ 
+    header('Location: login.php');
+    
+    exit(); 
+}
     $mysqli = new mysqli("localhost", "root", "", "fullstack");
     if ($mysqli->connect_errno) {
         die("Failed to connect to MySQL: " . $mysqli->connect_error);
@@ -65,6 +74,14 @@
         <a href="data-dosen.php" id="tombol-panah-img">
             <img src="93634.png" alt="Ke Data Dosen"> </a>
         <?php
+           if (!isset($_SESSION['user_logged_in']) || $_SESSION['user_logged_in'] !== true) {
+
+    $_SESSION['error_message'] = "Anda harus login dahulu!";
+ 
+    header('Location: login.php');
+    
+    exit(); 
+}
         if (!empty($error_message)) {
             echo '<div class="error-warning">' . $error_message . '</div>';
         }

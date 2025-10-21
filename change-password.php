@@ -6,10 +6,13 @@ if ($mysqli->connect_errno) {
     die("Koneksi gagal: " . $mysqli->connect_error);
 }
 
-// Jika belum login, kembalikan ke halaman login
-if (!isset($_SESSION['username'])) {
-    header("Location: login.php");
-    exit;
+       if (!isset($_SESSION['user_logged_in']) || $_SESSION['user_logged_in'] !== true) {
+
+    $_SESSION['error_message'] = "Anda harus login dahulu!";
+ 
+    header('Location: login.php');
+    
+    exit(); 
 }
 
 require_once("class/akun.php");

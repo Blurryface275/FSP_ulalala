@@ -1,4 +1,13 @@
 <?php
+ session_start();
+       if (!isset($_SESSION['user_logged_in']) || $_SESSION['user_logged_in'] !== true) {
+
+    $_SESSION['error_message'] = "Anda harus login dahulu!";
+ 
+    header('Location: login.php');
+    
+    exit(); 
+}
 $mysqli = new mysqli("localhost", "root", "", "fullstack");
 if ($mysqli->connect_errno) {
     die("Koneksi gagal: " . $mysqli->connect_error);

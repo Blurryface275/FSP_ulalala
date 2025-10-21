@@ -1,5 +1,13 @@
 <?php
-    session_start();
+     session_start();
+       if (!isset($_SESSION['user_logged_in']) || $_SESSION['user_logged_in'] !== true) {
+
+    $_SESSION['error_message'] = "Anda harus login dahulu!";
+ 
+    header('Location: login.php');
+    
+    exit(); 
+}
 ?>
 <!DOCTYPE html>
 <?php
