@@ -13,13 +13,10 @@
 
 <body>
     <?php
-     session_start();
-       if (!isset($_SESSION['user_logged_in']) || $_SESSION['user_logged_in'] !== true) {
-
+       session_start();
+if (!isset($_SESSION['username'])) { 
     $_SESSION['error_message'] = "Anda harus login dahulu!";
- 
     header('Location: login.php');
-    
     exit(); 
 }
     $mysqli = new mysqli("localhost", "root", "", "fullstack");
