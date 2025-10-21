@@ -81,4 +81,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $(".main-content").toggleClass("expanded");
             });
         });
-    </script>
+    </script>   

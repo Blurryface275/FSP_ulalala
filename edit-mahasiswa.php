@@ -8,7 +8,16 @@
     <title>Edit Mahasiswa</title>
     <link rel="stylesheet" href="login-style.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .error-warning {
+            color: red;
+            border: 1px solid red;
+            padding: 10px;
+            margin-bottom: 20px;
+            background-color: #ffeaea;
+            border-radius: 5px;
+        }
+    </style>
 </head>
 
 <body>
@@ -17,63 +26,50 @@
     if ($mysqli->connect_errno) {
         die("Failed to connect to MySQL: " . $mysqli->connect_error);
     }
+    require_once("class/mahasiswa.php");
+    $mhs = new mahasiswa($mysqli);
+    $error_message = "";
+    $nrp_to_edit = '';
+    $data = [];
 
-    // --- Ambil data lama untuk ditampilkan di form
     if (isset($_GET['nrp'])) {
         $nrp_to_edit = $_GET['nrp'];
-        $stmt = $mysqli->prepare("SELECT * FROM mahasiswa WHERE nrp = ?");
-        $stmt->bind_param("s", $nrp_to_edit);
-        $stmt->execute();
-        $data = $stmt->get_result()->fetch_assoc();
+        $data = $mhs->fetchMahasiswa($nrp_to_edit);
+
         if (!$data) {
             die("Data mahasiswa tidak ditemukan!");
         }
-        $stmt->close();
     } else {
         die("NRP mahasiswa tidak ditemukan!");
     }
 
     if ($_SERVER['REQUEST_METHOD'] === "POST") {
-        $nama_baru   = $_POST['nama'];
-        $nrp_baru    = $_POST['nrp'];
-        $nrp_lama    = $_POST['nrp_lama'];
-        $gender_baru = $_POST['gender'];
-        $tgl_baru    = $_POST['tgl'];
-        $angkatan_baru = $_POST['angkatan'];
+        $hasil = $mhs->executeUpdateMahasiswa($_POST, $_FILES, $data);
 
-        // Ambil extension file (jika ada upload baru)
-        $ext_baru = null;
-        if (!empty($_FILES['foto']['name'])) {
-            $ext_baru = strtolower(pathinfo($_FILES['foto']['name'], PATHINFO_EXTENSION));
-            $target   = "uploads/" . $nrp_baru . "." . $ext_baru;
-
-            move_uploaded_file($_FILES['foto']['tmp_name'], $target);
-
-            $sql = "UPDATE mahasiswa SET nrp=?, nama=?, gender=?, tanggal_lahir=?, angkatan=?, foto_extention=? WHERE nrp=?";
-            $stmt_update = $mysqli->prepare($sql);
-            $stmt_update->bind_param("ssssiss", $nrp_baru, $nama_baru, $gender_baru, $tgl_baru, $angkatan_baru, $ext_baru, $nrp_lama);
-        } else {
-            // Semisalnya ga ada upload baru → ambil ekstensi lama
-            $ext_baru = $data['foto_extention'];
-
-            $sql = "UPDATE mahasiswa SET nrp=?, nama=?, gender=?, tanggal_lahir=?, angkatan=?, foto_extention=? WHERE nrp=?";
-            $stmt_update = $mysqli->prepare($sql);
-            $stmt_update->bind_param("ssssiss", $nrp_baru, $nama_baru, $gender_baru, $tgl_baru, $angkatan_baru, $ext_baru, $nrp_lama);
-        }
-
-        if ($stmt_update->execute()) {
+        if ($hasil === true) {
             header("Location: data-mahasiswa.php");
             exit;
         } else {
-            echo "Error: " . $stmt_update->error;
+            $error_message = $hasil;
+
+            // isi ulang data biar form tetap terisi
+            $data['nama'] = $_POST['nama'];
+            $data['nrp'] = $_POST['nrp'];
+            $data['gender'] = $_POST['gender'];
+            $data['tanggal_lahir'] = $_POST['tgl'];
+            $data['angkatan'] = $_POST['angkatan'];
         }
     }
-
 
     ?>
     
     <div class="box">
         <h2>Edit Data Mahasiswa</h2>
+        <?php
+        if (!empty($error_message)) {
+            echo '<div class="error-warning">' . $error_message . '</div>';
+        }
+        ?>
         <form action="edit-mahasiswa.php?nrp=<?php echo $data['nrp']; ?>" method="post" enctype="multipart/form-data">
             <input type="hidden" name="nrp_lama" value="<?php echo $data['nrp']; ?>">
             <p>

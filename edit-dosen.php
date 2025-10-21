@@ -19,7 +19,7 @@
     }
     // cek apakah ada npk
     if (!isset($_GET['npk'])) {
-        echo "NPK tidak ditemukan!";
+        echo "NPK dosen tidak ditemukan!";
     }
 
     $npk = $_GET['npk'];
