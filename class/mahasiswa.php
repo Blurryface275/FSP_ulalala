@@ -131,9 +131,6 @@ class mahasiswa
         }
     }
 
-
-
-
     //ambil data berdasarkan nrp
     public function fetchMahasiswa($nrp)
     {

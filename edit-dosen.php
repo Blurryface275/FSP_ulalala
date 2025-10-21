@@ -27,38 +27,35 @@
     if ($mysqli->connect_errno) {
         die("Failed to connect to MySQL: " . $mysqli->connect_error);
     }
-    require_once("class/mahasiswa.php");
-    $mhs = new mahasiswa($mysqli);
+    require_once("class/dosen.php");
+    $dsn = new dosen($mysqli);
     $error_message = "";
-    $nrp_to_edit = '';
+    $npk_to_edit = '';
     $data = [];
 
-    if (isset($_GET['nrp'])) {
-        $nrp_to_edit = $_GET['nrp'];
-        $data = $mhs->fetchMahasiswa($nrp_to_edit);
+    if (isset($_GET['npk'])) {
+        $npk_to_edit = $_GET['npk'];
+        $data = $dsn->fetchDosen($npk_to_edit);
 
         if (!$data) {
-            die("Data mahasiswa tidak ditemukan!");
+            die("Data dosen tidak ditemukan!");
         }
     } else {
-        die("NRP mahasiswa tidak ditemukan!");
+        die("NPK dosen tidak ditemukan!");
     }
 
     if ($_SERVER['REQUEST_METHOD'] === "POST") {
-        $hasil = $mhs->executeUpdateMahasiswa($_POST, $_FILES, $data);
+        $hasil = $dsn->executeUpdateDosen($_POST, $_FILES, $data);
 
         if ($hasil === true) {
-            header("Location: data-mahasiswa.php");
+            header("Location: data-dosen.php");
             exit;
         } else {
             $error_message = $hasil;
 
             // isi ulang data biar form tetap terisi
             $data['nama'] = $_POST['nama'];
-            $data['nrp'] = $_POST['nrp'];
-            $data['gender'] = $_POST['gender'];
-            $data['tanggal_lahir'] = $_POST['tgl'];
-            $data['angkatan'] = $_POST['angkatan'];
+            $data['npk'] = $_POST['npk'];
         }
     }
     ?>
@@ -67,6 +64,11 @@
         <h2>Edit Dosen</h2>
         <a href="data-dosen.php" id="tombol-panah-img">
             <img src="93634.png" alt="Ke Data Dosen"> </a>
+        <?php
+        if (!empty($error_message)) {
+            echo '<div class="error-warning">' . $error_message . '</div>';
+        }
+        ?>
         <form action="edit-dosen.php?npk=<?php echo $npk; ?>" method="post" enctype="multipart/form-data">
             <input type="hidden" name="npk_lama" value="<?php echo $data['npk']; ?>">
 
@@ -89,8 +91,8 @@
                 <label for="foto">Edit Foto:</label><br>
                 <input type="file" name="foto" id="foto" accept="image/*">
             </p>
+            <button type="submit" name="submit">Simpan Perubahan</button>
 
-            <button type="submit" name="insert"><i class="fa-solid fa-save"></i> Simpan Perubahan</button>
         </form>
     </div>
 </body>
