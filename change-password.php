@@ -6,6 +6,7 @@ if ($mysqli->connect_errno) {
     die("Koneksi gagal: " . $mysqli->connect_error);
 }
 
+// Jika belum login, kembalikan ke halaman login
 if (!isset($_SESSION['username'])) {
     header("Location: login.php");
     exit;
@@ -13,7 +14,8 @@ if (!isset($_SESSION['username'])) {
 
 require_once("class/akun.php");
 $akun = new akun($mysqli);
-$message = '';
+
+$message = "";
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = $_SESSION['username'];
@@ -21,30 +23,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $new_password = $_POST['new_password'];
     $confirm_password = $_POST['confirm_password'];
 
+    // Validasi input
     if ($new_password !== $confirm_password) {
         $message = '<div class="message-error">Password baru dan konfirmasi password tidak cocok!</div>';
     } elseif (strlen($new_password) < 6) {
         $message = '<div class="message-error">Password baru harus minimal 6 karakter.</div>';
     } else {
-        try {
-            if ($akun->updatePassword($username, $old_password, $new_password)) {
-                $message = '<div class="message-success">Kata sandi berhasil diubah! Silakan login kembali.</div>';
-                // Hancurkan sesi agar pengguna harus login ulang, ini mau dipake ga ges? rasanya udah diajarin
-                session_destroy();
-                // Redirect ke halaman login setelah beberapa detik (menggunakan JS)
-                echo '<script>setTimeout(function(){ window.location.href = "login.php"; }, 3000);</script>';
-            } else {
-                $message = '<div class="message-error">Gagal: Kata sandi lama salah atau terjadi kesalahan database.</div>';
-            }
-        } catch (Exception $e) {
-            $message = '<div class="message-error">Error: ' . $e->getMessage() . '</div>';
+        // Update password
+        $updateSuccess = $akun->updatePassword($username, $old_password, $new_password);
+
+        if ($updateSuccess) {
+            // Jika berhasil, tampilkan pesan dan arahkan ke login
+            $_SESSION['success_message'] = "Kata sandi berhasil diubah! Silakan login kembali.";
+
+            // Hancurkan session agar user harus login ulang
+            session_destroy();
+
+            header("Location: login.php");
+            exit;
+        } else {
+            $message = '<div class="message-error">Kata sandi lama salah atau terjadi kesalahan database.</div>';
         }
     }
 }
 ?>
 <!DOCTYPE html>
 <html lang="id">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -52,13 +56,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="stylesheet" href="login-style.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
-
 <body>
     <div class="box">
         <h2>Ubah Kata Sandi</h2>
         <a href="data-dosen.php" id="tombol-panah-img">
-            <img src="93634.png" alt="Ke Data Dosen"> </a>
-        <?php echo $message; ?>
+            <img src="93634.png" alt="Ke Data Dosen"> 
+        </a>
+
+        <!-- Tampilkan pesan error/sukses -->
+        <?php if (!empty($message)) echo $message; ?>
+
         <form method="POST">
             <p>
                 <label for="old_password">Kata Sandi Lama:</label>
@@ -68,15 +75,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <label for="new_password">Kata Sandi Baru:</label>
                 <input type="password" id="new_password" name="new_password" required>
             </p>
-
             <p>
                 <label for="confirm_password">Konfirmasi Kata Sandi Baru:</label>
                 <input type="password" id="confirm_password" name="confirm_password" required>
             </p>
             <button type="submit">Ubah Password</button>
         </form>
-        <p style="text-align: center; margin-top: 15px;"><a href="index.php">Kembali ke Homepage</a></p>
+
+        <p style="text-align: center; margin-top: 15px;">
+            <a href="index.php">Kembali ke Homepage</a>
+        </p>
     </div>
 </body>
-
 </html>
