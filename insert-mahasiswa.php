@@ -21,7 +21,7 @@ if (isset($_SESSION['error_message'])) {
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
-        #error-warning {
+        .error-warning {
             color: red;
             border: 1px solid red;
             padding: 10px;
