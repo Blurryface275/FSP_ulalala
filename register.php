@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <title>Register - Fullstack</title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <link rel="stylesheet" href="asset/login-style.css">
+    <link rel="stylesheet" href="login-style.css">
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
