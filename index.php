@@ -17,6 +17,7 @@ if (isset($_SESSION['isadmin']) && $_SESSION['isadmin'] == 1) {
         $greeting .= "Mahasiswa " . $_SESSION['username'];
     } elseif ($_SESSION['role'] == 'dosen') {
         $greeting .= "Dosen " . $_SESSION['username'];
+        $isDosen = true;
     } else {
         $greeting .= $_SESSION['username'];
     }
@@ -25,6 +26,7 @@ if (isset($_SESSION['isadmin']) && $_SESSION['isadmin'] == 1) {
     $greeting .= $_SESSION['username'];
     $isAdmin = false;
 }
+
 ?>
 
 <!DOCTYPE html>
@@ -49,7 +51,12 @@ if (isset($_SESSION['isadmin']) && $_SESSION['isadmin'] == 1) {
                 <li><a href="data-mahasiswa.php">Data Mahasiswa</a></li>
                 <li><a href="insert-dosen.php">Tambah Dosen</a></li>
                 <li><a href="insert-mahasiswa.php">Tambah Mahasiswa</a></li>
+                <li><a href="insert-group.php">Tambah Group</a></li>
             <?php endif; ?>
+            <?php if (isset($isDosen) && $isDosen): ?>
+                <li><a href="insert-group.php">Tambah Group</a></li>
+            <?php endif; ?>
+
 
             <!-- Semua role (admin dan dosen) bisa ubah password dan logout -->
             <li><a href="change-password.php">Ubah Password</a></li>
@@ -84,4 +91,5 @@ if (isset($_SESSION['isadmin']) && $_SESSION['isadmin'] == 1) {
         });
     </script>
 </body>
+
 </html>

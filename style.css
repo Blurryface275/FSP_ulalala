@@ -20,6 +20,8 @@ body {
   min-height: 100vh;
   display: flex;
   overflow-x: hidden;
+  justify-content: center;
+  align-items: center;
 }
 
 /* Sidebar */
@@ -186,6 +188,31 @@ tr:hover {
 .foto {
   max-width: 15px;
 }
+
+/* Styling Khusus untuk Elemen Button */
+button[type="submit"] {
+    /* Mengikuti gaya tombol yang sudah kita sepakati */
+    background: var(--pink); 
+    color: var(--coklat); /* Warna teks tombol */
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+    
+    /* Properti Layout */
+    padding: 10px 20px; 
+    border-radius: 20px; 
+    margin-top: 10px;
+    
+    /* Transisi & Hover */
+    transition: background 0.3s;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15); /* Tambahkan shadow agar mirip tombol .btn */
+}
+
+button[type="submit"]:hover {
+    background: #e26b67; /* Warna pink sedikit lebih gelap saat hover */
+    color: white;
+}
+
 /* Button Styles (for aksi) */
 .btn {
   padding: 8px 12px;
@@ -242,6 +269,11 @@ input {
   border-radius: 10px;
   text-align: center;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  box-sizing: border-box;
+}
+.box h2 {
+  color: var(--coklat);
+  margin-bottom: 20px;
 }
 
 /* Responsive */
