@@ -428,8 +428,8 @@ input {
 }
 
 .detail-group .content-box {
-  width: 900px;
-  margin: 0 auto;
+  max-width: none;
+  margin: 0;
 }
 
 .tab-menu{

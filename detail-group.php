@@ -107,23 +107,49 @@ if ($mysqli->connect_errno) {
                     $stmt_members->bind_param("i", $group_id);
                     $stmt_members->execute();
                     $result_members = $stmt_members->get_result();
-                    if ($result_members && $result_members->num_rows > 0) {
+                    while ($member = $result_members->fetch_assoc()) {
                         echo "<ul class='member-list'>";
-                        while ($member = $result_members->fetch_assoc()) {
-                            echo "<li>" . htmlspecialchars($member['nama_member']) . " (" . htmlspecialchars($member['role']) . ")</li>";
-                        }
+
+                        echo "<li>" . htmlspecialchars($member['nama_member']) . " (" . htmlspecialchars($member['role']) . ")</li>";
+
                         echo "</ul>";
-                    } else {
+                    }
+                    if ($result_members->num_rows == 0) {
                         echo "<p>Belum ada anggota dalam grup ini.</p>";
                     }
                     echo '</div>'; // tutup tab-content
+                    echo '</div>'; // tutup tab-content utama
 
                 } else {
                     echo "<div id='error-warning'>Group tidak ditemukan.</div>";
                 }
+                // Tab Event
+                echo '<div id="tab-content-activities" class="tab-content-item" echo ($activeTab == "activities" ? "active" : "");> ';
+                echo '<h3>Aktivitas Grup</h3>';
+                // Ambil aktivitas dari tabel aktivitas berdasarkan idgrup
+                $query_activities = "SELECT judul, tanggal FROM event WHERE idgrup = ? ORDER BY tanggal DESC";
+                $stmt_activities = $mysqli->prepare($query_activities);
+                $stmt_activities->bind_param("i", $group_id);
+                $stmt_activities->execute();
+                $result_activities = $stmt_activities->get_result();
+                if ($result_activities && $result_activities->num_rows > 0) {
+                    echo "<table border=1 cell-spacing=0><th>Aktivitas</th> <th>Tanggal & Waktu</th>";
+                    while ($activity = $result_activities->fetch_assoc()) {
+                        echo "<tr>";
+                        echo "<td>" . htmlspecialchars($activity['judul']) . "</td>";
+                        echo "<td>" . htmlspecialchars($activity['tanggal']) . "</td>";
+                        echo "</tr>";
+                    }
+                    echo "</table>";
+                    echo '</div>'; // tutup tab-content
+                    echo '</div>'; // tutup tab-content utama
+                } else {
+                    echo "<p>Belum ada aktivitas dalam grup ini.</p>";
+                }
             } else {
                 echo "<div id='error-warning'>ID group tidak valid.</div>";
             }
+
             ?>
 
         </div>
@@ -140,20 +166,15 @@ if ($mysqli->connect_errno) {
             $(".main-content").toggleClass("expanded");
         });
 
-        // Logika Tab Switching
+        // Logika buat Tab Switching
         $('#tab-menu button').on('click', function() {
             const tabName = $(this).data('tab');
 
-            // 1. Update URL parameter (tanpa reload)
-            const url = new URL(window.location);
-            url.searchParams.set('tab', tabName);
-            history.pushState(null, '', url.toString());
-
-            // 2. Hapus kelas aktif dari semua tombol dan konten
+            // Hapus kelas aktif dari semua tombol dan konten
             $('#tab-menu button').removeClass('active');
             $('.tab-content-item').removeClass('active');
 
-            // 3. Aktifkan tombol yang diklik dan konten yang sesuai
+            // Aktifkan tombol yang diklik dan konten yang sesuai
             $(this).addClass('active');
             $('#tab-content-' + tabName).addClass('active');
         });
