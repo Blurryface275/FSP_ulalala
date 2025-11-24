@@ -82,6 +82,27 @@ if (isset($_SESSION['success_message'])) {
 
         $res = $group->displayGroup($limit, $offset);
         echo "<table border=1 cell-spacing=0><th>ID Group</th> <th>Nama Group</th> <th>Aksi</th>";
+        while ($row = $res->fetch_assoc()) {
+            echo "<tr>";
+            echo "<td>" . $row['idgrup'] . "</td>";
+            echo "<td>" . $row['nama'] . "</td>";
+            echo "<td><a href=\"detail-group.php?id=" . $row['idgrup'] . "\">Detail</a></td>";
+            echo "</tr>";
+        }
+        echo "</table>";
+
+        echo "<div class='pagination'>";
+        if ($page > 1) {
+            echo "<a href='data-group.php?page=" . ($page - 1) . "'>&laquo; Previous</a>";
+        }
+        for ($i = 1; $i <= $totalPages; $i++) {
+            if ($i == $page) {
+                echo "<a class='active' href='data-group.php?page=$i'>$i</a>";
+            } else {
+                echo "<a href='data-group.php?page=$i'>$i</a>";
+            }
+        }
+        echo "</div>";
         ?>
     </div>
 
