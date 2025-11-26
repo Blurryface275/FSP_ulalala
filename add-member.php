@@ -16,7 +16,7 @@ if ($mysqli->connect_errno) {
     exit;
 }
 
-require_once("group.php");
+require_once("class/group.php");
 
 // Validasi request
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -62,4 +62,3 @@ try {
 }
 
 exit;
-?>
