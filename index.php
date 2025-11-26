@@ -42,27 +42,44 @@ if (isset($_SESSION['isadmin']) && $_SESSION['isadmin'] == 1) {
 
 <body>
     <div id="sidebar" class="sidebar">
-        <div style="display: flex; align-items: center; gap: 10px; padding: 0 20px; margin-bottom: 20px;">
-            <div class="toggle-btn" id="toggle-btn">☰</div>
-        </div>
-        <ul>
-            <?php if ($isAdmin): ?>
-                <li><a href="data-dosen.php">Data Dosen</a></li>
-                <li><a href="data-mahasiswa.php">Data Mahasiswa</a></li>
-                <li><a href="insert-dosen.php">Tambah Dosen</a></li>
-                <li><a href="insert-mahasiswa.php">Tambah Mahasiswa</a></li>
-                <li><a href="insert-group.php">Tambah Group</a></li>
-            <?php endif; ?>
-            <?php if (isset($isDosen) && $isDosen): ?>
-                <li><a href="insert-group.php">Tambah Group</a></li>
-            <?php endif; ?>
-
-
-            <!-- Semua role (admin dan dosen) bisa ubah password dan logout -->
-            <li><a href="change-password.php">Ubah Password</a></li>
-            <li><a href="logout.php">Logout</a></li>
-        </ul>
+    <div style="display: flex; align-items: center; gap: 10px; padding: 0 20px; margin-bottom: 20px;">
+        <div class="toggle-btn" id="toggle-btn">☰</div>
     </div>
+
+    <ul>
+        <?php 
+        // Admin
+        if (isset($_SESSION['isadmin']) && $_SESSION['isadmin'] == 1): ?>
+            
+            <li><a href="data-dosen.php">Data Dosen</a></li>
+            <li><a href="data-mahasiswa.php">Data Mahasiswa</a></li>
+            <li><a href="insert-dosen.php">Tambah Dosen</a></li>
+            <li><a href="insert-mahasiswa.php">Tambah Mahasiswa</a></li>
+            <li><a href="data-group.php">Data Group</a></li>
+            <li><a href="insert-group.php">Tambah Group</a></li>
+
+        <?php 
+        // Dosen
+        elseif (isset($_SESSION['role']) && $_SESSION['role'] == 'dosen'): ?>
+            
+            <li><a href="data-group.php">Data Group</a></li>
+            <li><a href="insert-group.php">Tambah Group</a></li>
+
+        <?php 
+        // Mahasiswa
+        elseif (isset($_SESSION['role']) && $_SESSION['role'] == 'mahasiswa'): ?>
+
+            <li><a href="data-group.php">Data Group</a></li>
+
+        <?php endif; ?>
+
+        <!-- Semua role dapat ubah password & logout -->
+        <li><a href="change-password.php">Ubah Password</a></li>
+        <li><a href="logout.php">Logout</a></li>
+    </ul>
+
+</div>
+
 
     <div class="main-content">
         <header>
