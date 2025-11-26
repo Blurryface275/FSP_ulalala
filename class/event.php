@@ -33,7 +33,7 @@ class Event
 
     public function displayEvent($limit, $offset)
     {
-        $sql = "SELECT * FROM event ORDER BY judul ASC LIMIT ? OFFSET ?"; 
+        $sql = "SELECT * FROM event ORDER BY judul ASC LIMIT ? OFFSET ?";
         $stmt = $this->mysqli->prepare($sql);
         $stmt->bind_param("ii", $limit, $offset);
         $stmt->execute();
@@ -42,25 +42,29 @@ class Event
 
 
     // Insert event baru
+    // Insert event baru tanpa slug disimpan ke DB
     public function insertEventBaru($idgrup, $judul, $tanggal, $keterangan, $jenis, $poster_extension)
     {
+        // Slug tetap dibuat
         $judul_slug = $this->createSlug($judul);
-        
-        $sql = "INSERT INTO event (idgrup, judul, judul_slug, tanggal, keterangan, jenis, poster_extension) 
-                VALUES (?, ?, ?, ?, ?, ?, ?)";
-        
+
+        // Hapus judul_slug dari query INSERT
+        $sql = "INSERT INTO event (idgrup, judul, tanggal, keterangan, jenis, poster_extension) 
+            VALUES (?, ?, ?, ?, ?, ?)";
+
         $stmt = $this->mysqli->prepare($sql);
-        $stmt->bind_param("issssss", $idgrup, $judul, $judul_slug, $tanggal, $keterangan, $jenis, $poster_extension);
+        $stmt->bind_param("isssss", $idgrup, $judul, $tanggal, $keterangan, $jenis, $poster_extension);
 
         if (!$stmt->execute()) {
             throw new Exception("Error saat insert event: " . $stmt->error);
         }
 
         return [
-            'idevent' => $this->mysqli->insert_id, 
-            'judul_slug' => $judul_slug
+            'idevent' => $this->mysqli->insert_id,
+            'judul_slug' => $judul_slug   // tetap dikembalikan meski tidak disimpan di DB
         ];
     }
+
 
     // Hitung total event
     public function getTotalEvent()
