@@ -46,18 +46,39 @@ if ($mysqli->connect_errno) {
         <div style="display: flex; align-items: center; gap: 10px; padding: 0 20px; margin-bottom: 20px;">
             <div class="toggle-btn" id="toggle-btn">☰</div>
         </div>
+
         <ul>
-            <li><a href="data-dosen.php">Data Dosen</a></li>
-            <li><a href="data-mahasiswa.php">Data Mahasiswa</a></li>
-            <li><a href="insert-dosen.php">Tambah Dosen</a></li>
-            <li><a href="insert-mahasiswa.php">Tambah Mahasiswa</a></li>
-            <?php if (isset($_SESSION['role']) && $_SESSION['role'] == 'dosen'): ?>
+            <?php
+            // Admin
+            if (isset($_SESSION['isadmin']) && $_SESSION['isadmin'] == 1): ?>
+
+                <li><a href="data-dosen.php">Data Dosen</a></li>
+                <li><a href="data-mahasiswa.php">Data Mahasiswa</a></li>
+                <li><a href="insert-dosen.php">Tambah Dosen</a></li>
+                <li><a href="insert-mahasiswa.php">Tambah Mahasiswa</a></li>
+                <li><a href="data-group.php">Data Group</a></li>
                 <li><a href="insert-group.php">Tambah Group</a></li>
+
+            <?php
+            // Dosen
+            elseif (isset($_SESSION['role']) && $_SESSION['role'] == 'dosen'): ?>
+
+                <li><a href="data-group.php">Data Group</a></li>
+                <li><a href="insert-group.php">Tambah Group</a></li>
+
+            <?php
+            // Mahasiswa
+            elseif (isset($_SESSION['role']) && $_SESSION['role'] == 'mahasiswa'): ?>
+
+                <li><a href="data-group.php">Data Group</a></li>
+
             <?php endif; ?>
-            <li><a href="change-password.php"> Ubah Password</a></li>
-            <li><a href="data-group.php">Data Group</a></li>
-            <li><a href="logout.php"> Logout</a></li>
+
+            <!-- Semua role -->
+            <li><a href="change-password.php">Ubah Password</a></li>
+            <li><a href="logout.php">Logout</a></li>
         </ul>
+
     </div>
     <!-- biar bisa flex  -->
     <div class="main-content-wrapper">
@@ -86,6 +107,9 @@ if ($mysqli->connect_errno) {
                                 <h2><?= htmlspecialchars($group['nama']) ?></h2>
                                 <p>Dibuat oleh: <?= htmlspecialchars($group['username_pembuat']) ?></p>
                                 <p>Deskripsi: <?= htmlspecialchars($group['deskripsi']) ?></p>
+                                <p>Tgl Pembentukan: <?= date("Y-m-d", strtotime($group['tanggal_pembentukan'])) ?></p>
+                                <p>Jenis Group: <?= htmlspecialchars($group['jenis']) ?></p>
+
                             </div>
                             <div class="registration-code-area">
                                 <h3>Kode Registrasi:</h3>
@@ -108,12 +132,12 @@ if ($mysqli->connect_errno) {
                                 $query_members = "SELECT 
                                 CASE WHEN a.isadmin = 1 THEN d.nama ELSE m.nama END AS nama_member,
                                 CASE WHEN a.isadmin = 1 THEN 'Dosen' ELSE 'Mahasiswa' END AS role
-                            FROM member_grup mg
-                            JOIN akun a ON mg.username = a.username
-                            LEFT JOIN dosen d ON a.npk_dosen = d.npk
-                            LEFT JOIN mahasiswa m ON a.nrp_mahasiswa = m.nrp
-                            WHERE mg.idgrup = ?
-                            ORDER BY nama_member ASC";
+                                FROM member_grup mg
+                                JOIN akun a ON mg.username = a.username
+                                LEFT JOIN dosen d ON a.npk_dosen = d.npk
+                                LEFT JOIN mahasiswa m ON a.nrp_mahasiswa = m.nrp
+                                WHERE mg.idgrup = ?
+                                ORDER BY nama_member ASC";
                                 $stmt_members = $mysqli->prepare($query_members);
                                 $stmt_members->bind_param("i", $group_id);
                                 $stmt_members->execute();
@@ -133,7 +157,8 @@ if ($mysqli->connect_errno) {
 
                             <!-- Tab Aktivitas -->
                             <div id="tab-content-activities" class="tab-content-item">
-                                <h3>Aktivitas Grup</h3>
+                                <h3>Event Grup</h3>
+
                                 <?php
                                 $query_activities = "SELECT judul, tanggal FROM event WHERE idgrup = ? ORDER BY tanggal DESC";
                                 $stmt_activities = $mysqli->prepare($query_activities);
@@ -143,7 +168,7 @@ if ($mysqli->connect_errno) {
 
                                 if ($result_activities && $result_activities->num_rows > 0) {
                                     echo "<table border='1' cellspacing='0' style='width:100%; border-collapse: collapse;'>";
-                                    echo "<thead><tr><th>Aktivitas</th><th>Tanggal & Waktu</th></tr></thead><tbody>";
+                                    echo "<thead><tr><th>Event</th><th>Tanggal & Waktu</th></tr></thead><tbody>";
                                     while ($activity = $result_activities->fetch_assoc()) {
                                         echo "<tr>";
                                         echo "<td>" . htmlspecialchars($activity['judul']) . "</td>";
@@ -154,6 +179,14 @@ if ($mysqli->connect_errno) {
                                 } else {
                                     echo "<p>Belum ada aktivitas dalam grup ini.</p>";
                                 }
+                                if (isset($group_id) && $group_id > 0):
+                                ?>
+                                    <form action='insert-event.php' method='get'>
+                                        <input type='hidden' name='idgrup' value='<?= htmlspecialchars($group_id) ?>'>
+                                        <button type='submit'>Tambah Event</button>
+                                    </form>
+                                <?php
+                                endif;
                                 ?>
                             </div>
                         </div>
@@ -197,6 +230,7 @@ if ($mysqli->connect_errno) {
     </div> <!-- .main-content-wrapper -->
     <script>
         $(function() {
+
             // Sidebar toggle
             $("#toggle-btn").on("click", function() {
                 $("#sidebar").toggleClass("collapsed");
@@ -205,25 +239,25 @@ if ($mysqli->connect_errno) {
 
             // Tab switching
             $('#tab-menu button').on('click', function() {
-                // Hapus active dari semua
                 $('#tab-menu button').removeClass('active');
                 $('.tab-content-item').removeClass('active');
-
-                // Tambah active ke yang diklik
                 $(this).addClass('active');
+
                 const tab = $(this).data('tab');
                 $('#tab-content-' + tab).addClass('active');
             });
 
-            // Add member button click
-            $('.add-member-btn').on('click', function() {
+            // FIX: handler cukup sekali
+            $(document).on('click', '.add-member-btn', function() {
                 const nrp = $(this).data('nrp');
                 const groupId = <?= isset($group_id) ? $group_id : 'null' ?>;
 
                 if (!groupId) {
-                    alert('Group ID tidak valid.');
+                    alert("Group ID tidak valid.");
                     return;
                 }
+
+                const button = $(this); // simpan tombol yang diklik
 
                 $.ajax({
                     url: 'add_member.php',
@@ -232,14 +266,23 @@ if ($mysqli->connect_errno) {
                         nrp: nrp,
                         group_id: groupId
                     },
+                    dataType: 'json',
                     success: function(response) {
-                        alert(response.message);
+                        if (response.success) {
+                            button.text('Ditambahkan').prop('disabled', true);
+                            alert("Anggota berhasil ditambahkan");
+                        } else {
+                            alert(response.message);
+                        }
                     },
-                    error: function() {
-                        alert('Terjadi kesalahan saat menambahkan anggota.');
+                    error: function(xhr, status, error) {
+                        console.log(xhr.responseText);
+                        alert("Terjadi kesalahan saat menambahkan anggota.");
                     }
                 });
             });
+
+
         });
     </script>
 </body>
