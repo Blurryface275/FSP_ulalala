@@ -8,7 +8,7 @@ if ($mysqli->connect_errno) {
     exit;
 }
 
-require_once("Event.php"); 
+require_once("class/event.php"); 
 $eventManager = new Event($mysqli);
 
 if (isset($_POST['add_event'])) {

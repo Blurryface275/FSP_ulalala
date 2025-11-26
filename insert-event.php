@@ -4,21 +4,19 @@ session_start();
 $idgrup_aktif = $_GET['idgrup'] ?? null;
 
 $success_message = $_SESSION['success_message'] ?? null;
-$error_message = $_SESSION['error_message'] ?? null;
+$error_message   = $_SESSION['error_message'] ?? null;
 
+// Hapus pesan setelah diambil
 unset($_SESSION['success_message']);
 unset($_SESSION['error_message']);
 
-// Periksa validitas idgrup di sini
+// Validasi ID GRUP
 if (!$idgrup_aktif || !is_numeric($idgrup_aktif) || $idgrup_aktif <= 0) {
-    // Jika tidak valid, set pesan error dan set $idgrup_aktif menjadi null untuk mencegah tampilan ID grup yang rusak
     $idgrup_aktif = null;
     $error_message_form = "ID Grup tidak ditemukan. Event tidak dapat dibuat.";
 } else {
-    // Jika valid, konversi ke integer
     $idgrup_aktif = (int)$idgrup_aktif;
 }
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -26,26 +24,27 @@ if (!$idgrup_aktif || !is_numeric($idgrup_aktif) || $idgrup_aktif <= 0) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Detail Group</title>
+    <title>Tambah Event</title>
     <link rel="stylesheet" href="style.css">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
-        #error-warning {
-            color: red;
-            border: 1px solid red;
+        .alert-success {
             padding: 10px;
-            margin-bottom: 20px;
-            background-color: #ffeaea;
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+            color: #155724;
+            margin-bottom: 15px;
             border-radius: 5px;
             text-align: center;
         }
 
-        .tab-content-item {
-            display: none;
-        }
-
-        .tab-content-item.active {
-            display: block;
+        .alert-danger {
+            padding: 10px;
+            background: #f8d7da;
+            border-left: 4px solid #dc3545;
+            color: #721c24;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            text-align: center;
         }
     </style>
 </head>
@@ -54,21 +53,30 @@ if (!$idgrup_aktif || !is_numeric($idgrup_aktif) || $idgrup_aktif <= 0) {
     <div class="box">
         <h2>Tambah Event untuk Grup : <?= $idgrup_aktif ? htmlspecialchars($idgrup_aktif) : '' ?></h2>
 
-        <?php
-        // Tampilkan error jika ID Grup tidak valid
-        if (!$idgrup_aktif):
-        ?>
-            <div class="alert alert-danger" style="color: red; border: 1px solid red; padding: 10px; margin-bottom: 20px; background-color: #ffeaea; border-radius: 5px; text-align: center;">
-                ID Grup tidak ditemukan. Event tidak dapat dibuat.
+        <!-- 🔴 ALERT: ID Grup Tidak Valid -->
+        <?php if (!$idgrup_aktif): ?>
+            <div class="alert-danger">
+                <?= $error_message_form ?>
             </div>
         <?php endif; ?>
 
+
+        <!-- 🟩 ALERT SUKSES -->
         <?php if ($success_message): ?>
+            <div class="alert-success">
+                <?= htmlspecialchars($success_message) ?>
+            </div>
         <?php endif; ?>
 
+        <!-- 🔴 ALERT ERROR -->
         <?php if ($error_message): ?>
+            <div class="alert-danger">
+                <?= htmlspecialchars($error_message) ?>
+            </div>
         <?php endif; ?>
 
+
+        <!-- FORM INPUT EVENT -->
         <?php if ($idgrup_aktif): ?>
             <form action="event-process.php" method="POST" enctype="multipart/form-data">
 
@@ -92,10 +100,9 @@ if (!$idgrup_aktif || !is_numeric($idgrup_aktif) || $idgrup_aktif <= 0) {
                 <label for="poster">Upload Poster (Opsional):</label>
                 <input type="file" id="poster" name="poster" accept="image/png, image/jpeg, image/jpg"><br><br>
 
-                <button class="btn" type="submit" value="Tambah Event" name="add_event">Tambah Event</button>
+                <button class="btn" type="submit" name="add_event">Tambah Event</button>
             </form>
-        <?php endif;
-        ?>
+        <?php endif; ?>
 
     </div>
 </body>
