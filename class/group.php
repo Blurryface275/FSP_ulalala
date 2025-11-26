@@ -19,21 +19,41 @@ class group
         return $stmt->get_result();
     }
 
-    // Insert group baru
-    public function insertGroupBaru($group_name, $description)
+    //untuk buat kode regis grup
+    public function generateRegistrationCode($length = 8)
     {
-        $sql = "INSERT INTO grup (group_name, description) 
-                    VALUES (?, ?)";
+        $characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $code = '';
+        // Loop untuk mengenerate karakter
+        for ($i = 0; $i < $length; $i++) {
+            $code .= $characters[rand(0, strlen($characters) - 1)];
+        }
+        return $code;
+    }
+
+    // Insert group baru
+    public function insertGroupBaru($group_name, $description, $creator_username)
+    {
+        $registration_code = $this->generateRegistrationCode(8);
+        $current_datetime = date('Y-m-d H:i:s'); 
+        $group_type = 'Privat'; // Default jenis grup 
+        
+        $sql = "INSERT INTO grup (nama, deskripsi, kode_pendaftaran, username_pembuat, tanggal_pembentukan, jenis) 
+                VALUES (?, ?, ?, ?, ?, ?)";
+        
         $stmt = $this->mysqli->prepare($sql);
-        $stmt->bind_param("ss", $group_name, $description);
+        
+        $stmt->bind_param("ssssss", $group_name, $description, $registration_code, $creator_username, $current_datetime, $group_type);
 
         if (!$stmt->execute()) {
             throw new Exception("Error saat insert: " . $stmt->error);
         }
 
-        return true; // kalau berhasil
+        return [
+            'idgrup' => $this->mysqli->insert_id, 
+            'kode_pendaftaran' => $registration_code
+        ];
     }
-
 
     // Hitung total grup
     public function getTotalGroups()

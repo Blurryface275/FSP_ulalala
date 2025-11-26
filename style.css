@@ -76,9 +76,9 @@ body {
 }
 
 .sidebar.collapsed ~ .detail-group {
-     margin-left: 90px !important;
-     padding: 40px !important;
-   }
+  margin-left: 90px !important;
+  padding: 40px !important;
+}
 
 .toggle-btn {
   font-size: 22px;
@@ -97,13 +97,13 @@ body {
   width: calc(100%-250px);
 }
 
-.main-content .content-box{
-    margin: 0; 
-    padding: 20px;
-    background: var(--peach);
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    width: 100%;
+.main-content .content-box {
+  margin: 0;
+  padding: 20px;
+  background: var(--peach);
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  width: 100%;
 }
 
 .main-content.expanded {
@@ -208,26 +208,26 @@ tr:hover {
 
 /* Styling Khusus untuk Elemen Button */
 button[type="submit"] {
-    /* Mengikuti gaya tombol yang sudah kita sepakati */
-    background: var(--pink); 
-    color: var(--coklat); /* Warna teks tombol */
-    font-weight: bold;
-    border: none;
-    cursor: pointer;
-    
-    /* Properti Layout */
-    padding: 10px 20px; 
-    border-radius: 20px; 
-    margin-top: 10px;
-    
-    /* Transisi & Hover */
-    transition: background 0.3s;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15); /* Tambahkan shadow agar mirip tombol .btn */
+  /* Mengikuti gaya tombol yang sudah kita sepakati */
+  background: var(--pink);
+  color: var(--coklat); /* Warna teks tombol */
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+
+  /* Properti Layout */
+  padding: 10px 20px;
+  border-radius: 20px;
+  margin-top: 10px;
+
+  /* Transisi & Hover */
+  transition: background 0.3s;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15); /* Tambahkan shadow agar mirip tombol .btn */
 }
 
 button[type="submit"]:hover {
-    background: #e26b67; /* Warna pink sedikit lebih gelap saat hover */
-    color: white;
+  background: #e26b67; /* Warna pink sedikit lebih gelap saat hover */
+  color: white;
 }
 
 /* Button Styles (for aksi) */
@@ -266,8 +266,23 @@ button[type="submit"]:hover {
 
 /* Form & Box */
 label {
+  display: block;
   margin: 5px;
   font-weight: bold;
+  color: var(--coklat);
+}
+
+input[type="text"], 
+input[type="password"],
+textarea,
+select {
+  width: 100%; 
+  margin: 5px 0 15px 0;
+  padding: 10px 12px;
+  border: 1px solid var(--pink);
+  border-radius: 6px;
+  box-sizing: border-box;
+  background-color: white; 
   color: var(--coklat);
 }
 
@@ -451,13 +466,13 @@ input {
   margin-left: calc(220px - 80px);
 }
 
-.tab-menu{
+.tab-menu {
   display: flex;
   gap: 15px;
   margin-bottom: 20px;
   border-bottom: 2px solid var(--coklat);
 }
-.tab-menu button{
+.tab-menu button {
   padding: 10px 15px;
   text-decoration: none;
   color: var(--coklat);
@@ -488,12 +503,16 @@ input {
 }
 
 .member-list li {
-   padding: 12px 15px;
-   margin-bottom: 10px;
+  padding: 12px 15px;
+  margin-bottom: 10px;
 }
 
-.tab-content-item { display: none; }
-.tab-content-item.active { display: block; }
+.tab-content-item {
+  display: none;
+}
+.tab-content-item.active {
+  display: block;
+}
 
 /* Buat list awal member */
 .member-default-list {
@@ -511,7 +530,7 @@ input {
   background: var(--pink);
   color: var(--coklat);
 }
-.member-item-flex button{
+.member-item-flex button {
   background: var(--ungu);
   color: var(--cream);
   border: none;
@@ -528,14 +547,14 @@ input {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 10px;  
+  gap: 10px;
   width: 100%;
 }
 
 .main-content-wrapper {
   display: flex;
   gap: 20px;
-  padding: 40px 20px; 
+  padding: 40px 20px;
   margin-left: 220px;
   width: calc(100% - 220px);
   justify-content: center;
