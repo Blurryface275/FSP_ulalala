@@ -260,7 +260,7 @@ if ($mysqli->connect_errno) {
                 const button = $(this); // simpan tombol yang diklik
 
                 $.ajax({
-                    url: 'add_member.php',
+                    url: 'add-member.php',
                     method: 'POST',
                     data: {
                         nrp: nrp,
