@@ -105,17 +105,29 @@ if ($mysqli->connect_errno) {
                         <div class="header-group">
                             <div class="group-info">
                                 <h2><?= htmlspecialchars($group['nama']) ?></h2>
-                                <p>Dibuat oleh: <?= htmlspecialchars($group['username_pembuat']) ?></p>
-                                <p>Deskripsi: <?= htmlspecialchars($group['deskripsi']) ?></p>
-                                <p>Tgl Pembentukan: <?= date("Y-m-d", strtotime($group['tanggal_pembentukan'])) ?></p>
-                                <p>Jenis Group: <?= htmlspecialchars($group['jenis']) ?></p>
 
+                                <!-- TOMBOL EDIT -->
+                                <?php if (
+                                    $_SESSION['username'] == $group['username_pembuat'] ||
+                                    (isset($_SESSION['isadmin']) && $_SESSION['isadmin'] == 1) ||
+                                    $_SESSION['role'] == 'dosen'
+                                ) : ?>
+                                    <button id="btnEditGroup" class='edit-group-btn'>Edit</button>
+                                <?php endif; ?>
+
+                                <!-- KETERANGAN GROUP -->
+                                <p>Dibuat oleh: <?= htmlspecialchars($group['username_pembuat']) ?></p>
+                                <p>Deskripsi: <span id="desc-group"><?= htmlspecialchars($group['deskripsi']) ?></span></p>
+                                <p>Tgl Pembentukan: <?= date("Y-m-d", strtotime($group['tanggal_pembentukan'])) ?></p>
+                                <p>Jenis Group: <span id="jenis-group"><?= htmlspecialchars($group['jenis']) ?></span></p>
                             </div>
+
                             <div class="registration-code-area">
                                 <h3>Kode Registrasi:</h3>
                                 <span id="reg-code" class="registration-code"><?= htmlspecialchars($group['kode_pendaftaran']) ?></span>
                             </div>
                         </div>
+
 
                         <!-- Tab Menu -->
                         <div class="tab-menu" id="tab-menu">
@@ -130,16 +142,21 @@ if ($mysqli->connect_errno) {
                                 <h3>Daftar Anggota</h3>
                                 <?php
                                 $query_members = "SELECT 
-                                        CASE WHEN a.isadmin = 1 THEN d.nama ELSE m.nama END AS nama_member,
-                                        CASE WHEN a.isadmin = 1 THEN 'Dosen' ELSE 'Mahasiswa' END AS role,
-                                        a.username AS username_login,
-                                        CASE WHEN a.isadmin = 1 THEN d.npk ELSE m.nrp END AS id_anggota
-                                    FROM member_grup mg
-                                    JOIN akun a ON mg.username = a.username
-                                    LEFT JOIN dosen d ON a.npk_dosen = d.npk
-                                    LEFT JOIN mahasiswa m ON a.nrp_mahasiswa = m.nrp
-                                    WHERE mg.idgrup = ?
-                                    ORDER BY nama_member ASC";
+                                COALESCE(d.nama, m.nama, a.username) AS nama_member,
+                                CASE 
+                                WHEN d.npk IS NOT NULL THEN 'Dosen'
+                                WHEN m.nrp IS NOT NULL THEN 'Mahasiswa'
+                                ELSE 'Tidak diketahui'
+                                END AS role,
+                                a.username AS username_login,
+                                COALESCE(d.npk, m.nrp, a.username) AS id_anggota
+                                FROM member_grup mg
+                                JOIN akun a ON mg.username = a.username
+                                LEFT JOIN dosen d ON a.npk_dosen = d.npk
+                                LEFT JOIN mahasiswa m ON a.nrp_mahasiswa = m.nrp
+                                WHERE mg.idgrup = ?
+                                ORDER BY nama_member ASC;
+                                ";
 
                                 $stmt_members = $mysqli->prepare($query_members);
                                 $stmt_members->bind_param("i", $group_id);
@@ -325,9 +342,102 @@ if ($mysqli->connect_errno) {
                 });
             });
 
+            // --- Buka modal ---
+            $("#btnEditGroup").on("click", function() {
+                $("#editGroupModal").css("display", "flex");
+            });
+
+            // --- Tutup modal ---
+            $("#closeModal").on("click", function() {
+                $("#editGroupModal").hide();
+            });
+
+            // --- SIMPAN perubahan grup ---
+            $("#saveGroupEdit").on("click", function() {
+                const newName = $("#editGroupName").val();
+                const newDesc = $("#editGroupDesc").val();
+                const newType = $("#editGroupType").val();
+                const groupId = <?= $group_id ?>;
+
+                $.ajax({
+                    url: 'update-group.php',
+                    type: 'POST',
+                    data: {
+                        id: groupId,
+                        nama: newName,
+                        deskripsi: newDesc,
+                        jenis: newType
+                    },
+                    success: function(res) {
+                        if (res == "OK") {
+                            // Update tampilan tanpa reload
+                            $("h2").text(newName);
+                            $("#desc-group").text(newDesc);
+                            $("#jenis-group").text(newType);
+
+                            $("#editGroupModal").hide();
+                            alert("Data grup berhasil diperbarui!");
+                        } else {
+                            alert(res);
+                        }
+                    }
+                });
+            });
+
 
         });
     </script>
+    <!-- POPUP EDIT GROUP -->
+    <div id="editGroupModal" class="modal" style="
+    display:none; 
+    position:fixed; 
+    top:0; left:0; 
+    width:100%; height:100%; 
+    background:rgba(0,0,0,0.5); 
+    justify-content:center; 
+    align-items:center;">
+
+        <div style="background:#ffdce7; padding:20px; border-radius:10px; width:350px;">
+            <h3>Edit Grup</h3>
+
+            <label>Nama Grup:</label>
+            <input type="text" id="editGroupName" value="<?= htmlspecialchars($group['nama']) ?>" style="width:100%; margin-bottom:10px;">
+
+            <label>Deskripsi:</label>
+            <textarea id="editGroupDesc" style="width:100%; margin-bottom:10px;"><?= htmlspecialchars($group['deskripsi']) ?></textarea>
+
+            <label>Jenis Grup:</label>
+            <select id="editGroupType" style="width:100%; margin-bottom:10px;">
+                <option value="Publik" <?= $group['jenis'] == "Publik" ? "selected" : "" ?>>Publik</option>
+                <option value="Privat" <?= $group['jenis'] == "Privat" ? "selected" : "" ?>>Privat</option>
+            </select>
+
+            <button id="saveGroupEdit" 
+            style="  
+            background: #8b597b;
+            color: #ffe2db;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: bold;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            white-space: nowrap;">Simpan</button>
+            <button id="closeModal" style="  
+            background: #8b597b;
+            color: #ffe2db;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: bold;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            white-space: nowrap;">Batal</button>
+        </div>
+    </div>
+
 </body>
 
 </html>

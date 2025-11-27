@@ -565,6 +565,19 @@ input {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   white-space: nowrap;
 }
+
+.edit-group-btn{
+  background: var(--pink);
+  color: var(--cream);
+  border: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: bold;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  white-space: nowrap;
+}
 .member-item-flex {
   display: flex;
   justify-content: space-between;
