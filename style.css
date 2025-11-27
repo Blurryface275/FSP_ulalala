@@ -462,7 +462,6 @@ input {
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   padding: 20px;
-  /* biar margin kiri responsive ikut marign sidebar waktu expand dan minimize */
   margin-left: calc(220px - 80px);
 }
 
@@ -502,11 +501,6 @@ input {
   padding-top: 20px;
 }
 
-.member-list li {
-  padding: 12px 15px;
-  margin-bottom: 10px;
-}
-
 .tab-content-item {
   display: none;
 }
@@ -542,7 +536,35 @@ input {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   white-space: nowrap;
 }
-
+.remove-member-btn:hover {
+  background: #6d4463;
+}
+/* Member list */
+.member-list {
+  margin: 10px 10px;
+}
+.member-item {
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--pink);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.member-item:last-child {
+  border-bottom: none;
+}
+.member-list .remove-member-btn{
+  background: var(--ungu);
+  color: var(--cream);
+  border: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: bold;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  white-space: nowrap;
+}
 .member-item-flex {
   display: flex;
   justify-content: space-between;

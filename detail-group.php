@@ -130,28 +130,45 @@ if ($mysqli->connect_errno) {
                                 <h3>Daftar Anggota</h3>
                                 <?php
                                 $query_members = "SELECT 
-                                CASE WHEN a.isadmin = 1 THEN d.nama ELSE m.nama END AS nama_member,
-                                CASE WHEN a.isadmin = 1 THEN 'Dosen' ELSE 'Mahasiswa' END AS role
-                                FROM member_grup mg
-                                JOIN akun a ON mg.username = a.username
-                                LEFT JOIN dosen d ON a.npk_dosen = d.npk
-                                LEFT JOIN mahasiswa m ON a.nrp_mahasiswa = m.nrp
-                                WHERE mg.idgrup = ?
-                                ORDER BY nama_member ASC";
+                                        CASE WHEN a.isadmin = 1 THEN d.nama ELSE m.nama END AS nama_member,
+                                        CASE WHEN a.isadmin = 1 THEN 'Dosen' ELSE 'Mahasiswa' END AS role,
+                                        a.username AS username_login,
+                                        CASE WHEN a.isadmin = 1 THEN d.npk ELSE m.nrp END AS id_anggota
+                                    FROM member_grup mg
+                                    JOIN akun a ON mg.username = a.username
+                                    LEFT JOIN dosen d ON a.npk_dosen = d.npk
+                                    LEFT JOIN mahasiswa m ON a.nrp_mahasiswa = m.nrp
+                                    WHERE mg.idgrup = ?
+                                    ORDER BY nama_member ASC";
+
                                 $stmt_members = $mysqli->prepare($query_members);
                                 $stmt_members->bind_param("i", $group_id);
                                 $stmt_members->execute();
                                 $result_members = $stmt_members->get_result();
 
+                                echo "<div class='member-list'>";
+
                                 if ($result_members->num_rows > 0) {
-                                    echo "<ul class='member-list'>";
                                     while ($member = $result_members->fetch_assoc()) {
-                                        echo "<li>" . htmlspecialchars($member['nama_member']) . " (" . htmlspecialchars($member['role']) . ")</li>";
+                                        echo "<div class='member-item' id='student-" . htmlspecialchars($member['id_anggota']) . "'>";
+                                        echo "<div class='member-item-flex'>";
+
+                                        // Tampilkan nama + nrp/npk
+                                        echo htmlspecialchars($member['nama_member']) . " (" . htmlspecialchars($member['id_anggota']) . ")";
+
+                                        // Tampilkan tombol Hapus hanya jika user adalah dosen/admin & bukan diri sendiri
+                                        if (($_SESSION['role'] === 'dosen' || $_SESSION['isadmin'] == 1) && $member['username_login'] !== $_SESSION['username']) {
+                                            echo "<button class='remove-member-btn' data-username='" . htmlspecialchars($member['username_login']) . "'>Hapus</button>";
+                                        }
+
+                                        echo "</div>"; // tutup .member-item-flex
+                                        echo "</div>"; // tutup .member-item
                                     }
-                                    echo "</ul>";
                                 } else {
                                     echo "<p>Belum ada anggota dalam grup ini.</p>";
                                 }
+
+                                echo "</div>"; // tutup .member-list
                                 ?>
                             </div>
 
@@ -209,15 +226,19 @@ if ($mysqli->connect_errno) {
                 <!-- Munculin hasil pencarian di sini -->
                 <?php
                 // Menampilkan 10 mahasiswa pertama 
-                $query_search = "SELECT nrp, nama FROM mahasiswa ORDER BY nama ASC LIMIT 10";
-                $result_search = $mysqli->query($query_search);
+                $query_search = "SELECT m.nrp, m.nama FROM mahasiswa m JOIN akun a ON m.nrp = a.nrp_mahasiswa LEFT JOIN member_grup mg ON a.username = mg.username AND mg.idgrup=? WHERE mg.username IS NULL ORDER BY m.nama ASC LIMIT 10";
+                $result_search = $mysqli->prepare($query_search);
+                $result_search->bind_param("i", $group_id);
+                $result_search->execute();
+                $result_search = $result_search->get_result();
                 if ($result_search->num_rows > 0) {
                     echo "<ul class='member-default-list'>";
+
                     while ($student = $result_search->fetch_assoc()) {
                         echo "<li id='student-" . htmlspecialchars($student['nrp']) . "'>";
                         echo "<div class='member-item-flex'>";
                         echo htmlspecialchars($student['nama']) . " (" . htmlspecialchars($student['nrp']) . ")";
-                        echo "<button class='add-member-btn' data-nrp='" . htmlspecialchars($student['nrp']) . "'>Tambah</button>";
+                        echo "<button class='add-member-btn' data-nrp='" . htmlspecialchars($student['nrp']) . "' data-nama='" . htmlspecialchars($student['nama']) . "'>Tambah</button>";
                         echo "</div>";
                         echo "</li>";
                     }
@@ -229,6 +250,9 @@ if ($mysqli->connect_errno) {
         </div>
     </div> <!-- .main-content-wrapper -->
     <script>
+        const currentUserRole = '<?= $_SESSION['role'] ?>';
+        const currentUsername = '<?= $_SESSION['username'] ?>';
+
         $(function() {
 
             // Sidebar toggle
@@ -249,27 +273,46 @@ if ($mysqli->connect_errno) {
 
             // FIX: handler cukup sekali
             $(document).on('click', '.add-member-btn', function() {
+                const button = $(this); // simpan tombol yang diklik
                 const nrp = $(this).data('nrp');
                 const groupId = <?= isset($group_id) ? $group_id : 'null' ?>;
-
+                const nama = $(this).data('nama');
                 if (!groupId) {
                     alert("Group ID tidak valid.");
                     return;
                 }
 
-                const button = $(this); // simpan tombol yang diklik
+
 
                 $.ajax({
                     url: 'add-member.php',
                     method: 'POST',
                     data: {
                         nrp: nrp,
+                        nama: nama,
                         group_id: groupId
                     },
                     dataType: 'json',
                     success: function(response) {
                         if (response.success) {
-                            button.text('Ditambahkan').prop('disabled', true);
+                            let tombolHapus = '';
+                            // Cek apakah user adalah dosen atau admin
+                            const isAdmin = <?= isset($_SESSION['isadmin']) && $_SESSION['isadmin'] == 1 ? 'true' : 'false' ?>;
+                            if (currentUserRole === 'dosen' || isAdmin) {
+                                // Gunakan nrp sebagai username (karena untuk mahasiswa, username = nrp)
+                                tombolHapus = '<button class="remove-member-btn" data-username="' + nrp + '">Hapus</button>';
+                            }
+
+                            $('.member-list').append(
+                                '<div class="member-item" id="student-' + nrp + '">' +
+                                '<div class="member-item-flex">' +
+                                nama + ' (' + nrp + ')' +
+                                tombolHapus +
+                                '</div>' +
+                                '</div>'
+                            );
+
+                            $('li#student-' + nrp).remove(); // hapus dari daftar default (li di member-default-list)
                             alert("Anggota berhasil ditambahkan");
                         } else {
                             alert(response.message);
