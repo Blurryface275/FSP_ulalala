@@ -14,7 +14,7 @@ unset($_SESSION['error_message']);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tambah Group</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="login-style.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
         .alert {
@@ -40,7 +40,10 @@ unset($_SESSION['error_message']);
 
 <body>
     <div class="box">
-        <h2>Tambah Group Baru</h2>
+        <h2>Tambah Group Baru</h2><br><br>
+        <a href="index.php" id="tombol-panah-img">
+            <img src="93634.png" alt="Ke Data Dosen">
+        </a>
 
         <?php if ($success_message): ?>
             <div class="alert alert-success">
@@ -60,7 +63,7 @@ unset($_SESSION['error_message']);
 
             <label for="description">Deskripsi:</label><br>
             <textarea id="description" name="description" required></textarea><br><br>
-            
+
             <label for="group_type">Jenis Group:</label><br>
             <select id="group_type" name="group_type" required>
                 <option value="Privat">Privat</option>

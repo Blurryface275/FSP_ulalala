@@ -18,6 +18,7 @@ $groupHandler = new group($mysqli);
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $groupName  = $_POST['group_name']; 
     $deskripsi  = $_POST['description'];
+    $group_type = $_POST['group_type'];
 
     if (empty($groupName) || empty($deskripsi)) {
         $_SESSION['error_message'] = "Nama Group dan Deskripsi tidak boleh kosong.";
@@ -27,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
     try {
         $creator_username = $_SESSION['username']; 
-        $new_group_data = $groupHandler->insertGroupBaru($groupName, $deskripsi,$creator_username); 
+        $new_group_data = $groupHandler->insertGroupBaru($groupName, $deskripsi,$creator_username,$group_type); 
         
         $new_group_id = $new_group_data['idgrup'];
         $registration_code = $new_group_data['kode_pendaftaran'];
