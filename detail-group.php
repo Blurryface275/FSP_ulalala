@@ -113,7 +113,12 @@ if ($mysqli->connect_errno) {
                                         (isset($_SESSION['isadmin']) && $_SESSION['isadmin'] == 1) ||
                                         $_SESSION['role'] == 'dosen'
                                     ) : ?>
-                                        <button id="btnEditGroup" class='edit-group-btn'>Edit</button>
+                                        <button
+                                            id="btnEditGroup"
+                                            class="edit-group-btn"
+                                            data-id="<?= $group['idgrup'] ?>">
+                                            Edit
+                                        </button>
                                         <button
                                             id="btnHapusGroup"
                                             class="delete-group-btn"
@@ -487,62 +492,61 @@ if ($mysqli->connect_errno) {
             });
 
 
-            // --- Buka pop up ---
+            // Buka modal
             $("#btnEditGroup").on("click", function() {
-                $("#editGroupModal").css("display", "flex");
+                $("#editGroupModal").fadeIn();
             });
 
-            // --- Tutup pop up ---
+            // Tutup modal
             $("#closeModal").on("click", function() {
-                $("#editGroupModal").hide();
+                $("#editGroupModal").fadeOut();
             });
 
-            // --- SIMPAN perubahan grup ---
+            // Simpan update
             $("#saveGroupEdit").on("click", function() {
+
+                const groupId = $("#btnEditGroup").data("id");
                 const newName = $("#editGroupName").val();
                 const newDesc = $("#editGroupDesc").val();
                 const newType = $("#editGroupType").val();
-                const groupId = <?= $group_id ?>;
 
                 $.ajax({
-                    url: 'update-group.php',
-                    type: 'POST',
+                    url: "update-group.php",
+                    type: "POST",
+                    dataType: "json",
                     data: {
-                        id: groupId,
-                        nama: newName,
-                        deskripsi: newDesc,
-                        jenis: newType
+                        idgroup: groupId,
+                        group_name: newName,
+                        description: newDesc,
+                        group_type: newType
                     },
                     success: function(res) {
-                        if (res == "OK") {
-                            // Update tampilan tanpa reload
-                            $("h2").text(newName);
+                        if (res.success) {
+
+                            // update tampilan
+                            $("#groupTitle").text(newName);
                             $("#desc-group").text(newDesc);
                             $("#jenis-group").text(newType);
 
-                            $("#editGroupModal").hide();
-                            alert("Data grup berhasil diperbarui!");
+                            $("#editGroupModal").fadeOut();
+                            alert("Group berhasil diperbarui!");
+
                         } else {
-                            alert(res);
+                            alert(res.message);
                         }
+                    },
+                    error: function() {
+                        alert("Terjadi error saat menghubungi server.");
                     }
                 });
             });
 
-
         });
     </script>
     <!-- POP-UP EDIT GROUP -->
-    <div id="editGroupModal" class="modal" style="
-    display:none; 
-    position:fixed; 
-    top:0; left:0; 
-    width:100%; height:100%; 
-    background:rgba(0,0,0,0.5); 
-    justify-content:center; 
-    align-items:center;">
+    <div id="editGroupModal">
 
-        <div style="background:#ffdce7; padding:20px; border-radius:10px; width:350px;">
+        <div class="modal-content">
             <h3>Edit Grup</h3>
 
             <label>Nama Grup:</label>
@@ -557,30 +561,10 @@ if ($mysqli->connect_errno) {
                 <option value="Privat" <?= $group['jenis'] == "Privat" ? "selected" : "" ?>>Privat</option>
             </select>
 
-            <button id="saveGroupEdit"
-                style="  
-            background: #8b597b;
-            color: #ffe2db;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 12px;
-            font-weight: bold;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-            white-space: nowrap;">Simpan</button>
-            <button id="closeModal" style="  
-            background: #8b597b;
-            color: #ffe2db;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 12px;
-            font-weight: bold;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-            white-space: nowrap;">Batal</button>
+            <button id="saveGroupEdit" class="btn-modal">Simpan</button>
+            <button id="closeModal" class="btn-modal">Batal</button>
         </div>
+
     </div>
 
 </body>
