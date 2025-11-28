@@ -44,9 +44,15 @@ try {
     $result = $groupManager->insertMemberGrup($group_id, $nrp);
 
     if ($result) {
+        // ambil username untuk response
+        $stmt = $mysqli->prepare("SELECT username FROM akun WHERE nrp_mahasiswa = ?");
+        $stmt->bind_param("s", $nrp);
+        $stmt->execute();
+        $userRow = $stmt->get_result()->fetch_assoc();
         echo json_encode([
             'success' => true,
-            'message' => "Mahasiswa ($nrp) berhasil ditambahkan."
+            'message' => "Mahasiswa ($nrp) berhasil ditambahkan.",
+            'username' => $userRow['username']
         ]);
     } else {
         echo json_encode([

@@ -13,12 +13,12 @@
 
 <body>
     <?php
-       session_start();
-if (!isset($_SESSION['username'])) { 
-    $_SESSION['error_message'] = "Anda harus login dahulu!";
-    header('Location: login.php');
-    exit(); 
-}
+    session_start();
+    if (!isset($_SESSION['username'])) {
+        $_SESSION['error_message'] = "Anda harus login dahulu!";
+        header('Location: login.php');
+        exit();
+    }
     $mysqli = new mysqli("localhost", "root", "", "fullstack");
     if ($mysqli->connect_errno) {
         die("Failed to connect to MySQL: " . $mysqli->connect_error);
@@ -48,10 +48,10 @@ if (!isset($_SESSION['username'])) {
 
 </html>
 <script>
-        $(function() {
-            $("#toggle-btn").on("click", function() {
-                $("#sidebar").toggleClass("collapsed");
-                $(".main-content").toggleClass("expanded");
-            });
+    $(function() {
+        $("#toggle-btn").on("click", function() {
+            $("#sidebar").toggleClass("collapsed");
+            $(".main-content").toggleClass("expanded");
         });
-    </script>
+    });
+</script>

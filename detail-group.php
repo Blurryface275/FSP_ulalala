@@ -311,8 +311,11 @@ if ($mysqli->connect_errno) {
 
     </div> <!-- .main-content-wrapper -->
     <script>
-        const currentUserRole = '<?= $_SESSION['role'] ?>';
         const currentUsername = '<?= $_SESSION['username'] ?>';
+        const groupCreator = '<?= htmlspecialchars($group['username_pembuat']) ?>';
+        const isAdmin = <?= isset($_SESSION['isadmin']) && $_SESSION['isadmin'] == 1 ? 'true' : 'false' ?>;
+        const currentUserRole = '<?= $_SESSION['role'] ?>';
+
 
         $(function() {
 
@@ -335,9 +338,10 @@ if ($mysqli->connect_errno) {
             // Hapus member
             $(document).on('click', '.remove-member-btn', function() {
                 const button = $(this);
-                const username = $(this).data('username');
+                const username = button.data('username');
                 const groupId = <?= isset($group_id) ? $group_id : 'null' ?>;
-                const nrp = $(this).data('nrp');
+                const nrp = button.data('nrp');
+                const nama = button.data('nama');
 
                 if (!groupId) {
                     alert("Group ID tidak valid.");
@@ -350,7 +354,6 @@ if ($mysqli->connect_errno) {
                     data: {
                         username: username,
                         group_id: groupId,
-
                     },
                     dataType: 'json',
                     success: function(response) {
@@ -364,7 +367,7 @@ if ($mysqli->connect_errno) {
                                     '<li id="student-' + nrp + '">' +
                                     '<div class="member-item-flex">' +
                                     nama + ' (' + nrp + ')' +
-                                    '<button class="add-member-btn" data-nrp="' + nrp + '" data-nama="' + nama + '">Tambah</button>' +
+                                    '<button class="add-member-btn" data-nrp="' + nrp + '" data-nama="' + nama + '" data-username="' + username + '">Tambah</button>' +
                                     '</div>' +
                                     '</li>'
                                 );
@@ -406,10 +409,8 @@ if ($mysqli->connect_errno) {
                         if (response.success) {
                             const username = response.username; // dapatkan username dari response
                             let tombolHapus = '';
-                            // Cek apakah user adalah dosen atau admin
-                            const isAdmin = <?= isset($_SESSION['isadmin']) && $_SESSION['isadmin'] == 1 ? 'true' : 'false' ?>;
-                            // cek apakah user adalah pemilik group
-                            if (($_SESSION['role'] === 'dosen' || $_SESSION['isadmin'] == 1) && $group['username_pembuat'] == $_SESSION['username']) {
+                            // Hanya tampilkan tombol hapus jika user adalah pembuat grup
+                            if (currentUsername === groupCreator) {
                                 tombolHapus = '<button class="remove-member-btn" ' +
                                     'data-username="' + username + '" ' +
                                     'data-nrp="' + nrp + '" ' +
