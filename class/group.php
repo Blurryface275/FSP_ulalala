@@ -31,34 +31,71 @@ class group
         return $code;
     }
 
+    //insert group
     public function insertGroupBaru($group_name, $description, $creator_username, $group_type)
-{
-    $registration_code = $this->generateRegistrationCode(8);
-    $current_datetime = date('Y-m-d H:i:s');
+    {
+        $registration_code = $this->generateRegistrationCode(8);
+        $current_datetime = date('Y-m-d H:i:s');
 
-    $sql = "INSERT INTO grup (nama, deskripsi, kode_pendaftaran, username_pembuat, tanggal_pembentukan, jenis) 
+        $sql = "INSERT INTO grup (nama, deskripsi, kode_pendaftaran, username_pembuat, tanggal_pembentukan, jenis) 
             VALUES (?, ?, ?, ?, ?, ?)";
 
-    $stmt = $this->mysqli->prepare($sql);
-    $stmt->bind_param("ssssss", $group_name, $description, $registration_code, $creator_username, $current_datetime, $group_type);
+        $stmt = $this->mysqli->prepare($sql);
+        $stmt->bind_param("ssssss", $group_name, $description, $registration_code, $creator_username, $current_datetime, $group_type);
 
-    if (!$stmt->execute()) {
-        throw new Exception("Error saat insert group: " . $stmt->error);
+        if (!$stmt->execute()) {
+            throw new Exception("Error saat insert group: " . $stmt->error);
+        }
+
+        $idgrup_baru = $this->mysqli->insert_id;
+
+        // Insert ke tabel member_group
+        $sql_member = "INSERT INTO member_grup (idgrup, username) VALUES (?, ?)";
+        $stmt_member = $this->mysqli->prepare($sql_member);
+        $stmt_member->bind_param("is", $idgrup_baru, $creator_username);
+        $stmt_member->execute();
+
+        return [
+            'idgrup' => $idgrup_baru,
+            'kode_pendaftaran' => $registration_code
+        ];
     }
 
-    $idgrup_baru = $this->mysqli->insert_id;
+    //hapus group
+    public function deleteGroup($idgrup)
+    {
+        // hapus member grup 
+        $sql_member = "DELETE FROM member_grup WHERE idgrup = ?";
+        $stmt_member = $this->mysqli->prepare($sql_member);
+        $stmt_member->bind_param("i", $idgrup);
+        $stmt_member->execute();
 
-    // Insert ke tabel member_group
-    $sql_member = "INSERT INTO member_grup (idgrup, username) VALUES (?, ?)";
-    $stmt_member = $this->mysqli->prepare($sql_member);
-    $stmt_member->bind_param("is", $idgrup_baru, $creator_username);
-    $stmt_member->execute();
+        // hapus group
+        $sql = "DELETE FROM grup WHERE idgrup = ?";
+        $stmt = $this->mysqli->prepare($sql);
+        $stmt->bind_param("i", $idgrup);
 
-    return [
-        'idgrup' => $idgrup_baru,
-        'kode_pendaftaran' => $registration_code
-    ];
-}
+        if (!$stmt->execute()) {
+            throw new Exception("Error saat menghapus group: " . $stmt->error);
+        }
+
+        return true;
+    }
+
+    //update group
+    public function updateGroup($idgroup, $group_name, $description, $group_type)
+    {
+        $sql = "UPDATE grup SET nama = ?, deskripsi = ?, jenis = ? WHERE idgrup = ?";
+        $stmt = $this->mysqli->prepare($sql);
+        $stmt->bind_param("sssi", $group_name, $description, $group_type, $idgroup);
+
+        if (!$stmt->execute()) {
+            throw new Exception("Error saat update group: " . $stmt->error);
+        }
+
+        return true;
+    }
+
 
     // Hitung total grup
     public function getTotalGroups()

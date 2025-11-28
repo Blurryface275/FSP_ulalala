@@ -440,12 +440,12 @@ if ($mysqli->connect_errno) {
 
             });
 
-            // --- Buka modal ---
+            // --- Buka pop up ---
             $("#btnEditGroup").on("click", function() {
                 $("#editGroupModal").css("display", "flex");
             });
 
-            // --- Tutup modal ---
+            // --- Tutup pop up ---
             $("#closeModal").on("click", function() {
                 $("#editGroupModal").hide();
             });
@@ -485,7 +485,7 @@ if ($mysqli->connect_errno) {
 
         });
     </script>
-    <!-- POPUP EDIT GROUP -->
+    <!-- POP-UP EDIT GROUP -->
     <div id="editGroupModal" class="modal" style="
     display:none; 
     position:fixed; 
