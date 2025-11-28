@@ -103,30 +103,48 @@ if ($mysqli->connect_errno) {
                         $group = $result->fetch_assoc();
             ?>
                         <div class="header-group">
-                            <div class="group-info">
-                                <h2><?= htmlspecialchars($group['nama']) ?></h2>
 
-                                <!-- TOMBOL EDIT -->
-                                <?php if (
-                                    $_SESSION['username'] == $group['username_pembuat'] ||
-                                    (isset($_SESSION['isadmin']) && $_SESSION['isadmin'] == 1) ||
-                                    $_SESSION['role'] == 'dosen'
-                                ) : ?>
-                                    <button id="btnEditGroup" class='edit-group-btn'>Edit</button>
-                                <?php endif; ?>
+                            <div class="header-top">
+                                <h2 class="group-title"><?= htmlspecialchars($group['nama']) ?></h2>
 
-                                <!-- KETERANGAN GROUP -->
-                                <p>Dibuat oleh: <?= htmlspecialchars($group['username_pembuat']) ?></p>
-                                <p>Deskripsi: <span id="desc-group"><?= htmlspecialchars($group['deskripsi']) ?></span></p>
-                                <p>Tgl Pembentukan: <?= date("Y-m-d", strtotime($group['tanggal_pembentukan'])) ?></p>
-                                <p>Jenis Group: <span id="jenis-group"><?= htmlspecialchars($group['jenis']) ?></span></p>
+                                <div class="group-buttons">
+                                    <?php if (
+                                        $_SESSION['username'] == $group['username_pembuat'] ||
+                                        (isset($_SESSION['isadmin']) && $_SESSION['isadmin'] == 1) ||
+                                        $_SESSION['role'] == 'dosen'
+                                    ) : ?>
+                                        <button id="btnEditGroup" class='edit-group-btn'>Edit</button>
+                                        <button
+                                            id="btnHapusGroup"
+                                            class="delete-group-btn"
+                                            data-id="<?= $group['idgrup'] ?>">
+                                            Hapus
+                                        </button>
+
+                                    <?php endif; ?>
+                                </div>
                             </div>
 
-                            <div class="registration-code-area">
-                                <h3>Kode Registrasi:</h3>
-                                <span id="reg-code" class="registration-code"><?= htmlspecialchars($group['kode_pendaftaran']) ?></span>
+                            <hr class="separator">
+
+                            <div class="header-info-body">
+
+                                <div class="group-info">
+                                    <p><strong>Dibuat oleh:</strong> <?= htmlspecialchars($group['username_pembuat']) ?></p>
+                                    <p><strong>Deskripsi:</strong> <span id="desc-group"><?= htmlspecialchars($group['deskripsi']) ?></span></p>
+                                    <p><strong>Tgl Pembentukan:</strong> <?= date("Y-m-d", strtotime($group['tanggal_pembentukan'])) ?></p>
+                                    <p><strong>Jenis Group:</strong> <span id="jenis-group"><?= htmlspecialchars($group['jenis']) ?></span></p>
+                                </div>
+
+                                <div class="registration-code-area">
+                                    <p class="code-label"><strong>Kode Registrasi:</strong></p>
+                                    <span id="reg-code" class="registration-code">
+                                        <?= htmlspecialchars($group['kode_pendaftaran']) ?>
+                                    </span>
+                                </div>
                             </div>
                         </div>
+
 
 
                         <!-- Tab Menu -->
@@ -436,9 +454,38 @@ if ($mysqli->connect_errno) {
                         }
                     });
                 }
-
-
             });
+
+            // Delete Group
+            $(document).on('click', '.delete-group-btn', function() {
+                const button = $(this);
+                const groupId = button.data('id');
+
+                if (confirm('Yakin ingin menghapus group ini?')) {
+                    $.ajax({
+                        url: 'delete-group.php',
+                        method: 'GET',
+                        data: {
+                            id: groupId
+                        },
+                        dataType: 'json',
+                        success: function(response) {
+                            if (response.success) {
+                                button.closest('tr').remove();
+                                alert("Group berhasil dihapus");
+                                window.location.href = "data-group.php";
+                            } else {
+                                alert(response.message);
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            console.log(xhr.responseText);
+                            alert("Terjadi kesalahan saat menghapus group.");
+                        }
+                    });
+                }
+            });
+
 
             // --- Buka pop up ---
             $("#btnEditGroup").on("click", function() {

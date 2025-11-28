@@ -272,17 +272,17 @@ label {
   color: var(--coklat);
 }
 
-input[type="text"], 
+input[type="text"],
 input[type="password"],
 textarea,
 select {
-  width: 100%; 
+  width: 100%;
   margin: 5px 0 15px 0;
   padding: 10px 12px;
   border: 1px solid var(--pink);
   border-radius: 6px;
   box-sizing: border-box;
-  background-color: white; 
+  background-color: white;
   color: var(--coklat);
 }
 
@@ -416,53 +416,137 @@ input {
   margin-top: 20px;
   text-align: right;
 }
-.registration-code {
-  font-size: 20px;
-  font-weight: bold;
-  background: var(--pink);
-  color: var(--coklat);
-  padding: 5px 15px;
-  border-radius: 5px;
-  display: inline-block;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-}
+
+
+/* Anda perlu memastikan variabel CSS --ungu, --cream, --peach sudah terdefinisi di tempat lain (misalnya :root) */
 
 .header-group {
-  background: var(--ungu);
-  color: var(--cream);
+  background: var(
+    --ungu,
+    #5c3b69
+  ); /* Menggunakan nilai default jika variabel tidak ada */
+  color: var(--cream, #f4f3ee);
   padding: 20px;
   border-radius: 10px;
   margin-bottom: 30px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
   width: 100%;
+  /* Gunakan Flexbox untuk mengatur konten internal */
+  display: flex;
+  flex-direction: column; /* Konten disusun vertikal */
 }
-.group-info h2 {
-  color: var(--cream);
-  margin-bottom: 15px;
+
+/* Bagian Atas: Judul dan Tombol */
+.header-top {
+  display: flex;
+  justify-content: space-between; /* Judul di kiri, Tombol di kanan */
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.group-title {
+  margin: 0;
+  font-size: 28px; /* Sedikit lebih besar untuk judul */
+  font-weight: bold;
+  color: var(--cream, #f4f3ee);
+}
+
+/* Area Tombol */
+.group-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+/* Gaya Tombol */
+.edit-group-btn,
+.delete-group-btn {
+  padding: 8px 16px;
+  border: none;
+  cursor: pointer;
+  border-radius: 8px; /* Sedikit lebih melengkung */
+  font-size: 14px;
+  font-weight: 600;
+  transition: background-color 0.2s;
+}
+
+.edit-group-btn {
+  background-color: #f0c3a3; /* Warna pink/peach lembut */
+  color: #444; /* Teks gelap */
+}
+
+.delete-group-btn {
+  background-color: #f08080; /* Warna merah muda lembut */
+  color: white;
+}
+
+/* Hover effect */
+.edit-group-btn:hover {
+  background-color: #e8b08e;
+}
+
+.delete-group-btn:hover {
+  background-color: #e56b6b;
+}
+
+/* Garis Pemisah */
+.separator {
+  border: 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.2); /* Garis tipis, semi-transparan */
+  margin: 10px 0 20px 0;
+}
+
+/* Bagian Bawah: Informasi Group dan Kode Registrasi */
+.header-info-body {
+  display: flex;
+  justify-content: space-between; /* Untuk memisahkan Info Group dan Kode Registrasi */
+  align-items: flex-start; /* Agar kode registrasi tidak terlalu tinggi jika info panjang */
+  gap: 20px;
+}
+
+.group-info {
+  flex-grow: 1; /* Memberi ruang lebih pada info */
+  color: var(--cream, #f4f3ee);
+  font-size: 16px;
 }
 
 .group-info p {
-  color: var(--peach);
-  font-size: 16px;
   margin: 5px 0;
+  line-height: 1.5;
 }
 
-.detail-group .content-box {
-  max-width: none;
-  margin: 0;
+/* Style untuk teks tebal pada label */
+.group-info strong,
+.code-label strong {
+  font-weight: bold;
+  /* Optional: warna berbeda sedikit */
+  color: var(--peach, #f0c3a3);
 }
 
-.detail-group {
-  flex: 1;
-  min-width: 300px;
-  max-width: 500px;
-  background: var(--peach);
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  padding: 20px;
-  margin-left: calc(220px - 80px);
+/* Area Kode Registrasi */
+.registration-code-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Untuk menengahkan kode registrasi */
+  min-width: 150px; /* Lebar minimum agar kode terlihat */
+}
+
+.code-label {
+  margin: 0 0 5px 0;
+  font-size: 14px;
+  color: var(--peach, #f0c3a3);
+  text-align: center;
+}
+
+.registration-code {
+  /* Gaya untuk membuat kotak Kode Registrasi seperti di gambar */
+  background-color: var(--peach, #f0c3a3);
+  color: #444; /* Teks gelap di dalam kotak terang */
+  font-size: 18px;
+  font-weight: bold;
+  padding: 10px 15px;
+  border-radius: 6px;
+  letter-spacing: 1px;
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .tab-menu {
@@ -553,7 +637,7 @@ input {
 .member-item:last-child {
   border-bottom: none;
 }
-.member-list .remove-member-btn{
+.member-list .remove-member-btn {
   background: var(--ungu);
   color: var(--cream);
   border: none;
@@ -566,9 +650,9 @@ input {
   white-space: nowrap;
 }
 
-.edit-group-btn{
+.edit-group-btn {
   background: var(--pink);
-  color: var(--cream);
+  color: var(--coklat);
   border: none;
   padding: 5px 10px;
   border-radius: 5px;

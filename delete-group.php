@@ -5,13 +5,26 @@ require_once("class/group.php");
 $mysqli = new mysqli("localhost", "root", "", "fullstack");
 
 if (!isset($_GET['id'])) {
-    die("ID group tidak valid.");
+    echo json_encode([
+        "success" => false,
+        "message" => "ID group tidak valid."
+    ]);
+    exit;
 }
 
 $groupHandler = new group($mysqli);
 
-$groupHandler->deleteGroup($_GET['id']);
+try {
+    $groupHandler->deleteGroup($_GET['id']);
 
-$_SESSION['success_message'] = "Group berhasil dihapus!";
-header("Location: data-group.php");
-exit();
+    echo json_encode([
+        "success" => true,
+        "message" => "Group berhasil dihapus!"
+    ]);
+} catch (Exception $e) {
+    echo json_encode([
+        "success" => false,
+        "message" => $e->getMessage()
+    ]);
+}
+exit;
