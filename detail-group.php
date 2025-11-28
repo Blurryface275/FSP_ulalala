@@ -202,11 +202,27 @@ if ($mysqli->connect_errno) {
 
                                 if ($result_activities && $result_activities->num_rows > 0) {
                                     echo "<table border='1' cellspacing='0' style='width:100%; border-collapse: collapse;'>";
-                                    echo "<thead><tr><th>Event</th><th>Tanggal & Waktu</th></tr></thead><tbody>";
+                                    echo "<thead><tr><th>Event</th><th>Tanggal & Waktu</th><th colspan='2'>Aksi</th></tr></thead><tbody>";
                                     while ($activity = $result_activities->fetch_assoc()) {
                                         echo "<tr>";
                                         echo "<td>" . htmlspecialchars($activity['judul']) . "</td>";
                                         echo "<td>" . htmlspecialchars($activity['tanggal']) . "</td>";
+                                        echo "<td><a href='detail-event.php?id=" . $activity['judul'] . "'>Lihat Detail</a></td>";
+
+                                        // tombol hapus event jika dosen yang membuat grup ini
+                                        if ($_SESSION['username'] == $group['username_pembuat']) {
+                                            echo "<td>
+                                                        <button class='delete-event-btn' type='button' 
+                                                                onclick=\"if(confirm('Yakin ingin menghapus event ini?')) {
+                                                                    window.location.href='delete-event.php?id={$judul}&group_id={$group_id}';
+                                                                }\">
+                                                            Hapus Event
+                                                        </button>
+                                                    </td>";
+                                        } else {
+                                            echo ""; // kosong jika bukan dosen yg login
+                                        }
+
                                         echo "</tr>";
                                     }
                                     echo "</tbody></table>";
@@ -288,7 +304,54 @@ if ($mysqli->connect_errno) {
                 $('#tab-content-' + tab).addClass('active');
             });
 
-            // FIX: handler cukup sekali
+            // Hapus member
+            $(document).on('click', '.remove-member-btn', function() {
+                const button = $(this);
+                const username = $(this).data('username');
+                const groupId = <?= isset($group_id) ? $group_id : 'null' ?>;
+
+                if (!groupId) {
+                    alert("Group ID tidak valid.");
+                    return;
+                }
+
+                $.ajax({
+                    url: 'remove-member.php',
+                    method: 'POST',
+                    data: {
+                        username: username,
+                        group_id: groupId
+                    },
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response.success) {
+                            // Hapus elemen member dari daftar
+                            button.closest('.member-item').remove();
+                            alert("Anggota berhasil dihapus");
+                            // Tambah di member-default-list
+                            $('.member-default-list').append(
+                                '<li id="student-' + username + '">' +
+                                '<div class="member-item-flex">' +
+                                username + // karena untuk mahasiswa, username = nrp
+                                ' <button class="add-member-btn" data-nrp="' + username + '" data-nama="(Nama Tidak Diketahui)">Tambah</button>' +
+                                '</div>' +
+                                '</li>'
+                            );
+
+                        } else {
+                            alert(response.message);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.log(xhr.responseText);
+                        alert("Terjadi kesalahan saat menghapus anggota.");
+                    }
+                });
+            });
+
+
+
+            // Button add member ke group
             $(document).on('click', '.add-member-btn', function() {
                 const button = $(this); // simpan tombol yang diklik
                 const nrp = $(this).data('nrp');
@@ -328,8 +391,9 @@ if ($mysqli->connect_errno) {
                                 '</div>' +
                                 '</div>'
                             );
+                            button.closest('li').remove(); // hapus dari default-member-list
 
-                            $('li#student-' + nrp).remove(); // hapus dari daftar default (li di member-default-list)
+
                             alert("Anggota berhasil ditambahkan");
                         } else {
                             alert(response.message);
@@ -340,6 +404,40 @@ if ($mysqli->connect_errno) {
                         alert("Terjadi kesalahan saat menambahkan anggota.");
                     }
                 });
+            });
+
+            // Delete Event
+            $(document).on('click', '.delete-event-btn', function() {
+                const button = $(this);
+                const judul = button.closest('tr').find('td:first').text();
+                const groupId = <?= $group_id ?>;
+
+                if (confirm('Yakin ingin menghapus event ini?')) {
+                    $.ajax({
+                        url: 'delete-event.php',
+                        method: 'GET',
+                        data: {
+                            id: judul,
+                            group_id: groupId
+                        },
+                        dataType: 'json',
+                        success: function(response) {
+                            if (response.success) {
+                                // Hapus elemen event dari daftar
+                                button.closest('tr').remove();
+                                alert("Event berhasil dihapus");
+                            } else {
+                                alert(response.message);
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            console.log(xhr.responseText);
+                            alert("Terjadi kesalahan saat menghapus event.");
+                        }
+                    });
+                }
+
+
             });
 
             // --- Buka modal ---
@@ -412,8 +510,8 @@ if ($mysqli->connect_errno) {
                 <option value="Privat" <?= $group['jenis'] == "Privat" ? "selected" : "" ?>>Privat</option>
             </select>
 
-            <button id="saveGroupEdit" 
-            style="  
+            <button id="saveGroupEdit"
+                style="  
             background: #8b597b;
             color: #ffe2db;
             border: none;
