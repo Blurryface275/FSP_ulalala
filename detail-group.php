@@ -196,9 +196,12 @@ if ($mysqli->connect_errno) {
                                         // Tampilkan nama + nrp/npk
                                         echo htmlspecialchars($member['nama_member']) . " (" . htmlspecialchars($member['id_anggota']) . ")";
 
-                                        // Tampilkan tombol Hapus hanya jika user adalah dosen/admin & bukan diri sendiri
-                                        if (($_SESSION['role'] === 'dosen' || $_SESSION['isadmin'] == 1) && $member['username_login'] !== $_SESSION['username']) {
-                                            echo "<button class='remove-member-btn' data-username='" . htmlspecialchars($member['username_login']) . "'>Hapus</button>";
+                                        // Tampilkan tombol Hapus hanya jika user adalah dosen atau admin dan pembuat grup
+                                        if (($_SESSION['role'] === 'dosen' || $_SESSION['isadmin'] == 1) && $group['username_pembuat'] == $_SESSION['username']) {
+                                            echo "<button class='remove-member-btn'
+                                                    data-username='" . htmlspecialchars($member['username_login']) . "'
+                                                    data-nrp='" . htmlspecialchars($member['id_anggota']) . "'
+                                                    data-nama='" . htmlspecialchars($member['nama_member']) . "'>Hapus</button>";
                                         }
 
                                         echo "</div>"; // tutup .member-item-flex
@@ -274,6 +277,7 @@ if ($mysqli->connect_errno) {
         </div> <!-- .content-box -->
 
         <!-- Box untuk add member dengan fitur search-->
+
         <div class="content-box add-member-box" style="margin-right: 20%;">
             <h2>Tambah Anggota</h2>
             <label for="search-member">Cari Mahasiswa:</label>
@@ -304,6 +308,7 @@ if ($mysqli->connect_errno) {
             </div>
 
         </div>
+
     </div> <!-- .main-content-wrapper -->
     <script>
         const currentUserRole = '<?= $_SESSION['role'] ?>';
@@ -332,6 +337,7 @@ if ($mysqli->connect_errno) {
                 const button = $(this);
                 const username = $(this).data('username');
                 const groupId = <?= isset($group_id) ? $group_id : 'null' ?>;
+                const nrp = $(this).data('nrp');
 
                 if (!groupId) {
                     alert("Group ID tidak valid.");
@@ -343,7 +349,8 @@ if ($mysqli->connect_errno) {
                     method: 'POST',
                     data: {
                         username: username,
-                        group_id: groupId
+                        group_id: groupId,
+
                     },
                     dataType: 'json',
                     success: function(response) {
@@ -352,14 +359,16 @@ if ($mysqli->connect_errno) {
                             button.closest('.member-item').remove();
                             alert("Anggota berhasil dihapus");
                             // Tambah di member-default-list
-                            $('.member-default-list').append(
-                                '<li id="student-' + username + '">' +
-                                '<div class="member-item-flex">' +
-                                username + // karena untuk mahasiswa, username = nrp
-                                ' <button class="add-member-btn" data-nrp="' + username + '" data-nama="(Nama Tidak Diketahui)">Tambah</button>' +
-                                '</div>' +
-                                '</li>'
-                            );
+                            if ($('.member-default-list').length) { // tujuan ifnya buat kalo box add member tersedia soalnya box add member cuma muncul kalo dosen/admin liat detail group
+                                $('.member-default-list').append(
+                                    '<li id="student-' + nrp + '">' +
+                                    '<div class="member-item-flex">' +
+                                    nama + ' (' + nrp + ')' +
+                                    '<button class="add-member-btn" data-nrp="' + nrp + '" data-nama="' + nama + '">Tambah</button>' +
+                                    '</div>' +
+                                    '</li>'
+                                );
+                            }
 
                         } else {
                             alert(response.message);
@@ -384,9 +393,6 @@ if ($mysqli->connect_errno) {
                     alert("Group ID tidak valid.");
                     return;
                 }
-
-
-
                 $.ajax({
                     url: 'add-member.php',
                     method: 'POST',
@@ -398,12 +404,16 @@ if ($mysqli->connect_errno) {
                     dataType: 'json',
                     success: function(response) {
                         if (response.success) {
+                            const username = response.username; // dapatkan username dari response
                             let tombolHapus = '';
                             // Cek apakah user adalah dosen atau admin
                             const isAdmin = <?= isset($_SESSION['isadmin']) && $_SESSION['isadmin'] == 1 ? 'true' : 'false' ?>;
-                            if (currentUserRole === 'dosen' || isAdmin) {
-                                // Gunakan nrp sebagai username (karena untuk mahasiswa, username = nrp)
-                                tombolHapus = '<button class="remove-member-btn" data-username="' + nrp + '">Hapus</button>';
+                            // cek apakah user adalah pemilik group
+                            if (($_SESSION['role'] === 'dosen' || $_SESSION['isadmin'] == 1) && $group['username_pembuat'] == $_SESSION['username']) {
+                                tombolHapus = '<button class="remove-member-btn" ' +
+                                    'data-username="' + username + '" ' +
+                                    'data-nrp="' + nrp + '" ' +
+                                    'data-nama="' + nama + '">Hapus</button>';
                             }
 
                             $('.member-list').append(
