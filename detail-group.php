@@ -276,38 +276,40 @@ if ($mysqli->connect_errno) {
             ?>
         </div> <!-- .content-box -->
 
-        <!-- Box untuk add member dengan fitur search-->
+        <!-- Hanya tampilkan kalau username yang login sama dengan username pembuat grup -->
+        <?php if ($_SESSION['username'] === $group['username_pembuat']) : ?>
+            <!-- Box untuk add member dengan fitur search-->
+            <div class="content-box add-member-box" style="margin-right: 20%;">
+                <h2>Tambah Anggota</h2>
+                <label for="search-member">Cari Mahasiswa:</label>
+                <input type="text" name="search-member" id="search-member" placeholder="Masukkan NRP ...">
+                <div id="search-results">
+                    <!-- Munculin hasil pencarian di sini -->
+                    <?php
+                    // Menampilkan 10 mahasiswa pertama 
+                    $query_search = "SELECT m.nrp, m.nama FROM mahasiswa m JOIN akun a ON m.nrp = a.nrp_mahasiswa LEFT JOIN member_grup mg ON a.username = mg.username AND mg.idgrup=? WHERE mg.username IS NULL ORDER BY m.nama ASC LIMIT 10";
+                    $result_search = $mysqli->prepare($query_search);
+                    $result_search->bind_param("i", $group_id);
+                    $result_search->execute();
+                    $result_search = $result_search->get_result();
+                    if ($result_search->num_rows > 0) {
+                        echo "<ul class='member-default-list'>";
 
-        <div class="content-box add-member-box" style="margin-right: 20%;">
-            <h2>Tambah Anggota</h2>
-            <label for="search-member">Cari Mahasiswa:</label>
-            <input type="text" name="search-member" id="search-member" placeholder="Masukkan NRP ...">
-            <div id="search-results">
-                <!-- Munculin hasil pencarian di sini -->
-                <?php
-                // Menampilkan 10 mahasiswa pertama 
-                $query_search = "SELECT m.nrp, m.nama FROM mahasiswa m JOIN akun a ON m.nrp = a.nrp_mahasiswa LEFT JOIN member_grup mg ON a.username = mg.username AND mg.idgrup=? WHERE mg.username IS NULL ORDER BY m.nama ASC LIMIT 10";
-                $result_search = $mysqli->prepare($query_search);
-                $result_search->bind_param("i", $group_id);
-                $result_search->execute();
-                $result_search = $result_search->get_result();
-                if ($result_search->num_rows > 0) {
-                    echo "<ul class='member-default-list'>";
-
-                    while ($student = $result_search->fetch_assoc()) {
-                        echo "<li id='student-" . htmlspecialchars($student['nrp']) . "'>";
-                        echo "<div class='member-item-flex'>";
-                        echo htmlspecialchars($student['nama']) . " (" . htmlspecialchars($student['nrp']) . ")";
-                        echo "<button class='add-member-btn' data-nrp='" . htmlspecialchars($student['nrp']) . "' data-nama='" . htmlspecialchars($student['nama']) . "'>Tambah</button>";
-                        echo "</div>";
-                        echo "</li>";
+                        while ($student = $result_search->fetch_assoc()) {
+                            echo "<li id='student-" . htmlspecialchars($student['nrp']) . "'>";
+                            echo "<div class='member-item-flex'>";
+                            echo htmlspecialchars($student['nama']) . " (" . htmlspecialchars($student['nrp']) . ")";
+                            echo "<button class='add-member-btn' data-nrp='" . htmlspecialchars($student['nrp']) . "' data-nama='" . htmlspecialchars($student['nama']) . "'>Tambah</button>";
+                            echo "</div>";
+                            echo "</li>";
+                        }
+                        echo "</ul>";
                     }
-                    echo "</ul>";
-                }
-                ?>
-            </div>
+                    ?>
+                </div>
 
-        </div>
+            </div>
+        <?php endif; ?>
 
     </div> <!-- .main-content-wrapper -->
     <script>
