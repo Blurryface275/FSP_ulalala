@@ -118,23 +118,24 @@ $res = $group->displayGroup($limit, $offset, $user_role);
             echo "<td>" . $row['nama'] . "</td>";
             echo "<td>";
 
-            if ($is_admin == 1 || $user_role == 'dosen') {
-                echo "<a href=\"detail-group.php?id=" . $idgrup . "\">Kelola Grup</a>";
-            } elseif ($user_role == 'mahasiswa') {
-                if ($is_member) {
-                    echo "<a href=\"detail-group.php?id=" . $idgrup . "\">Masuk Grup</a>";
-                } else {
-                    // Arahin ke join-group.php untuk input kode registrasi
-                    echo "<a href=\"detail-group.php?id=" . $idgrup . "\">Bergabung</a>"; 
-                }
-            } else {
-                // Fallback: Default Detail
-                echo "<a href=\"detail-group.php?id=" . $idgrup . "\">Detail</a>";
-            }
-
-            echo "</td>";
-            echo "</tr>";
+           if ($is_admin == 1 || $user_role == 'dosen') {
+        echo "<a href=\"detail-group.php?id=" . $idgrup . "\">Kelola Grup</a>";
+    } elseif ($user_role == 'mahasiswa') {
+        if ($is_member) {
+            // JIKA SUDAH BERGABUNG
+            echo "<a href=\"detail-group.php?id=" . $idgrup . "\">Lihat Grup</a>";
+        } else {
+            // JIKA BELUM BERGABUNG
+            echo "<a href=\"detail-group.php?id=" . $idgrup . "\">Masuk Grup</a>"; 
         }
+    } else {
+        // Fallback: Default Detail
+        echo "<a href=\"detail-group.php?id=" . $idgrup . "\">Detail</a>";
+    }
+
+    echo "</td>";
+    echo "</tr>";
+}
         echo "</table>";
 
         // --- Tampilan ---
