@@ -41,9 +41,6 @@ unset($_SESSION['error_message']);
 <body>
     <div class="box">
         <h2>Tambah Group Baru</h2><br><br>
-        <a href="index.php" id="tombol-panah-img">
-            <img src="93634.png" alt="Ke Data Dosen">
-        </a>
 
         <?php if ($success_message): ?>
             <div class="alert alert-success">

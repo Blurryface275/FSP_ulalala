@@ -45,8 +45,7 @@ if (isset($_SESSION['error_message'])) {
             <div id="error-warning"><?= $error_message ?></div>
         <?php endif; ?>
         <h1>Tambah Dosen</h1>
-         <a href="data-dosen.php" id="tombol-panah-img">
-        <img src="93634.png" alt="Ke Data Dosen"> </a>
+    
        
         <form action="dosen-process.php" method="POST" enctype="multipart/form-data">
             <p>

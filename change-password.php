@@ -58,10 +58,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body>
     <div class="box">
         <h2>Ubah Kata Sandi</h2>
-        <a href="index.php" id="tombol-panah-img">
-            <img src="93634.png" alt="Ke Data Dosen"> 
-        </a>
-
         <!-- Tampilkan pesan error/sukses -->
         <?php if (!empty($message)) echo $message; ?>
 
