@@ -5,6 +5,9 @@ if (!isset($_SESSION['username'])) {
     header('Location: login.php');
     exit(); 
 }
+
+$user_role = $_SESSION['role'] ?? ''; 
+$is_admin = $_SESSION['isadmin'] ?? 0;
 ?>
 <!DOCTYPE html>
 <?php
@@ -42,20 +45,40 @@ if (!isset($_SESSION['username'])) {
 </head>
 
 <body>
-    <div id="sidebar" class="sidebar">
-        <div style="display: flex; align-items: center; gap: 10px; padding: 0 20px; margin-bottom: 20px;">
-            <div class="toggle-btn" id="toggle-btn">☰</div>
-        </div>
-        <ul>
+   <div id="sidebar" class="sidebar">
+    <div style="display: flex; align-items: center; gap: 10px; padding: 0 20px; margin-bottom: 20px;">
+        <div class="toggle-btn" id="toggle-btn">☰</div>
+    </div>
+    <ul>
+        <?php
+        // Admin
+        if ($is_admin == 1): ?>
             <li><a href="data-dosen.php">Data Dosen</a></li>
             <li><a href="data-mahasiswa.php">Data Mahasiswa</a></li>
             <li><a href="insert-dosen.php">Tambah Dosen</a></li>
             <li><a href="insert-mahasiswa.php">Tambah Mahasiswa</a></li>
-            <li><a href="change-password.php"> Ubah Password</a></li> 
-            <li><a href="logout.php"> Logout</a></li>
-        </ul>
-    </div>
-    
+            <li><a href="data-group.php">Data Group</a></li>
+            <li><a href="insert-group.php">Tambah Group</a></li>
+
+        <?php
+        // Dosen
+        elseif ($user_role == 'dosen'): ?>
+
+            <li><a href="data-group.php">Data Group</a></li>
+            <li><a href="insert-group.php">Tambah Group</a></li>
+
+        <?php
+        // Mahasiswa
+        elseif ($user_role == 'mahasiswa'): ?>
+
+            <li><a href="data-group.php">Data Group</a></li>
+
+        <?php endif; ?>
+
+        <li><a href="change-password.php">Ubah Password</a></li>
+        <li><a href="logout.php">Logout</a></li>
+    </ul>
+</div>
     <div class="content-box">
     <h1>Data Dosen</h1>
     <?php
