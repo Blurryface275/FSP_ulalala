@@ -60,19 +60,6 @@ $is_admin = $_SESSION['isadmin'] ?? 0;
             <li><a href="data-group.php">Data Group</a></li>
             <li><a href="insert-group.php">Tambah Group</a></li>
 
-        <?php
-        // Dosen
-        elseif ($user_role == 'dosen'): ?>
-
-            <li><a href="data-group.php">Data Group</a></li>
-            <li><a href="insert-group.php">Tambah Group</a></li>
-
-        <?php
-        // Mahasiswa
-        elseif ($user_role == 'mahasiswa'): ?>
-
-            <li><a href="data-group.php">Data Group</a></li>
-
         <?php endif; ?>
 
         <li><a href="change-password.php">Ubah Password</a></li>
