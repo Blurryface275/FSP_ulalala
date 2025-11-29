@@ -1,6 +1,5 @@
 <?php
-require_once("parent.php");
-
+ require_once("parent.php"); 
 class group
 {
     private $mysqli;
@@ -9,29 +8,65 @@ class group
     {
         $this->mysqli = $mysqli;
     }
-
-    // Ambil semua group
-// Di dalam class group di file class/group.php
-
-public function displayGroup($limit, $offset, $role = 'unknown') 
-{
-    // Cek apakah user adalah mahasiswa
-    $filter_clause = "";
-    if ($role === 'mahasiswa') {
-        // Jika mahasiswa, hanya tampilkan grup yang publik
-        $filter_clause = " WHERE jenis = 'Publik' ";
+    /*
+      Cek apa user udah jadi member dari grup tertentu
+     */
+    public function isMember($username, $idgrup)
+    {
+        $sql = "SELECT idgrup FROM member_grup WHERE username = ? AND idgrup = ?";
+        $stmt = $this->mysqli->prepare($sql);
+        $stmt->bind_param("si", $username, $idgrup);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $stmt->close();
+        
+        // Kalo jumlah baris > 0, berarti user sudah member
+        return $result->num_rows > 0;
     }
 
-    // Gabungkan query dengan filter (jika ada)
-    $sql = "SELECT idgrup, nama FROM grup " . $filter_clause . " ORDER BY nama asc LIMIT ? OFFSET ?";
-    
-    $stmt = $this->mysqli->prepare($sql);
-    $stmt->bind_param("ii", $limit, $offset);
-    $stmt->execute();
-    return $stmt->get_result();
-}
+    /*
+      Namipilin grup publik aja kalau Mahasiswa
+     */
+    public function displayGroup($limit, $offset, $role = 'unknown') 
+    {
+        $filter_clause = "";
+        if ($role === 'mahasiswa') {
+            $filter_clause = " WHERE jenis = 'Publik' ";
+        }
 
-    // jadi private karena dipakai dalam class ini saja
+        $sql = "SELECT idgrup, nama FROM grup " . $filter_clause . " ORDER BY nama asc LIMIT ? OFFSET ?";
+        
+        $stmt = $this->mysqli->prepare($sql);
+        $stmt->bind_param("ii", $limit, $offset);
+        $stmt->execute();
+        return $stmt->get_result();
+    }
+
+    /*
+      Ngitung total group dari filter role.
+     */
+    public function getTotalGroups($role = 'unknown')
+    {
+        $filter_clause = "";
+        if ($role === 'mahasiswa') {
+            $filter_clause = " WHERE jenis = 'Publik' ";
+        }
+        
+        $sql = "SELECT COUNT(*) as total FROM grup" . $filter_clause;
+        $result = $this->mysqli->query($sql);
+        
+        if (!$result) {
+            // Menangani error query
+            return 0;
+        }
+        
+        $row = $result->fetch_assoc();
+        return $row['total'];
+    }
+
+    /*
+      Ngebuat kode registrasi acak buat group.
+     */
     private function generateRegistrationCode($length = 8)
     {
         $characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -42,14 +77,16 @@ public function displayGroup($limit, $offset, $role = 'unknown')
         return $code;
     }
 
-    //insert group
+    /*
+      Insert group baru ke tabel grup dan nambahin pembuat sebagai member pertama.
+     */
     public function insertGroupBaru($group_name, $description, $creator_username, $group_type)
     {
         $registration_code = $this->generateRegistrationCode(8);
         $current_datetime = date('Y-m-d H:i:s');
 
         $sql = "INSERT INTO grup (nama, deskripsi, kode_pendaftaran, username_pembuat, tanggal_pembentukan, jenis) 
-            VALUES (?, ?, ?, ?, ?, ?)";
+                VALUES (?, ?, ?, ?, ?, ?)";
 
         $stmt = $this->mysqli->prepare($sql);
         $stmt->bind_param("ssssss", $group_name, $description, $registration_code, $creator_username, $current_datetime, $group_type);
@@ -72,16 +109,18 @@ public function displayGroup($limit, $offset, $role = 'unknown')
         ];
     }
 
-    //hapus group
+    /*
+     Hapus group serta semua membernya.
+     */
     public function deleteGroup($idgrup)
     {
-        // hapus member grup 
+        // Hapus member grup dulul (agar ga ngelanggar FK)
         $sql_member = "DELETE FROM member_grup WHERE idgrup = ?";
         $stmt_member = $this->mysqli->prepare($sql_member);
         $stmt_member->bind_param("i", $idgrup);
         $stmt_member->execute();
 
-        // hapus group
+        // Hapus group
         $sql = "DELETE FROM grup WHERE idgrup = ?";
         $stmt = $this->mysqli->prepare($sql);
         $stmt->bind_param("i", $idgrup);
@@ -93,7 +132,9 @@ public function displayGroup($limit, $offset, $role = 'unknown')
         return true;
     }
 
-    //update group
+    /*
+     Update detail group.
+     */
     public function updateGroup($idgroup, $group_name, $description, $group_type)
     {
         $sql = "UPDATE grup SET nama = ?, deskripsi = ?, jenis = ? WHERE idgrup = ?";
@@ -107,35 +148,12 @@ public function displayGroup($limit, $offset, $role = 'unknown')
         return true;
     }
 
-
-   // Di dalam class group di file class/group.php
-
-public function getTotalGroups($role = 'unknown')
-{
-    // Cek apakah user adalah mahasiswa
-    $filter_clause = "";
-    if ($role === 'mahasiswa') {
-        // Jika mahasiswa, hitung hanya grup yang publik
-        $filter_clause = " WHERE jenis = 'Publik' ";
-    }
-    
-    // Gabungkan query dengan filter
-    $sql = "SELECT COUNT(*) as total FROM grup" . $filter_clause;
-    $result = $this->mysqli->query($sql);
-    
-    if (!$result) {
-        // Menangani error query (praktik baik)
-        return 0;
-    }
-    
-    $row = $result->fetch_assoc();
-    return $row['total'];
-}
-
-    // Insert Member Grup
+    /*
+      Insert Member Grup berdasarkan NRP
+     */
     public function insertMemberGrup($idgrup, $nrp)
     {
-        // 1. Cari username dari tabel akun
+        // Cari username dari tabel akun
         $sql = "SELECT username FROM akun WHERE nrp_mahasiswa = ?";
         $stmt = $this->mysqli->prepare($sql);
         $stmt->bind_param("s", $nrp);
@@ -149,7 +167,7 @@ public function getTotalGroups($role = 'unknown')
         $row = $result->fetch_assoc();
         $username = $row['username'];
 
-        // 2. Insert ke member_grup
+        // Insert ke member_grup
         $sqlInsert = "INSERT INTO member_grup (idgrup, username) VALUES (?, ?)";
         $stmtInsert = $this->mysqli->prepare($sqlInsert);
         $stmtInsert->bind_param("is", $idgrup, $username);
@@ -165,8 +183,9 @@ public function getTotalGroups($role = 'unknown')
         return $stmtInsert->affected_rows > 0;
     }
 
-
-    //hapus member
+    /*
+      Hapus member dari grup.
+     */
     public function deleteMemberGrup($idgrup, $username)
     {
         $sql = "DELETE FROM member_grup WHERE idgrup = ? AND username = ?";
@@ -177,7 +196,7 @@ public function getTotalGroups($role = 'unknown')
             throw new Exception("Error saat menghapus member grup: " . $stmt->error);
         }
 
-        // Mengembalikan TRUE jika ada 1 baris atau lebih yang terhapus
+        // Mengembalikan TRUE jika ada 1 baris atau lebih yang kehapus
         return $stmt->affected_rows > 0;
     }
 }
