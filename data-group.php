@@ -95,14 +95,16 @@ if (isset($_SESSION['success_message'])) {
         if (!empty($success_message)) {
             echo "<div id='error-warning'>", $success_message, "</div>";
         }
+        // --- START PERBAIKAN LOGIKA QUERY ---
+        $user_role = $_SESSION['role'] ?? 'unknown'; // Ambil role pengguna
 
         $limit = 5; // jumlah grup per halaman
         $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
         $offset = ($page - 1) * $limit;
-        $totalGroups = $group->getTotalGroups();
+        $totalGroups = $group->getTotalGroups($user_role);
         $totalPages = ceil($totalGroups / $limit);
 
-        $res = $group->displayGroup($limit, $offset);
+        $res = $group->displayGroup($limit, $offset,$user_role);
         echo "<table border=1 cell-spacing=0><th>ID Group</th> <th>Nama Group</th> <th>Aksi</th>";
         while ($row = $res->fetch_assoc()) {
             echo "<tr>";

@@ -11,14 +11,25 @@ class group
     }
 
     // Ambil semua group
-    public function displayGroup($limit, $offset)
-    {
-        $sql = "SELECT * FROM grup ORDER BY nama asc limit ? offset ?";
-        $stmt = $this->mysqli->prepare($sql);
-        $stmt->bind_param("ii", $limit, $offset);
-        $stmt->execute();
-        return $stmt->get_result();
+// Di dalam class group di file class/group.php
+
+public function displayGroup($limit, $offset, $role = 'unknown') 
+{
+    // Cek apakah user adalah mahasiswa
+    $filter_clause = "";
+    if ($role === 'mahasiswa') {
+        // Jika mahasiswa, hanya tampilkan grup yang publik
+        $filter_clause = " WHERE jenis = 'Publik' ";
     }
+
+    // Gabungkan query dengan filter (jika ada)
+    $sql = "SELECT idgrup, nama FROM grup " . $filter_clause . " ORDER BY nama asc LIMIT ? OFFSET ?";
+    
+    $stmt = $this->mysqli->prepare($sql);
+    $stmt->bind_param("ii", $limit, $offset);
+    $stmt->execute();
+    return $stmt->get_result();
+}
 
     // jadi private karena dipakai dalam class ini saja
     private function generateRegistrationCode($length = 8)
@@ -97,14 +108,29 @@ class group
     }
 
 
-    // Hitung total grup
-    public function getTotalGroups()
-    {
-        $sql = "SELECT COUNT(idgrup) as total FROM grup";
-        $result = $this->mysqli->query($sql);
-        $row = $result->fetch_assoc();
-        return $row['total'];
+   // Di dalam class group di file class/group.php
+
+public function getTotalGroups($role = 'unknown')
+{
+    // Cek apakah user adalah mahasiswa
+    $filter_clause = "";
+    if ($role === 'mahasiswa') {
+        // Jika mahasiswa, hitung hanya grup yang publik
+        $filter_clause = " WHERE jenis = 'Publik' ";
     }
+    
+    // Gabungkan query dengan filter
+    $sql = "SELECT COUNT(*) as total FROM grup" . $filter_clause;
+    $result = $this->mysqli->query($sql);
+    
+    if (!$result) {
+        // Menangani error query (praktik baik)
+        return 0;
+    }
+    
+    $row = $result->fetch_assoc();
+    return $row['total'];
+}
 
     // Insert Member Grup
     public function insertMemberGrup($idgrup, $nrp)
