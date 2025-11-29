@@ -5,6 +5,9 @@ if (!isset($_SESSION['username'])) {
     header('Location: login.php');
     exit(); 
 }
+
+$user_role = $_SESSION['role'] ?? ''; 
+$is_admin = $_SESSION['isadmin'] ?? 0;
 ?>
 <!DOCTYPE html>
 <?php
@@ -22,7 +25,7 @@ if (isset($_SESSION['error_message'])) {
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tambah Mahasiswa</title>
-    <link rel="stylesheet" href="login-style.css">
+      <link rel="stylesheet" href="style.css">
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
@@ -38,8 +41,28 @@ if (isset($_SESSION['error_message'])) {
 </head>
 
 <body>
+<div id="sidebar" class="sidebar">
+    <div style="display: flex; align-items: center; gap: 10px; padding: 0 20px; margin-bottom: 20px;">
+        <div class="toggle-btn" id="toggle-btn">☰</div>
+    </div>
+    <ul>
+        <?php
+        // Admin
+        if ($is_admin == 1): ?>
+            <li><a href="data-dosen.php">Data Dosen</a></li>
+            <li><a href="data-mahasiswa.php">Data Mahasiswa</a></li>
+            <li><a href="insert-dosen.php">Tambah Dosen</a></li>
+            <li><a href="insert-mahasiswa.php">Tambah Mahasiswa</a></li>
+            <li><a href="data-group.php">Data Group</a></li>
+            <li><a href="insert-group.php">Tambah Group</a></li>
 
-    <div class="box">
+    
+        <?php endif; ?>
+    <li><a href="change-password.php">Ubah Password</a></li>
+        <li><a href="logout.php">Logout</a></li>
+    </ul>
+</div>
+      <div class="box">
         <!-- Semisal error message itu ada -->
         <?php if (!empty($error_message)): ?> 
             <div class="error-warning"><?= $error_message ?></div>
@@ -86,7 +109,7 @@ if (isset($_SESSION['error_message'])) {
             <button type="submit" name="submit">Insert</button>
 
         </form>
-    </div>
+        </div>
 </body>
 
 </html>

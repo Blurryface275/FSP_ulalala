@@ -6,6 +6,10 @@ $error_message = $_SESSION['error_message'] ?? null;
 
 unset($_SESSION['success_message']);
 unset($_SESSION['error_message']);
+
+
+$user_role = $_SESSION['role'] ?? ''; 
+$is_admin = $_SESSION['isadmin'] ?? 0;
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -14,7 +18,7 @@ unset($_SESSION['error_message']);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tambah Group</title>
-    <link rel="stylesheet" href="login-style.css">
+    <link rel="stylesheet" href="style.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
         .alert {
@@ -39,6 +43,27 @@ unset($_SESSION['error_message']);
 </head>
 
 <body>
+    <div id="sidebar" class="sidebar">
+    <div style="display: flex; align-items: center; gap: 10px; padding: 0 20px; margin-bottom: 20px;">
+        <div class="toggle-btn" id="toggle-btn">☰</div>
+    </div>
+    <ul>
+        <?php
+        // Admin
+        if ($is_admin == 1): ?>
+            <li><a href="data-dosen.php">Data Dosen</a></li>
+            <li><a href="data-mahasiswa.php">Data Mahasiswa</a></li>
+            <li><a href="insert-dosen.php">Tambah Dosen</a></li>
+            <li><a href="insert-mahasiswa.php">Tambah Mahasiswa</a></li>
+            <li><a href="data-group.php">Data Group</a></li>
+            <li><a href="insert-group.php">Tambah Group</a></li>
+
+    
+        <?php endif; ?>
+    <li><a href="change-password.php">Ubah Password</a></li>
+        <li><a href="logout.php">Logout</a></li>
+    </ul>
+</div>
     <div class="box">
         <h2>Tambah Group Baru</h2><br><br>
 
