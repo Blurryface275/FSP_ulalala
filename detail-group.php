@@ -283,12 +283,9 @@ $can_view_full_detail = $is_member ||
                                     <p class="code-label"><strong>Kode Registrasi:</strong></p>
                                     <span id="reg-code" class="registration-code">
                                         <?php 
-                                        // Hanya tampilkan kode registrasi jika user adalah pembuat/admin/dosen
-                                        if ($can_edit_group) {
+                                       //tampilin kodenya
                                             echo htmlspecialchars($group['kode_pendaftaran']);
-                                        } else {
-                                            echo "******"; // Sembunyikan untuk member biasa
-                                        }
+                                       
                                         ?>
                                     </span>
                                 </div>
