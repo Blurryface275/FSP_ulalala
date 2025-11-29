@@ -1,12 +1,12 @@
 <?php
-    session_start();
-if (!isset($_SESSION['username'])) { 
+session_start();
+if (!isset($_SESSION['username'])) {
     $_SESSION['error_message'] = "Anda harus login dahulu!";
     header('Location: login.php');
-    exit(); 
+    exit();
 }
 
-$user_role = $_SESSION['role'] ?? ''; 
+$user_role = $_SESSION['role'] ?? '';
 $is_admin = $_SESSION['isadmin'] ?? 0;
 ?>
 
@@ -15,7 +15,7 @@ $is_admin = $_SESSION['isadmin'] ?? 0;
 <?php
 if (isset($_SESSION['error_message'])) {
     $error_message = $_SESSION['error_message'] ?? '';
-    
+
 
     unset($_SESSION['error_message']);
 }
@@ -27,7 +27,7 @@ if (isset($_SESSION['error_message'])) {
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tambah Dosen</title>
-  <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="login-style.css">
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
@@ -43,64 +43,66 @@ if (isset($_SESSION['error_message'])) {
 </head>
 
 <body>
-   <div id="sidebar" class="sidebar">
-    <div style="display: flex; align-items: center; gap: 10px; padding: 0 20px; margin-bottom: 20px;">
-        <div class="toggle-btn" id="toggle-btn">☰</div>
+    <div id="sidebar" class="sidebar">
+        <div style="display: flex; align-items: center; gap: 10px; padding: 0 20px; margin-bottom: 20px;">
+            <div class="toggle-btn" id="toggle-btn">☰</div>
+        </div>
+        <ul>
+            <?php
+            // Admin
+            if ($is_admin == 1): ?>
+                <li><a href="data-dosen.php">Data Dosen</a></li>
+                <li><a href="data-mahasiswa.php">Data Mahasiswa</a></li>
+                <li><a href="insert-dosen.php">Tambah Dosen</a></li>
+                <li><a href="insert-mahasiswa.php">Tambah Mahasiswa</a></li>
+                <li><a href="data-group.php">Data Group</a></li>
+                <li><a href="insert-group.php">Tambah Group</a></li>
+
+
+            <?php endif; ?>
+
+            <li><a href="change-password.php">Ubah Password</a></li>
+            <li><a href="logout.php">Logout</a></li>
+        </ul>
     </div>
-    <ul>
-        <?php
-        // Admin
-        if ($is_admin == 1): ?>
-            <li><a href="data-dosen.php">Data Dosen</a></li>
-            <li><a href="data-mahasiswa.php">Data Mahasiswa</a></li>
-            <li><a href="insert-dosen.php">Tambah Dosen</a></li>
-            <li><a href="insert-mahasiswa.php">Tambah Mahasiswa</a></li>
-            <li><a href="data-group.php">Data Group</a></li>
-            <li><a href="insert-group.php">Tambah Group</a></li>
+    <div class="main-content">
+        <div class="box">
+            <!-- Semisal error message itu ada -->
+            <?php if (!empty($error_message)): ?>
+                <div id="error-warning"><?= $error_message ?></div>
+            <?php endif; ?>
+            <h1>Tambah Dosen</h1>
 
-    
-        <?php endif; ?>
 
-        <li><a href="change-password.php">Ubah Password</a></li>
-        <li><a href="logout.php">Logout</a></li>
-    </ul>
-</div>
-    <div class="box">
-         <!-- Semisal error message itu ada -->
-        <?php if (!empty($error_message)): ?> 
-            <div id="error-warning"><?= $error_message ?></div>
-        <?php endif; ?>
-        <h1>Tambah Dosen</h1>
-    
-       
-        <form action="dosen-process.php" method="POST" enctype="multipart/form-data">
-            <p>
-                <label for="nama">Nama : </label>
-                <input type="text" name="nama" id="nama">
-            </p>
-            <p>
-                <label for="npk">NPK : </label>
-                <input type="text" name="npk" id="npk">
-            </p>
-            <p>
-                <label for="foto">Foto : </label>
-                <input type="file" name="foto" id="foto">
-            </p>
-            <p>
-                <label for="password">Password : </label> <!-- Karena password ditentukan oleh admin -->
-                <input type="password" name="password" id="password">
-            </p>
-            <button type="submit" name="submit">Insert</button> 
-        </form>
+            <form action="dosen-process.php" method="POST" enctype="multipart/form-data">
+                <p>
+                    <label for="nama">Nama : </label>
+                    <input type="text" name="nama" id="nama">
+                </p>
+                <p>
+                    <label for="npk">NPK : </label>
+                    <input type="text" name="npk" id="npk">
+                </p>
+                <p>
+                    <label for="foto">Foto : </label>
+                    <input type="file" name="foto" id="foto">
+                </p>
+                <p>
+                    <label for="password">Password : </label> <!-- Karena password ditentukan oleh admin -->
+                    <input type="password" name="password" id="password">
+                </p>
+                <button type="submit" name="submit">Insert</button>
+            </form>
+        </div>
     </div>
 </body>
 
 </html>
 <script>
-        $(function() {
-            $("#toggle-btn").on("click", function() {
-                $("#sidebar").toggleClass("collapsed");
-                $(".main-content").toggleClass("expanded");
-            });
+    $(function() {
+        $("#toggle-btn").on("click", function() {
+            $("#sidebar").toggleClass("collapsed");
+            $(".main-content").toggleClass("expanded");
         });
-    </script>   
+    });
+</script>

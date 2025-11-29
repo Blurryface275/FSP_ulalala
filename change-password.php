@@ -5,10 +5,10 @@ $mysqli = new mysqli("localhost", "root", "", "fullstack");
 if ($mysqli->connect_errno) {
     die("Koneksi gagal: " . $mysqli->connect_error);
 }
-if (!isset($_SESSION['username'])) { 
+if (!isset($_SESSION['username'])) {
     $_SESSION['error_message'] = "Anda harus login dahulu!";
     header('Location: login.php');
-    exit(); 
+    exit();
 }
 
 require_once("class/akun.php");
@@ -46,35 +46,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-$user_role = $_SESSION['role'] ?? ''; 
+$user_role = $_SESSION['role'] ?? '';
 $is_admin = $_SESSION['isadmin'] ?? 0;
 ?>
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ubah Password</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="login-style.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
+
 <body>
 
-<div id="sidebar" class="sidebar">
-    <div style="display: flex; align-items: center; gap: 10px; padding: 0 20px; margin-bottom: 20px;">
-        <div class="toggle-btn" id="toggle-btn">☰</div>
-    </div>
-    <ul>
-        <?php
-        // Admin
-        if ($is_admin == 1): ?>
-            <li><a href="data-dosen.php">Data Dosen</a></li>
-            <li><a href="data-mahasiswa.php">Data Mahasiswa</a></li>
-            <li><a href="insert-dosen.php">Tambah Dosen</a></li>
-            <li><a href="insert-mahasiswa.php">Tambah Mahasiswa</a></li>
-            <li><a href="data-group.php">Data Group</a></li>
-            <li><a href="insert-group.php">Tambah Group</a></li>
-       <?php
+    <div id="sidebar" class="sidebar">
+        <div style="display: flex; align-items: center; gap: 10px; padding: 0 20px; margin-bottom: 20px;">
+            <div class="toggle-btn" id="toggle-btn">☰</div>
+        </div>
+        <ul>
+            <?php
+            // Admin
+            if ($is_admin == 1): ?>
+                <li><a href="data-dosen.php">Data Dosen</a></li>
+                <li><a href="data-mahasiswa.php">Data Mahasiswa</a></li>
+                <li><a href="insert-dosen.php">Tambah Dosen</a></li>
+                <li><a href="insert-mahasiswa.php">Tambah Mahasiswa</a></li>
+                <li><a href="data-group.php">Data Group</a></li>
+                <li><a href="insert-group.php">Tambah Group</a></li>
+            <?php
             // Dosen
             elseif ($user_role == 'dosen'): ?>
 
@@ -92,33 +94,44 @@ $is_admin = $_SESSION['isadmin'] ?? 0;
             <li><a href="change-password.php">Ubah Password</a></li>
             <li><a href="logout.php">Logout</a></li>
         </ul>
-    
-     
-</div>
-    <div class="box">
-        <h2>Ubah Kata Sandi</h2>
-        <!-- Tampilkan pesan error/sukses -->
-        <?php if (!empty($message)) echo $message; ?>
 
-        <form method="POST">
-            <p>
-                <label for="old_password">Kata Sandi Lama:</label>
-                <input type="password" id="old_password" name="old_password" required>
-            </p>
-            <p>
-                <label for="new_password">Kata Sandi Baru:</label>
-                <input type="password" id="new_password" name="new_password" required>
-            </p>
-            <p>
-                <label for="confirm_password">Konfirmasi Kata Sandi Baru:</label>
-                <input type="password" id="confirm_password" name="confirm_password" required>
-            </p>
-            <button type="submit">Ubah Password</button>
-        </form>
 
-        <p style="text-align: center; margin-top: 15px;">
-            <a href="index.php">Kembali ke Homepage</a>
-        </p>
+    </div>
+    <div class="main-content">
+        <div class="box">
+            <h2>Ubah Kata Sandi</h2>
+            <!-- Tampilkan pesan error/sukses -->
+            <?php if (!empty($message)) echo $message; ?>
+
+            <form method="POST">
+                <p>
+                    <label for="old_password">Kata Sandi Lama:</label>
+                    <input type="password" id="old_password" name="old_password" required>
+                </p>
+                <p>
+                    <label for="new_password">Kata Sandi Baru:</label>
+                    <input type="password" id="new_password" name="new_password" required>
+                </p>
+                <p>
+                    <label for="confirm_password">Konfirmasi Kata Sandi Baru:</label>
+                    <input type="password" id="confirm_password" name="confirm_password" required>
+                </p>
+                <button type="submit">Ubah Password</button>
+            </form>
+
+            <p style="text-align: center; margin-top: 15px;">
+                <a href="index.php">Kembali ke Homepage</a>
+            </p>
+        </div>
     </div>
 </body>
+
 </html>
+<script>
+    $(function() {
+        $("#toggle-btn").on("click", function() {
+            $("#sidebar").toggleClass("collapsed");
+            $(".main-content").toggleClass("expanded");
+        });
+    });
+</script>
