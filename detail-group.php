@@ -5,24 +5,25 @@ if (!isset($_SESSION['username'])) {
     exit;
 }
 
-// require_once 'koneksi.php'; // Digantikan dengan kode koneksi langsung
 $mysqli = new mysqli("localhost", "root", "", "fullstack");
 if ($mysqli->connect_errno) {
     die("Failed to connect to MySQL: " . $mysqli->connect_error);
 }
 
-// Tambahan Variabel Global
 $logged_in_username = $_SESSION['username'];
 $logged_in_role = $_SESSION['role'] ?? '';
 $is_admin = $_SESSION['isadmin'] ?? 0;
 $group_id = $_GET['id'] ?? null;
-$error_message = null;
-$success_message = null;
+$success_message = $_SESSION['success_message'] ?? null;
+unset($_SESSION['success_message']);
+
+$error_message = $_SESSION['error_message'] ?? null; 
+unset($_SESSION['error_message']);
 $group = null; // Inisialisasi variabel grup
 $is_member = false;
 $can_edit_group = false; // Akan di-update setelah data grup diambil
 
-// --- Fungsi Pengecekan Member ---
+// --- Ngcek Member ---
 function isMember($mysqli, $username, $group_id) {
     $q = "SELECT 1 FROM member_grup WHERE username = ? AND idgrup = ?";
     $stmt = $mysqli->prepare($q);
@@ -32,7 +33,7 @@ function isMember($mysqli, $username, $group_id) {
     return $result->num_rows > 0;
 }
 
-// --- A. Logika Ambil Data Grup & Pengecekan Awal ---
+// --- Ambil data grup sama pengecekan ---
 if ($group_id > 0) {
     $query = "SELECT * FROM grup WHERE idgrup = ?";
     $stmt = $mysqli->prepare($query);
@@ -49,7 +50,7 @@ if ($group_id > 0) {
     }
 }
 
-// --- B. Logika UPDATE Grup (Handle POST dari Modal Edit) ---
+// ---Logika updet grup ---
 $edit_submitted = isset($_POST['action']) && $_POST['action'] === 'update_group';
 
 if ($group && $can_edit_group && $edit_submitted) {
@@ -67,7 +68,7 @@ if ($group && $can_edit_group && $edit_submitted) {
 
         if ($stmtUpdate->execute()) {
             $success_message = "Data grup berhasil diperbarui!";
-            // Perbarui objek $group agar tampilan langsung berubah (sebelum reload jika ada)
+            // Perbarui tampilan
             $group['nama'] = $nama_baru;
             $group['deskripsi'] = $deskripsi_baru;
             $group['jenis'] = $jenis_baru;
@@ -78,29 +79,25 @@ if ($group && $can_edit_group && $edit_submitted) {
 }
 
 
-// --- C. Logika PEMROSESAN FORM JOIN (Hanya untuk Mahasiswa yang Belum Member) ---
-// Note: Kode ini harus di bawah Logika A agar $group dan $is_member terdefinisi.
+// --- Logika untuk Mahasiswa yg Belum Member ---
 if ($group && $logged_in_role === 'mahasiswa' && !$is_member && isset($_POST['action']) && $_POST['action'] === 'submit_code') {
     $code = trim($_POST['reg_code'] ?? '');
     
     // Verifikasi Kode
     if ($group['kode_pendaftaran'] === $code) {
-        // Kode Benar: Lakukan penambahan member
+        // Kalo bener nambah member
         $sqlInsert = "INSERT INTO member_grup (idgrup, username) VALUES (?, ?)";
         $stmtInsert = $mysqli->prepare($sqlInsert);
         $stmtInsert->bind_param("is", $group_id, $logged_in_username);
 
         if ($stmtInsert->execute()) {
-            $is_member = true; // Update status agar bisa lihat detail
-            $success_message = "Selamat! Anda berhasil bergabung ke grup " . htmlspecialchars($group['nama']) . ".";
-        } else {
-            // Error insert (mungkin duplikat entry)
-            if ($stmtInsert->errno === 1062) {
-                $error_message = "Anda sudah menjadi anggota grup ini.";
-            } else {
-                $error_message = "Gagal menambahkan member. Error: " . $stmtInsert->error;
-            }
-        }
+    $_SESSION['success_message'] = "Selamat! Anda berhasil bergabung ke grup " . htmlspecialchars($group['nama']) . ".";
+    
+    header("Location: detail-group.php?id=" . $group_id);
+    exit(); 
+} else {
+    $error_message = "Gagal menambahkan member. Coba lagi atau hubungi administrator. Error: " . $mysqli->error;
+}
     } else {
         // Kode Salah
         $error_message = "Kode registrasi salah! (jangan lupa perhatikan lower/uppercase!) Coba lagi.";
@@ -108,7 +105,7 @@ if ($group && $logged_in_role === 'mahasiswa' && !$is_member && isset($_POST['ac
 }
 
 
-// --- Refresh status $can_view_full_detail setelah semua proses POST (JOIN atau UPDATE) selesai ---
+// --- Refresh status $can_view_full_detail setelah semua proses beres ---
 $can_view_full_detail = $is_member || 
                         ($group && $logged_in_username == $group['username_pembuat']) ||
                         $is_admin == 1 ||
@@ -135,7 +132,7 @@ $can_view_full_detail = $is_member ||
             border-radius: 5px;
             text-align: center;
         }
-        /* Tambahan style untuk notifikasi sukses/error di halaman */
+    
         .alert-success { 
             color: #155724; 
             background-color: #d4edda; 
@@ -221,7 +218,7 @@ $can_view_full_detail = $is_member ||
                 echo "<div id='error-warning'>Group tidak ditemukan.</div>";
             } else {
                 
-                // --- TAMPILAN FORM INPUT KODE (Jika Belum Member dan Role Mahasiswa) ---
+                // --- TAMPILAN kalo blm Member & Role Mahasiswa) ---
                 if (!$can_view_full_detail && $logged_in_role === 'mahasiswa') {
             ?>
                     <div style="text-align: center; padding: 40px; border: 1px solid #ccc; border-radius: 8px;">
@@ -241,7 +238,7 @@ $can_view_full_detail = $is_member ||
                     </div>
 
             <?php 
-                // --- TAMPILAN DETAIL GRUP PENUH (Jika sudah terverifikasi) ---
+                // --- TAMPILAN DETAIL GRUP PENUH kalo dah terverif ---
                 } else {
             ?>
                         <div class="header-group">
@@ -331,11 +328,11 @@ $can_view_full_detail = $is_member ||
                                         echo "<div class='member-item' id='student-" . htmlspecialchars($member['id_anggota']) . "'>";
                                         echo "<div class='member-item-flex'>";
 
-                                        // Tampilkan nama + nrp/npk
+                                        // Tampilin nama + nrp/npk
                                         echo htmlspecialchars($member['nama_member']) . " (" . htmlspecialchars($member['id_anggota']) . ")";
 
-                                        // Tampilkan tombol Hapus hanya jika user adalah dosen atau admin dan pembuat grup
-                                        // Atau jika yang login adalah pemilik grup
+                                        // Tampilin tombol Hapus kalo user itu dosen atau admin dan pembuat grup
+                                       
                                         if ($group['username_pembuat'] == $logged_in_username) { 
                                             echo "<button class='remove-member-btn'
                                                         data-username='" . htmlspecialchars($member['username_login']) . "'
@@ -343,14 +340,14 @@ $can_view_full_detail = $is_member ||
                                                         data-nama='" . htmlspecialchars($member['nama_member']) . "'>Hapus</button>";
                                         }
 
-                                        echo "</div>"; // tutup .member-item-flex
-                                        echo "</div>"; // tutup .member-item
+                                        echo "</div>"; 
+                                        echo "</div>"; 
                                     }
                                 } else {
                                     echo "<p>Belum ada anggota dalam grup ini.</p>";
                                 }
 
-                                echo "</div>"; // tutup .member-list
+                                echo "</div>"; 
                                 ?>
                             </div>
 
@@ -368,13 +365,13 @@ $can_view_full_detail = $is_member ||
                                     echo "<table border='1' cellspacing='0' style='width:100%; border-collapse: collapse;'>";
                                     echo "<thead><tr><th>Event</th><th>Tanggal & Waktu</th><th colspan='2'>Aksi</th></tr></thead><tbody>";
                                     while ($activity = $result_activities->fetch_assoc()) {
-                                        $judul = $activity['judul']; // Ambil judul sebelum di-htmlspecialchars
+                                        $judul = $activity['judul']; 
                                         echo "<tr>";
                                         echo "<td>" . htmlspecialchars($activity['judul']) . "</td>";
                                         echo "<td>" . htmlspecialchars($activity['tanggal']) . "</td>";
                                         echo "<td><a href='detail-event.php?id=" . urlencode($judul) . "'>Lihat Detail</a></td>";
 
-                                        // tombol hapus event jika yang login adalah pembuat grup
+                                    
                                         if ($group['username_pembuat'] == $logged_in_username) {
                                             echo "<td>
                                                             <button class='delete-event-btn' type='button' 
@@ -407,13 +404,13 @@ $can_view_full_detail = $is_member ||
                         </div>
 
             <?php
-                } // Tutup else ($can_view_full_detail)
-            } // Tutup else (!$group)
+                } 
+            } 
             ?>
         </div> 
         
         <?php 
-        // Hanya tampilkan kolom Tambah Anggota jika yang login adalah pemilik grup
+        // Tampillin Tambah Anggota kalo yg login itu pemilik grup
         if ($group && $logged_in_username === $group['username_pembuat']) : ?>
             <div class="content-box add-member-box" style="margin-right: 20%;">
                 <h2>Tambah Anggota</h2>
@@ -497,7 +494,7 @@ $can_view_full_detail = $is_member ||
         </div>
 
     </div>
-    <?php endif; // Akhir dari conditional $can_edit_group ?>
+    <?php endif; ?>
     <script>
     const currentUsername = '<?= $logged_in_username ?>';
     const groupCreator = '<?= htmlspecialchars($group['username_pembuat'] ?? '') ?>';
@@ -555,9 +552,9 @@ $can_view_full_detail = $is_member ||
                         button.closest('.member-item').remove();
                         alert("Anggota berhasil dihapus");
                         
-                        // Tambah di member-default-list (hanya jika box add member tersedia dan yang dihapus adalah mahasiswa)
+                        // Tambah di memberdefault list (kalo box add member tersedia dan yang dihapus adalah mahasiswa)
                         if ($('.member-default-list').length && nrp && nrp.length > 5) { 
-                            // Tambahkan kembali ke list tambah member jika dia adalah mahasiswa
+                            // Tambahin balik ke list tambah member kalo mahasiswa
                             $('.member-default-list').append(
                                 '<li id="student-' + nrp + '">' +
                                 '<div class="member-item-flex">' +
@@ -606,7 +603,7 @@ $can_view_full_detail = $is_member ||
                 success: function(response) {
                     if (response.success) {
                         let tombolHapus = '';
-                        // Hanya tampilkan tombol hapus jika user adalah pembuat grup
+                        // Hanya tampilin tombol hapus kalo user adalah pembuat grup
                         if (currentUsername === groupCreator) {
                             tombolHapus = '<button class="remove-member-btn" ' +
                                 'data-username="' + username + '" ' +
@@ -614,7 +611,7 @@ $can_view_full_detail = $is_member ||
                                 'data-nama="' + nama + '">Hapus</button>';
                         }
 
-                        // Tambahkan ke daftar anggota
+                        // Tambahin ke daftar anggota
                         $('.member-list').append(
                             '<div class="member-item" id="student-' + nrp + '">' +
                             '<div class="member-item-flex">' +
@@ -668,25 +665,21 @@ $can_view_full_detail = $is_member ||
             }
         });
 
-        // --- FUNGSI MODAL EDIT GRUP (BARU) ---
-
-        // 1. Tampilkan Modal saat tombol Edit diklik
+        // Tampilin Modal saat tombol Edit diklik
         $('#btnEditGroup').on('click', function() {
             // Pastikan nilai di modal sesuai dengan data yang sedang ditampilkan
             $('#editGroupName').val($('#groupTitle').text().trim());
             $('#editGroupDesc').val($('#desc-group').text().trim());
             $('#editGroupType').val($('#jenis-group').text().trim());
 
-            // Tampilkan Modal kustom
-            $('#editGroupModal').fadeIn(200);
+            $('#editGroupModal');
         });
 
-        // 2. Tutup Modal saat tombol Batal diklik
         $('#closeModal').on('click', function() {
-            $('#editGroupModal').fadeOut(200);
+            $('#editGroupModal');
         });
 
-        // 3. Submit Form Edit Grup (menggunakan form temporer untuk redirect post PHP)
+        // pake form temporer untuk redirect post PHP
         $('#saveGroupEdit').on('click', function() {
             // Buat form temporer untuk submit POST agar prosesnya ditangani oleh PHP di atas
             const form = $('<form action="detail-group.php?id=<?= $group_id ?>" method="POST"></form>');
@@ -700,14 +693,13 @@ $can_view_full_detail = $is_member ||
             form.submit();
         });
         
-        // --- Pengecekan Jika Ada Error dari PHP Setelah Submit (Untuk Menampilkan Ulang Modal) ---
         <?php if ($error_message && $edit_submitted && $can_edit_group): ?>
-            // Jika ada error setelah submit edit, dan user adalah pengedit, tampilkan kembali modal
-            $('#editGroupModal').fadeIn(0);
+            // Kalo ada error habis submit edit, dan user itu pengedit, tampilin balik modal
+            $('#editGroupModal');
         <?php endif; ?>
 
 
-    }); // Tutup $(function() {
+    }); 
 
 </script>
 
