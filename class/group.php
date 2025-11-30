@@ -184,7 +184,7 @@ class group
     }
 
     /*
-      Hapus member dari grup.
+      Hapus member dari grup & keluar dari grup
      */
     public function deleteMemberGrup($idgrup, $username)
     {
@@ -199,4 +199,6 @@ class group
         // Mengembalikan TRUE jika ada 1 baris atau lebih yang kehapus
         return $stmt->affected_rows > 0;
     }
+
+
 }

@@ -465,7 +465,9 @@ input {
 
 /* Gaya Tombol */
 .edit-group-btn,
-.delete-group-btn {
+.delete-group-btn,
+.leave-group-btn {
+  background-color: #efa3a0;
   padding: 8px 16px;
   border: none;
   cursor: pointer;
