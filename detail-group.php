@@ -249,6 +249,15 @@ $can_view_full_detail = $is_member ||
                             <h2 class="group-title" id="groupTitle"><?= htmlspecialchars($group['nama']) ?></h2>
 
                             <div class="group-buttons">
+                                <?php if ($_SESSION['role'] == 'mahasiswa' && $_SESSION['username'] !== $group['username_pembuat']) : ?>
+                                    <button
+                                        class="leave-group-btn"
+                                        data-id="<?= $group['idgrup'] ?>"
+                                        data-username="<?= $_SESSION['username'] ?>">
+                                        Keluar
+                                    </button>
+                                <?php endif; ?>
+
                                 <?php if ($can_edit_group) : ?>
                                     <button
                                         id="btnEditGroup"
@@ -668,6 +677,39 @@ $can_view_full_detail = $is_member ||
                     });
                 }
             });
+
+            //leave group 
+            // keluar dari grup
+            $(document).on('click', '.leave-group-btn', function() {
+                const button = $(this);
+                const groupId = button.data('id');
+                const username = button.data('username');
+
+                if (confirm('Yakin ingin keluar dari group ini?')) {
+                    $.ajax({
+                        url: 'leave-group.php',
+                        method: 'GET',
+                        data: {
+                            id: groupId,
+                            username: username
+                        },
+                        dataType: 'json',
+                        success: function(response) {
+                            if (response.success) {
+                                alert("Anda berhasil keluar dari group ini");
+                                window.location.href = "data-group.php";
+                            } else {
+                                alert(response.message);
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            console.log(xhr.responseText);
+                            alert("Terjadi kesalahan saat keluar group.");
+                        }
+                    });
+                }
+            });
+
 
             // Tampilin Modal saat tombol Edit diklik
             $('#btnEditGroup').on('click', function() {

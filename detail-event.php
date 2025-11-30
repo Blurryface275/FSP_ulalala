@@ -131,7 +131,7 @@ $mysqli->close();
             <!-- Placeholder poster -->
             <div class="poster">
                 <?php
-                $poster_path = "posters/event_" . $event_id . "." . $poster_extension;
+                $poster_path = "posters/" . $event_id . "." . $poster_extension;
                 if (file_exists($poster_path)) {
                     echo "<img src='" . htmlspecialchars($poster_path) . "' alt='Poster Event' class='event-poster'>";
                 } else {
