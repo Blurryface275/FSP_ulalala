@@ -484,6 +484,29 @@ input {
   color: white;
 }
 
+.delete-event-btn {
+   background: #f08080;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.detail-event-btn {
+    background-color: #8b597b;
+    color: white;
+    text-decoration: none;
+    font-weight: 600;
+    padding: 5px 10px;
+    border-radius: 20px;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+}
+
 /* Hover effect */
 .edit-group-btn:hover {
   background-color: #e8b08e;
@@ -491,6 +514,18 @@ input {
 
 .delete-group-btn:hover {
   background-color: #e56b6b;
+}
+
+.delete-event-btn:hover {
+    background: #e56b6b;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.detail-event-btn:hover {
+    background-color: #6d4463;
+    text-decoration: underline;
+    cursor: pointer;
 }
 
 /* Garis Pemisah */
@@ -734,3 +769,42 @@ input {
   white-space: nowrap;
   margin-right: 5px;
 }
+/* Untuk halaman detail event */
+.detail-event{
+  text-align: left;
+  margin: 0 auto;
+  padding: 20px;
+  max-width: 600px;
+  background: var(--peach);
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.detail-event p {
+  margin: 10px 0;
+  color: var(--coklat);
+}
+
+.poster{
+  background: transparent;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.detail-event .event-poster{
+  max-width: 100%;
+  border-radius: 6px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+.detail-event .event-poster-placeholder{
+  width: 100%;
+  max-width: 300px;
+  height: auto;
+  color: red;
+  font-size: 24px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+

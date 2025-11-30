@@ -17,14 +17,15 @@ $group_id = $_GET['id'] ?? null;
 $success_message = $_SESSION['success_message'] ?? null;
 unset($_SESSION['success_message']);
 
-$error_message = $_SESSION['error_message'] ?? null; 
+$error_message = $_SESSION['error_message'] ?? null;
 unset($_SESSION['error_message']);
 $group = null; // Inisialisasi variabel grup
 $is_member = false;
 $can_edit_group = false; // Akan di-update setelah data grup diambil
 
 // --- Ngcek Member ---
-function isMember($mysqli, $username, $group_id) {
+function isMember($mysqli, $username, $group_id)
+{
     $q = "SELECT 1 FROM member_grup WHERE username = ? AND idgrup = ?";
     $stmt = $mysqli->prepare($q);
     $stmt->bind_param("si", $username, $group_id);
@@ -43,7 +44,7 @@ if ($group_id > 0) {
     if ($result && $result->num_rows > 0) {
         $group = $result->fetch_assoc();
         $is_member = isMember($mysqli, $logged_in_username, $group_id);
-        
+
         // Menentukan otoritas edit
         $is_owner = ($logged_in_username == $group['username_pembuat']);
         $can_edit_group = $is_owner || $is_admin == 1 || $logged_in_role == 'dosen';
@@ -82,7 +83,7 @@ if ($group && $can_edit_group && $edit_submitted) {
 // --- Logika untuk Mahasiswa yg Belum Member ---
 if ($group && $logged_in_role === 'mahasiswa' && !$is_member && isset($_POST['action']) && $_POST['action'] === 'submit_code') {
     $code = trim($_POST['reg_code'] ?? '');
-    
+
     // Verifikasi Kode
     if ($group['kode_pendaftaran'] === $code) {
         // Kalo bener nambah member
@@ -91,13 +92,13 @@ if ($group && $logged_in_role === 'mahasiswa' && !$is_member && isset($_POST['ac
         $stmtInsert->bind_param("is", $group_id, $logged_in_username);
 
         if ($stmtInsert->execute()) {
-    $_SESSION['success_message'] = "Selamat! Anda berhasil bergabung ke grup " . htmlspecialchars($group['nama']) . ".";
-    
-    header("Location: detail-group.php?id=" . $group_id);
-    exit(); 
-} else {
-    $error_message = "Gagal menambahkan member. Coba lagi atau hubungi administrator. Error: " . $mysqli->error;
-}
+            $_SESSION['success_message'] = "Selamat! Anda berhasil bergabung ke grup " . htmlspecialchars($group['nama']) . ".";
+
+            header("Location: detail-group.php?id=" . $group_id);
+            exit();
+        } else {
+            $error_message = "Gagal menambahkan member. Coba lagi atau hubungi administrator. Error: " . $mysqli->error;
+        }
     } else {
         // Kode Salah
         $error_message = "Kode registrasi salah! (jangan lupa perhatikan lower/uppercase!) Coba lagi.";
@@ -106,10 +107,10 @@ if ($group && $logged_in_role === 'mahasiswa' && !$is_member && isset($_POST['ac
 
 
 // --- Refresh status $can_view_full_detail setelah semua proses beres ---
-$can_view_full_detail = $is_member || 
-                        ($group && $logged_in_username == $group['username_pembuat']) ||
-                        $is_admin == 1 ||
-                        $logged_in_role == 'dosen';
+$can_view_full_detail = $is_member ||
+    ($group && $logged_in_username == $group['username_pembuat']) ||
+    $is_admin == 1 ||
+    $logged_in_role == 'dosen';
 
 
 ?>
@@ -132,24 +133,25 @@ $can_view_full_detail = $is_member ||
             border-radius: 5px;
             text-align: center;
         }
-    
-        .alert-success { 
-            color: #155724; 
-            background-color: #d4edda; 
-            border: 1px solid #c3e6cb; 
-            padding: 10px; 
-            margin-bottom: 20px; 
-            border-radius: 5px; 
-            text-align: center; 
+
+        .alert-success {
+            color: #155724;
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            text-align: center;
         }
-        .alert-danger { 
-            color: #721c24; 
-            background-color: #f8d7da; 
-            border: 1px solid #f5c6cb; 
-            padding: 10px; 
-            margin-bottom: 20px; 
-            border-radius: 5px; 
-            text-align: center; 
+
+        .alert-danger {
+            color: #721c24;
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            text-align: center;
         }
 
         .tab-content-item {
@@ -217,19 +219,19 @@ $can_view_full_detail = $is_member ||
             } elseif (!$group) {
                 echo "<div id='error-warning'>Group tidak ditemukan.</div>";
             } else {
-                
+
                 // --- TAMPILAN kalo blm Member & Role Mahasiswa) ---
                 if (!$can_view_full_detail && $logged_in_role === 'mahasiswa') {
             ?>
                     <div style="text-align: center; padding: 40px; border: 1px solid #ccc; border-radius: 8px;">
                         <h2>Verifikasi Keanggotaan Grup: <?= htmlspecialchars($group['nama']) ?></h2>
                         <p>Masukkan Kode Registrasi Grup untuk bergabung dan melihat detail:</p>
-                        
+
                         <form action="detail-group.php?id=<?= $group_id ?>" method="POST" style="margin-top: 20px;">
                             <input type="hidden" name="action" value="submit_code">
-                            
+
                             <input type="text" id="reg_code" name="reg_code" placeholder="Kode Registrasi" required style="padding: 10px; width: 60%; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 4px;">
-                            
+
                             <button type="submit" style="padding: 10px 20px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">
                                 Konfirmasi Kode
                             </button>
@@ -237,69 +239,69 @@ $can_view_full_detail = $is_member ||
                         <p style="margin-top: 20px;"><a href="data-group.php">&laquo; Kembali ke Daftar Grup</a></p>
                     </div>
 
-            <?php 
-                // --- TAMPILAN DETAIL GRUP PENUH kalo dah terverif ---
+                <?php
+                    // --- TAMPILAN DETAIL GRUP PENUH kalo dah terverif ---
                 } else {
-            ?>
-                        <div class="header-group">
+                ?>
+                    <div class="header-group">
 
-                            <div class="header-top">
-                                <h2 class="group-title" id="groupTitle"><?= htmlspecialchars($group['nama']) ?></h2>
+                        <div class="header-top">
+                            <h2 class="group-title" id="groupTitle"><?= htmlspecialchars($group['nama']) ?></h2>
 
-                                <div class="group-buttons">
-                                    <?php if ($can_edit_group) : ?>
-                                        <button
-                                            id="btnEditGroup"
-                                            class="edit-group-btn"
-                                            data-id="<?= $group['idgrup'] ?>">
-                                            Edit
-                                        </button>
-                                        <button
-                                            id="btnHapusGroup"
-                                            class="delete-group-btn"
-                                            data-id="<?= $group['idgrup'] ?>">
-                                            Hapus
-                                        </button>
+                            <div class="group-buttons">
+                                <?php if ($can_edit_group) : ?>
+                                    <button
+                                        id="btnEditGroup"
+                                        class="edit-group-btn"
+                                        data-id="<?= $group['idgrup'] ?>">
+                                        Edit
+                                    </button>
+                                    <button
+                                        id="btnHapusGroup"
+                                        class="delete-group-btn"
+                                        data-id="<?= $group['idgrup'] ?>">
+                                        Hapus
+                                    </button>
 
-                                    <?php endif; ?>
-                                </div>
-                            </div>
-
-                            <hr class="separator">
-
-                            <div class="header-info-body">
-
-                                <div class="group-info">
-                                    <p><strong>Dibuat oleh:</strong> <?= htmlspecialchars($group['username_pembuat']) ?></p>
-                                    <p><strong>Deskripsi:</strong> <span id="desc-group"><?= htmlspecialchars($group['deskripsi']) ?></span></p>
-                                    <p><strong>Tgl Pembentukan:</strong> <?= date("Y-m-d", strtotime($group['tanggal_pembentukan'])) ?></p>
-                                    <p><strong>Jenis Group:</strong> <span id="jenis-group"><?= htmlspecialchars($group['jenis']) ?></span></p>
-                                </div>
-
-                                <div class="registration-code-area">
-                                    <p class="code-label"><strong>Kode Registrasi:</strong></p>
-                                    <span id="reg-code" class="registration-code">
-                                        <?php 
-                                       //tampilin kodenya
-                                            echo htmlspecialchars($group['kode_pendaftaran']);
-                                       
-                                        ?>
-                                    </span>
-                                </div>
+                                <?php endif; ?>
                             </div>
                         </div>
 
+                        <hr class="separator">
 
-                        <div class="tab-menu" id="tab-menu">
-                            <button data-tab="member" class="active">Anggota</button>
-                            <button data-tab="activities">Aktivitas</button>
+                        <div class="header-info-body">
+
+                            <div class="group-info">
+                                <p><strong>Dibuat oleh:</strong> <?= htmlspecialchars($group['username_pembuat']) ?></p>
+                                <p><strong>Deskripsi:</strong> <span id="desc-group"><?= htmlspecialchars($group['deskripsi']) ?></span></p>
+                                <p><strong>Tgl Pembentukan:</strong> <?= date("Y-m-d", strtotime($group['tanggal_pembentukan'])) ?></p>
+                                <p><strong>Jenis Group:</strong> <span id="jenis-group"><?= htmlspecialchars($group['jenis']) ?></span></p>
+                            </div>
+
+                            <div class="registration-code-area">
+                                <p class="code-label"><strong>Kode Registrasi:</strong></p>
+                                <span id="reg-code" class="registration-code">
+                                    <?php
+                                    //tampilin kodenya
+                                    echo htmlspecialchars($group['kode_pendaftaran']);
+
+                                    ?>
+                                </span>
+                            </div>
                         </div>
+                    </div>
 
-                        <div class="tab-content" id="tab-content">
-                            <div id="tab-content-member" class="tab-content-item active">
-                                <h3>Daftar Anggota</h3>
-                                <?php
-                                $query_members = "SELECT 
+
+                    <div class="tab-menu" id="tab-menu">
+                        <button data-tab="member" class="active">Anggota</button>
+                        <button data-tab="activities">Aktivitas</button>
+                    </div>
+
+                    <div class="tab-content" id="tab-content">
+                        <div id="tab-content-member" class="tab-content-item active">
+                            <h3>Daftar Anggota</h3>
+                            <?php
+                            $query_members = "SELECT 
                                 COALESCE(d.nama, m.nama, a.username) AS nama_member,
                                 CASE 
                                 WHEN d.npk IS NOT NULL THEN 'Dosen'
@@ -316,100 +318,103 @@ $can_view_full_detail = $is_member ||
                                 ORDER BY nama_member ASC;
                                 ";
 
-                                $stmt_members = $mysqli->prepare($query_members);
-                                $stmt_members->bind_param("i", $group_id);
-                                $stmt_members->execute();
-                                $result_members = $stmt_members->get_result();
+                            $stmt_members = $mysqli->prepare($query_members);
+                            $stmt_members->bind_param("i", $group_id);
+                            $stmt_members->execute();
+                            $result_members = $stmt_members->get_result();
 
-                                echo "<div class='member-list'>";
+                            echo "<div class='member-list'>";
 
-                                if ($result_members->num_rows > 0) {
-                                    while ($member = $result_members->fetch_assoc()) {
-                                        echo "<div class='member-item' id='student-" . htmlspecialchars($member['id_anggota']) . "'>";
-                                        echo "<div class='member-item-flex'>";
+                            if ($result_members->num_rows > 0) {
+                                while ($member = $result_members->fetch_assoc()) {
+                                    echo "<div class='member-item' id='student-" . htmlspecialchars($member['id_anggota']) . "'>";
+                                    echo "<div class='member-item-flex'>";
 
-                                        // Tampilin nama + nrp/npk
-                                        echo htmlspecialchars($member['nama_member']) . " (" . htmlspecialchars($member['id_anggota']) . ")";
+                                    // Tampilin nama + nrp/npk
+                                    echo htmlspecialchars($member['nama_member']) . " (" . htmlspecialchars($member['id_anggota']) . ")";
 
-                                        // Tampilin tombol Hapus kalo user itu dosen atau admin dan pembuat grup
-                                       
-                                        if ($group['username_pembuat'] == $logged_in_username) { 
-                                            echo "<button class='remove-member-btn'
+                                    // Tampilin tombol Hapus kalo user itu dosen atau admin dan pembuat grup
+
+                                    if ($group['username_pembuat'] == $logged_in_username && $member['username_login'] != $logged_in_username) {
+                                        echo "<button class='remove-member-btn'
                                                         data-username='" . htmlspecialchars($member['username_login']) . "'
                                                         data-nrp='" . htmlspecialchars($member['id_anggota']) . "'
                                                         data-nama='" . htmlspecialchars($member['nama_member']) . "'>Hapus</button>";
-                                        }
-
-                                        echo "</div>"; 
-                                        echo "</div>"; 
                                     }
-                                } else {
-                                    echo "<p>Belum ada anggota dalam grup ini.</p>";
+
+                                    echo "</div>";
+                                    echo "</div>";
                                 }
+                            } else {
+                                echo "<p>Belum ada anggota dalam grup ini.</p>";
+                            }
 
-                                echo "</div>"; 
-                                ?>
-                            </div>
-
-                            <div id="tab-content-activities" class="tab-content-item">
-                                <h3>Event Grup</h3>
-
-                                <?php
-                                $query_activities = "SELECT judul, tanggal FROM event WHERE idgrup = ? ORDER BY tanggal DESC";
-                                $stmt_activities = $mysqli->prepare($query_activities);
-                                $stmt_activities->bind_param("i", $group_id);
-                                $stmt_activities->execute();
-                                $result_activities = $stmt_activities->get_result();
-
-                                if ($result_activities && $result_activities->num_rows > 0) {
-                                    echo "<table border='1' cellspacing='0' style='width:100%; border-collapse: collapse;'>";
-                                    echo "<thead><tr><th>Event</th><th>Tanggal & Waktu</th><th colspan='2'>Aksi</th></tr></thead><tbody>";
-                                    while ($activity = $result_activities->fetch_assoc()) {
-                                        $judul = $activity['judul']; 
-                                        echo "<tr>";
-                                        echo "<td>" . htmlspecialchars($activity['judul']) . "</td>";
-                                        echo "<td>" . htmlspecialchars($activity['tanggal']) . "</td>";
-                                        echo "<td><a href='detail-event.php?id=" . urlencode($judul) . "'>Lihat Detail</a></td>";
-
-                                    
-                                        if ($group['username_pembuat'] == $logged_in_username) {
-                                            echo "<td>
-                                                            <button class='delete-event-btn' type='button' 
-                                                                onclick=\"if(confirm('Yakin ingin menghapus event ini?')) {
-                                                                    window.location.href='delete-event.php?id=" . urlencode($judul) . "&group_id={$group_id}';
-                                                                }\">
-                                                                Hapus Event
-                                                            </button>
-                                                        </td>";
-                                        } else {
-                                            echo "<td></td>"; // kosong jika bukan pembuat grup
-                                        }
-
-                                        echo "</tr>";
-                                    }
-                                    echo "</tbody></table>";
-                                } else {
-                                    echo "<p>Belum ada aktivitas dalam grup ini.</p>";
-                                }
-                                if ($group_id > 0 && $can_edit_group):
-                                ?>
-                                    <form action='insert-event.php' method='get' style="margin-top: 15px;">
-                                        <input type='hidden' name='idgrup' value='<?= htmlspecialchars($group_id) ?>'>
-                                        <button type='submit'>Tambah Event</button>
-                                    </form>
-                                <?php
-                                endif;
-                                ?>
-                            </div>
+                            echo "</div>";
+                            ?>
                         </div>
 
+                        <div id="tab-content-activities" class="tab-content-item">
+                            <h3>Event Grup</h3>
+
+                            <?php
+                            $query_activities = "SELECT judul, tanggal, idevent FROM event WHERE idgrup = ? ORDER BY tanggal DESC";
+                            $stmt_activities = $mysqli->prepare($query_activities);
+                            $stmt_activities->bind_param("i", $group_id);
+                            $stmt_activities->execute();
+                            $result_activities = $stmt_activities->get_result();
+
+                            if ($result_activities && $result_activities->num_rows > 0) {
+                                echo "<table border='1' cellspacing='0' style='width:100%; border-collapse: collapse;'>";
+                                echo "<thead><tr><th>Event</th><th>Tanggal & Waktu</th><th colspan='2'>Aksi</th></tr></thead><tbody>";
+                                while ($activity = $result_activities->fetch_assoc()) {
+                                    $judul = $activity['judul'];
+                                    $event_id = $activity['idevent'];
+                                    echo "<tr>";
+                                    echo "<td>" . htmlspecialchars($activity['judul']) . "</td>";
+                                    echo "<td>" . htmlspecialchars($activity['tanggal']) . "</td>";
+                                    echo "<td>
+                                            <a href='detail-event.php?event_id=" . urlencode($event_id) . "' class='detail-event-btn'>Lihat Detail</a>
+                                        </td>";
+
+
+                                    if ($group['username_pembuat'] == $logged_in_username) {
+                                        echo "<td>
+                                                <button class='delete-event-btn' type='button' 
+                                                onclick=\"if(confirm('Yakin ingin menghapus event ini?')) {
+                                                window.location.href='delete-event.php?event_id=" . urlencode($event_id) . "&group_id={$group_id}';
+                                                }\">
+                                                Hapus Event
+                                                </button>
+                                            </td>";
+                                    } else {
+                                        echo "<td></td>"; // kosong jika bukan pembuat grup
+                                    }
+
+                                    echo "</tr>";
+                                }
+                                echo "</tbody></table>";
+                            } else {
+                                echo "<p>Belum ada aktivitas dalam grup ini.</p>";
+                            }
+                            if ($group_id > 0 && $can_edit_group):
+                            ?>
+                                <form action='insert-event.php' method='get' style="margin-top: 15px;">
+                                    <input type='hidden' name='idgrup' value='<?= htmlspecialchars($group_id) ?>'>
+                                    <button type='submit'>Tambah Event</button>
+                                </form>
+                            <?php
+                            endif;
+                            ?>
+                        </div>
+                    </div>
+
             <?php
-                } 
-            } 
+                }
+            }
             ?>
-        </div> 
-        
-        <?php 
+        </div>
+
+        <?php
         // Tampillin Tambah Anggota kalo yg login itu pemilik grup
         if ($group && $logged_in_username === $group['username_pembuat']) : ?>
             <div class="content-box add-member-box" style="margin-right: 20%;">
@@ -430,7 +435,7 @@ $can_view_full_detail = $is_member ||
                     $stmt_search->bind_param("i", $group_id);
                     $stmt_search->execute();
                     $result_search = $stmt_search->get_result();
-                    
+
                     if ($result_search->num_rows > 0) {
                         echo "<ul class='member-default-list'>";
 
@@ -450,12 +455,12 @@ $can_view_full_detail = $is_member ||
             </div>
         <?php endif; ?>
 
-    </div> 
+    </div>
 
-    <?php 
-    if ($can_edit_group): 
+    <?php
+    if ($can_edit_group):
     ?>
-    <div id="editGroupModal" style="
+        <div id="editGroupModal" style="
         display: none; /* Sembunyikan secara default */
         position: fixed;
         z-index: 1000;
@@ -466,7 +471,7 @@ $can_view_full_detail = $is_member ||
         overflow: auto;
         background-color: rgba(0,0,0,0.5); /* Background gelap */
     ">
-        <div class="modal-content" style="
+            <div class="modal-content" style="
             background-color: #fefefe;
             margin: 10% auto; 
             padding: 20px;
@@ -475,233 +480,232 @@ $can_view_full_detail = $is_member ||
             max-width: 500px;
             border-radius: 8px;
         ">
-            <h3>Edit Grup</h3>
+                <h3>Edit Grup</h3>
 
-            <label>Nama Grup:</label>
-            <input type="text" id="editGroupName" value="<?= htmlspecialchars($group['nama'] ?? '') ?>" style="width:100%; margin-bottom:10px;">
+                <label>Nama Grup:</label>
+                <input type="text" id="editGroupName" value="<?= htmlspecialchars($group['nama'] ?? '') ?>" style="width:100%; margin-bottom:10px;">
 
-            <label>Deskripsi:</label>
-            <textarea id="editGroupDesc" style="width:100%; margin-bottom:10px;"><?= htmlspecialchars($group['deskripsi'] ?? '') ?></textarea>
+                <label>Deskripsi:</label>
+                <textarea id="editGroupDesc" style="width:100%; margin-bottom:10px;"><?= htmlspecialchars($group['deskripsi'] ?? '') ?></textarea>
 
-            <label>Jenis Grup:</label>
-            <select id="editGroupType" style="width:100%; margin-bottom:20px;">
-                <option value="Publik" <?= ($group['jenis'] ?? '') == "Publik" ? "selected" : "" ?>>Publik</option>
-                <option value="Privat" <?= ($group['jenis'] ?? '') == "Privat" ? "selected" : "" ?>>Privat</option>
-            </select>
+                <label>Jenis Grup:</label>
+                <select id="editGroupType" style="width:100%; margin-bottom:20px;">
+                    <option value="Publik" <?= ($group['jenis'] ?? '') == "Publik" ? "selected" : "" ?>>Publik</option>
+                    <option value="Privat" <?= ($group['jenis'] ?? '') == "Privat" ? "selected" : "" ?>>Privat</option>
+                </select>
 
-            <button id="saveGroupEdit" class="btn-modal" style="padding: 10px; background-color: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer;">Simpan</button>
-            <button id="closeModal" class="btn-modal" style="padding: 10px; background-color: #f44336; color: white; border: none; border-radius: 4px; cursor: pointer;">Batal</button>
+                <button id="saveGroupEdit" class="btn-modal" style="padding: 10px; background-color: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer;">Simpan</button>
+                <button id="closeModal" class="btn-modal" style="padding: 10px; background-color: #f44336; color: white; border: none; border-radius: 4px; cursor: pointer;">Batal</button>
+            </div>
+
         </div>
-
-    </div>
     <?php endif; ?>
     <script>
-    const currentUsername = '<?= $logged_in_username ?>';
-    const groupCreator = '<?= htmlspecialchars($group['username_pembuat'] ?? '') ?>';
-    const isAdmin = <?= $is_admin == 1 ? 'true' : 'false' ?>;
-    const currentUserRole = '<?= $logged_in_role ?>';
+        const currentUsername = '<?= $logged_in_username ?>';
+        const groupCreator = '<?= htmlspecialchars($group['username_pembuat'] ?? '') ?>';
+        const isAdmin = <?= $is_admin == 1 ? 'true' : 'false' ?>;
+        const currentUserRole = '<?= $logged_in_role ?>';
 
 
-    $(function() {
+        $(function() {
 
-        // Sidebar toggle
-        $("#toggle-btn").on("click", function() {
-            $("#sidebar").toggleClass("collapsed");
-            $(".content-box").toggleClass("expanded");
-        });
+            // Sidebar toggle
+            $("#toggle-btn").on("click", function() {
+                $("#sidebar").toggleClass("collapsed");
+                $(".content-box").toggleClass("expanded");
+            });
 
-        // Tab switching
-        $('#tab-menu button').on('click', function() {
-            $('#tab-menu button').removeClass('active');
-            $('.tab-content-item').removeClass('active');
-            $(this).addClass('active');
+            // Tab switching
+            $('#tab-menu button').on('click', function() {
+                $('#tab-menu button').removeClass('active');
+                $('.tab-content-item').removeClass('active');
+                $(this).addClass('active');
 
-            const tab = $(this).data('tab');
-            $('#tab-content-' + tab).addClass('active');
-        });
+                const tab = $(this).data('tab');
+                $('#tab-content-' + tab).addClass('active');
+            });
 
-        // Hapus member
-        $(document).on('click', '.remove-member-btn', function() {
-            const button = $(this);
-            const username = button.data('username');
-            const groupId = <?= $group_id ?? 'null' ?>;
-            const nrp = button.data('nrp');
-            const nama = button.data('nama');
+            // Hapus member
+            $(document).on('click', '.remove-member-btn', function() {
+                const button = $(this);
+                const username = button.data('username');
+                const groupId = <?= $group_id ?? 'null' ?>;
+                const nrp = button.data('nrp');
+                const nama = button.data('nama');
 
-            if (!groupId) {
-                alert("Group ID tidak valid.");
-                return;
-            }
-            
-            // Tambahkan konfirmasi
-            if (!confirm(`Yakin ingin mengeluarkan ${nama} dari grup?`)) {
-                return;
-            }
+                if (!groupId) {
+                    alert("Group ID tidak valid.");
+                    return;
+                }
 
-            $.ajax({
-                url: 'remove-member.php',
-                method: 'POST',
-                data: {
-                    username: username,
-                    group_id: groupId,
-                },
-                dataType: 'json',
-                success: function(response) {
-                    if (response.success) {
-                        // Hapus elemen member dari daftar
-                        button.closest('.member-item').remove();
-                        alert("Anggota berhasil dihapus");
-                        
-                        // Tambah di memberdefault list (kalo box add member tersedia dan yang dihapus adalah mahasiswa)
-                        if ($('.member-default-list').length && nrp && nrp.length > 5) { 
+                // Tambahkan konfirmasi
+                if (!confirm(`Yakin ingin mengeluarkan ${nama} dari grup?`)) {
+                    return;
+                }
+
+                $.ajax({
+                    url: 'remove-member.php',
+                    method: 'POST',
+                    data: {
+                        username: username,
+                        group_id: groupId,
+                    },
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response.success) {
+                            // Hapus elemen member dari daftar
+                            button.closest('.member-item').remove();
+                            alert("Anggota berhasil dihapus");
+
                             // Tambahin balik ke list tambah member kalo mahasiswa
                             $('.member-default-list').append(
                                 '<li id="student-' + nrp + '">' +
                                 '<div class="member-item-flex">' +
                                 nama + ' (' + nrp + ')' +
-                                '<button class="add-member-btn" data-nrp="' + nrp + '" data-nama="' + nama + '" data-username="' + username + '">Tambah</button>' + 
+                                '<button class="add-member-btn" data-nrp="' + nrp + '" data-nama="' + nama + '" data-username="' + username + '">Tambah</button>' +
                                 '</div>' +
                                 '</li>'
                             );
-                        }
-
-                    } else {
-                        alert(response.message);
-                    }
-                },
-                error: function(xhr, status, error) {
-                    console.log(xhr.responseText);
-                    alert("Terjadi kesalahan saat menghapus anggota.");
-                }
-            });
-        });
 
 
-
-        // Button add member ke group
-        $(document).on('click', '.add-member-btn', function() {
-            const button = $(this); // simpan tombol yang diklik
-            const nrp = $(this).data('nrp');
-            const username = $(this).data('username'); // Ambil username dari data-attribute
-            const groupId = <?= $group_id ?? 'null' ?>;
-            const nama = $(this).data('nama');
-            
-            if (!groupId) {
-                alert("Group ID tidak valid.");
-                return;
-            }
-            
-            $.ajax({
-                url: 'add-member.php',
-                method: 'POST',
-                data: {
-                    username: username, // Kirim username bukan nrp
-                    nama: nama,
-                    group_id: groupId
-                },
-                dataType: 'json',
-                success: function(response) {
-                    if (response.success) {
-                        let tombolHapus = '';
-                        // Hanya tampilin tombol hapus kalo user adalah pembuat grup
-                        if (currentUsername === groupCreator) {
-                            tombolHapus = '<button class="remove-member-btn" ' +
-                                'data-username="' + username + '" ' +
-                                'data-nrp="' + nrp + '" ' +
-                                'data-nama="' + nama + '">Hapus</button>';
-                        }
-
-                        // Tambahin ke daftar anggota
-                        $('.member-list').append(
-                            '<div class="member-item" id="student-' + nrp + '">' +
-                            '<div class="member-item-flex">' +
-                            nama + ' (' + nrp + ')' +
-                            tombolHapus +
-                            '</div>' +
-                            '</div>'
-                        );
-                        button.closest('li').remove(); // hapus dari default-member-list
-
-
-                        alert("Anggota berhasil ditambahkan");
-                    } else {
-                        alert(response.message);
-                    }
-                },
-                error: function(xhr, status, error) {
-                    console.log(xhr.responseText);
-                    alert("Terjadi kesalahan saat menambahkan anggota.");
-                }
-            });
-        });
-
-
-        // Delete Group
-        $(document).on('click', '.delete-group-btn', function() {
-            const button = $(this);
-            const groupId = button.data('id');
-
-            if (confirm('Yakin ingin menghapus group ini?')) {
-                $.ajax({
-                    url: 'delete-group.php',
-                    method: 'GET',
-                    data: {
-                        id: groupId
-                    },
-                    dataType: 'json',
-                    success: function(response) {
-                        if (response.success) {
-                            alert("Group berhasil dihapus");
-                            window.location.href = "data-group.php";
                         } else {
                             alert(response.message);
                         }
                     },
                     error: function(xhr, status, error) {
                         console.log(xhr.responseText);
-                        alert("Terjadi kesalahan saat menghapus group.");
+                        alert("Terjadi kesalahan saat menghapus anggota.");
                     }
                 });
-            }
+            });
+
+
+
+            // Button add member ke group
+            $(document).on('click', '.add-member-btn', function() {
+                const button = $(this); // simpan tombol yang diklik
+                const nrp = $(this).data('nrp');
+                const username = $(this).data('username'); // Ambil username dari data-attribute
+                const groupId = <?= $group_id ?? 'null' ?>;
+                const nama = $(this).data('nama');
+
+                if (!groupId) {
+                    alert("Group ID tidak valid.");
+                    return;
+                }
+
+                $.ajax({
+                    url: 'add-member.php',
+                    method: 'POST',
+                    data: {
+                        username: username,
+                        nrp: nrp,
+                        nama: nama,
+                        group_id: groupId
+                    },
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response.success) {
+                            let tombolHapus = '';
+                            // Hanya tampilin tombol hapus kalo user adalah pembuat grup
+                            if (currentUsername === groupCreator) {
+                                tombolHapus = '<button class="remove-member-btn" ' +
+                                    'data-username="' + username + '" ' +
+                                    'data-nrp="' + nrp + '" ' +
+                                    'data-nama="' + nama + '">Hapus</button>';
+                            }
+
+                            // Tambahin ke daftar anggota
+                            $('.member-list').append(
+                                '<div class="member-item" id="student-' + nrp + '">' +
+                                '<div class="member-item-flex">' +
+                                nama + ' (' + nrp + ')' +
+                                tombolHapus +
+                                '</div>' +
+                                '</div>'
+                            );
+                            button.closest('li').remove(); // hapus dari default-member-list
+
+
+                            alert("Anggota berhasil ditambahkan");
+                        } else {
+                            alert(response.message);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.log(xhr.responseText);
+                        alert("Terjadi kesalahan saat menambahkan anggota.");
+                    }
+                });
+            });
+
+
+            // Delete Group
+            $(document).on('click', '.delete-group-btn', function() {
+                const button = $(this);
+                const groupId = button.data('id');
+
+                if (confirm('Yakin ingin menghapus group ini?')) {
+                    $.ajax({
+                        url: 'delete-group.php',
+                        method: 'GET',
+                        data: {
+                            id: groupId
+                        },
+                        dataType: 'json',
+                        success: function(response) {
+                            if (response.success) {
+                                alert("Group berhasil dihapus");
+                                window.location.href = "data-group.php";
+                            } else {
+                                alert(response.message);
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            console.log(xhr.responseText);
+                            alert("Terjadi kesalahan saat menghapus group.");
+                        }
+                    });
+                }
+            });
+
+            // Tampilin Modal saat tombol Edit diklik
+            $('#btnEditGroup').on('click', function() {
+                // Pastikan nilai di modal sesuai dengan data yang sedang ditampilkan
+                $('#editGroupName').val($('#groupTitle').text().trim());
+                $('#editGroupDesc').val($('#desc-group').text().trim());
+                $('#editGroupType').val($('#jenis-group').text().trim());
+
+                $('#editGroupModal');
+            });
+
+            $('#closeModal').on('click', function() {
+                $('#editGroupModal');
+            });
+
+            // pake form temporer untuk redirect post PHP
+            $('#saveGroupEdit').on('click', function() {
+                // Buat form temporer untuk submit POST agar prosesnya ditangani oleh PHP di atas
+                const form = $('<form action="detail-group.php?id=<?= $group_id ?>" method="POST"></form>');
+                form.append('<input type="hidden" name="action" value="update_group">');
+                form.append('<input type="hidden" name="idgrup" value="<?= $group_id ?>">');
+                form.append('<input type="hidden" name="nama_grup" value="' + $('#editGroupName').val() + '">');
+                form.append('<input type="hidden" name="deskripsi" value="' + $('#editGroupDesc').val() + '">');
+                form.append('<input type="hidden" name="jenis" value="' + $('#editGroupType').val() + '">');
+
+                $('body').append(form);
+                form.submit();
+            });
+
+            <?php if ($error_message && $edit_submitted && $can_edit_group): ?>
+                // Kalo ada error habis submit edit, dan user itu pengedit, tampilin balik modal
+                $('#editGroupModal');
+            <?php endif; ?>
+
+
         });
-
-        // Tampilin Modal saat tombol Edit diklik
-        $('#btnEditGroup').on('click', function() {
-            // Pastikan nilai di modal sesuai dengan data yang sedang ditampilkan
-            $('#editGroupName').val($('#groupTitle').text().trim());
-            $('#editGroupDesc').val($('#desc-group').text().trim());
-            $('#editGroupType').val($('#jenis-group').text().trim());
-
-            $('#editGroupModal');
-        });
-
-        $('#closeModal').on('click', function() {
-            $('#editGroupModal');
-        });
-
-        // pake form temporer untuk redirect post PHP
-        $('#saveGroupEdit').on('click', function() {
-            // Buat form temporer untuk submit POST agar prosesnya ditangani oleh PHP di atas
-            const form = $('<form action="detail-group.php?id=<?= $group_id ?>" method="POST"></form>');
-            form.append('<input type="hidden" name="action" value="update_group">');
-            form.append('<input type="hidden" name="idgrup" value="<?= $group_id ?>">');
-            form.append('<input type="hidden" name="nama_grup" value="' + $('#editGroupName').val() + '">');
-            form.append('<input type="hidden" name="deskripsi" value="' + $('#editGroupDesc').val() + '">');
-            form.append('<input type="hidden" name="jenis" value="' + $('#editGroupType').val() + '">');
-            
-            $('body').append(form);
-            form.submit();
-        });
-        
-        <?php if ($error_message && $edit_submitted && $can_edit_group): ?>
-            // Kalo ada error habis submit edit, dan user itu pengedit, tampilin balik modal
-            $('#editGroupModal');
-        <?php endif; ?>
-
-
-    }); 
-
-</script>
+    </script>
 
 </body>
+
 </html>
