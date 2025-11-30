@@ -373,7 +373,7 @@ $can_view_full_detail = $is_member ||
                                     echo "<td>" . htmlspecialchars($activity['judul']) . "</td>";
                                     echo "<td>" . htmlspecialchars($activity['tanggal']) . "</td>";
                                     echo "<td>
-                                            <a href='detail-event.php?event_id=" . urlencode($event_id) . "' class='detail-event-btn'>Lihat Detail</a>
+                                            <a href='detail-event.php?event_id=" . urlencode($event_id) . "&& group_id=" . urlencode($group_id) . "' class='detail-event-btn'>Lihat Detail</a>
                                         </td>";
 
 

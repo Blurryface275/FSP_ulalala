@@ -507,6 +507,18 @@ input {
     font-size: 14px;
 }
 
+.edit-event-btn {
+    background-color: #8b597b;
+    color: white;
+    text-decoration: none;
+    font-weight: 600;
+    padding: 5px 10px;
+    border-radius: 20px;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+}
+
 /* Hover effect */
 .edit-group-btn:hover {
   background-color: #e8b08e;
@@ -806,5 +818,79 @@ input {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+/* === MODAL EDIT EVENT === */
+#editEventModal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    justify-content: center;
+    align-items: flex-start;
+    padding-top: 80px;
+}
+
+#editEventModal .modal-content {
+    background: #ffdce7;
+    padding: 20px;
+    border-radius: 10px;
+    width: 350px;
+    max-width: 90%;
+    margin: 0 auto;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+#editEventModal h3 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    color: var(--coklat);
+    text-align: center;
+}
+
+#editEventModal label {
+    display: block;
+    margin: 10px 0 5px;
+    font-weight: bold;
+    color: var(--coklat);
+}
+
+#editEventModal input[type="text"],
+#editEventModal input[type="datetime-local"],
+#editEventModal textarea,
+#editEventModal select {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid var(--pink);
+    border-radius: 6px;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+#editEventModal textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+#editEventModal .edit-group-btn {
+    background: var(--pink);
+    color: var(--coklat);
+    border: none;
+    padding: 6px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: bold;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    margin: 5px 5px 0 0;
+    display: inline-block;
+}
+
+#editEventModal .edit-group-btn:hover {
+    background: #e8b08e;
 }
 
