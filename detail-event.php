@@ -13,27 +13,25 @@ if ($mysqli->connect_errno) {
 // Proses edit event
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['event_id'])) {
     // Ambil data dari form (yang dikirim lewat JS)
-    $p_event_id = $_POST['event_id'];
-    $p_group_id = $_POST['idgrup']; // Untuk redirect kembali
-    $p_judul = $_POST['judul'];
-    $p_tanggal = $_POST['tanggal'];
-    $p_keterangan = $_POST['keterangan'];
-    $p_jenis = $_POST['jenis'];
+    $update_event_id = $_POST['event_id'];
+    $update_group_id = $_POST['idgrup']; // Untuk redirect kembali
+    $update_judul = $_POST['judul'];
+    $update_tanggal = $_POST['tanggal'];
+    $update_keterangan = $_POST['keterangan'];
+    $update_jenis = $_POST['jenis'];
 
     // Validasi sederhana (opsional: pastikan tidak kosong)
-    if (!empty($p_judul) && !empty($p_tanggal)) {
-        // Query Update
-        $stmt_upd = $mysqli->prepare("UPDATE event SET judul=?, tanggal=?, keterangan=?, jenis=? WHERE idevent=?");
-        $stmt_upd->bind_param("ssssi", $p_judul, $p_tanggal, $p_keterangan, $p_jenis, $p_event_id);
+    if (!empty($update_judul) && !empty($update_tanggal)) {
+        $stmt_update = $mysqli->prepare("UPDATE event SET judul=?, tanggal=?, keterangan=?, jenis=? WHERE idevent=?");
+        $stmt_update->bind_param("ssssi", $update_judul, $update_tanggal, $update_keterangan, $update_jenis, $update_event_id);
 
-        if ($stmt_upd->execute()) {
-            // Sukses Update: Redirect (PRG Pattern) agar data refresh
-            header("Location: detail-event.php?event_id=" . $p_event_id . "&group_id=" . $p_group_id);
+        if ($stmt_update->execute()) {
+            header("Location: detail-event.php?event_id=" . $update_event_id . "&group_id=" . $update_group_id);
             exit();
         } else {
             echo "<script>alert('Gagal mengupdate data: " . $mysqli->error . "');</script>";
         }
-        $stmt_upd->close();
+        $stmt_update->close();
     }
 }
 
