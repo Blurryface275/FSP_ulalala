@@ -258,7 +258,8 @@ $can_view_full_detail = $is_member ||
                                     </button>
                                 <?php endif; ?>
 
-                                <?php if ($can_edit_group) : ?>
+
+                                <?php if ($_SESSION['username'] == $group['username_pembuat']) : ?>
                                     <button
                                         id="btnEditGroup"
                                         class="edit-group-btn"
@@ -588,6 +589,24 @@ $can_view_full_detail = $is_member ||
                 });
             });
 
+            // Buat search member by NRP
+            const defaultMemberList = $("#search-results").html();
+
+            $("#search-member").on("input", function() {
+                const nrp = $(this).val().trim();
+                const groupId = <?= (int)($group_id ?? 0) ?>;
+
+                // ini misal kosong, isi pake default
+                if (nrp === "") {
+                    $("#search-results").html(defaultMemberList);
+                    return; // Stop, jangan jalankan AJAX
+                }
+
+                $.get("search-member.php?nrp=" + encodeURIComponent(nrp) + "&group_id=" + groupId, function(data) {
+                    $("#search-results").html(data);
+                });
+            });
+
 
 
             // Button add member ke group
@@ -617,7 +636,7 @@ $can_view_full_detail = $is_member ||
                         if (response.success) {
                             let tombolHapus = '';
                             // Hanya tampilin tombol hapus kalo user adalah pembuat grup
-                            if (currentUsername === groupCreator) {
+                            if ($_SESSION['username'] === groupCreator) {
                                 tombolHapus = '<button class="remove-member-btn" ' +
                                     'data-username="' + username + '" ' +
                                     'data-nrp="' + nrp + '" ' +
@@ -718,7 +737,7 @@ $can_view_full_detail = $is_member ||
                 $('#editGroupDesc').val($('#desc-group').text().trim());
                 $('#editGroupType').val($('#jenis-group').text().trim());
 
-                $('#editGroupModal');
+                $('#editGroupModal').show();
             });
 
             $('#closeModal').on('click', function() {
