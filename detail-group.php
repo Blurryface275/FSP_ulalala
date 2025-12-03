@@ -636,7 +636,7 @@ $can_view_full_detail = $is_member ||
                         if (response.success) {
                             let tombolHapus = '';
                             // Hanya tampilin tombol hapus kalo user adalah pembuat grup
-                            if ($_SESSION['username'] === groupCreator) {
+                            if (currentUsername === groupCreator) {
                                 tombolHapus = '<button class="remove-member-btn" ' +
                                     'data-username="' + username + '" ' +
                                     'data-nrp="' + nrp + '" ' +
