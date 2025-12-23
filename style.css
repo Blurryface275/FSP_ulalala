@@ -293,7 +293,6 @@ input {
   border-radius: 6px;
 }
 
-
 .box {
   width: 100%;
   max-width: 400px;
@@ -308,13 +307,12 @@ input {
   margin-bottom: 20px;
 }
 .gender-options {
-    display: flex;
-    gap: 20px;
-    align-items: center;
-    justify-content: center;
-    padding: 5px 0;
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  justify-content: center;
+  padding: 5px 0;
 }
-
 
 /* Responsive */
 @media (max-width: 768px) {
@@ -488,38 +486,38 @@ input {
 }
 
 .delete-event-btn {
-   background: #f08080;
-    color: white;
-    border: none;
-    padding: 5px 10px;
-    border-radius: 20px;
-    font-weight: 600;
-    cursor: pointer;
-    font-size: 14px;
+  background: #f08080;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 14px;
 }
 
 .detail-event-btn {
-    background-color: #8b597b;
-    color: white;
-    text-decoration: none;
-    font-weight: 600;
-    padding: 5px 10px;
-    border-radius: 20px;
-    border: none;
-    cursor: pointer;
-    font-size: 14px;
+  background-color: #8b597b;
+  color: white;
+  text-decoration: none;
+  font-weight: 600;
+  padding: 5px 10px;
+  border-radius: 20px;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
 }
 
 .edit-event-btn {
-    background-color: #8b597b;
-    color: white;
-    text-decoration: none;
-    font-weight: 600;
-    padding: 5px 10px;
-    border-radius: 20px;
-    border: none;
-    cursor: pointer;
-    font-size: 14px;
+  background-color: #8b597b;
+  color: white;
+  text-decoration: none;
+  font-weight: 600;
+  padding: 5px 10px;
+  border-radius: 20px;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
 }
 
 /* Hover effect */
@@ -532,15 +530,15 @@ input {
 }
 
 .delete-event-btn:hover {
-    background: #e56b6b;
-    text-decoration: underline;
-    cursor: pointer;
+  background: #e56b6b;
+  text-decoration: underline;
+  cursor: pointer;
 }
 
 .detail-event-btn:hover {
-    background-color: #6d4463;
-    text-decoration: underline;
-    cursor: pointer;
+  background-color: #6d4463;
+  text-decoration: underline;
+  cursor: pointer;
 }
 
 /* Garis Pemisah */
@@ -785,7 +783,7 @@ input {
   margin-right: 5px;
 }
 /* Untuk halaman detail event */
-.detail-event{
+.detail-event {
   text-align: left;
   margin: 0 auto;
   padding: 20px;
@@ -800,18 +798,18 @@ input {
   color: var(--coklat);
 }
 
-.poster{
+.poster {
   background: transparent;
   display: flex;
   justify-content: center;
   align-items: center;
 }
-.detail-event .event-poster{
+.detail-event .event-poster {
   max-width: 100%;
   border-radius: 6px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
 }
-.detail-event .event-poster-placeholder{
+.detail-event .event-poster-placeholder {
   width: 100%;
   max-width: 300px;
   height: auto;
@@ -825,75 +823,164 @@ input {
 
 /* === MODAL EDIT EVENT === */
 #editEventModal {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 1000;
-    justify-content: center;
-    align-items: flex-start;
-    padding-top: 80px;
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 80px;
 }
 
 #editEventModal .modal-content {
-    background: #ffdce7;
-    padding: 20px;
-    border-radius: 10px;
-    width: 350px;
-    max-width: 90%;
-    margin: 0 auto;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  background: #ffdce7;
+  padding: 20px;
+  border-radius: 10px;
+  width: 350px;
+  max-width: 90%;
+  margin: 0 auto;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 #editEventModal h3 {
-    margin-top: 0;
-    margin-bottom: 15px;
-    color: var(--coklat);
-    text-align: center;
+  margin-top: 0;
+  margin-bottom: 15px;
+  color: var(--coklat);
+  text-align: center;
 }
 
 #editEventModal label {
-    display: block;
-    margin: 10px 0 5px;
-    font-weight: bold;
-    color: var(--coklat);
+  display: block;
+  margin: 10px 0 5px;
+  font-weight: bold;
+  color: var(--coklat);
 }
 
 #editEventModal input[type="text"],
 #editEventModal input[type="datetime-local"],
 #editEventModal textarea,
 #editEventModal select {
-    width: 100%;
-    padding: 8px 10px;
-    border: 1px solid var(--pink);
-    border-radius: 6px;
-    box-sizing: border-box;
-    font-family: Arial, sans-serif;
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid var(--pink);
+  border-radius: 6px;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
 }
 
 #editEventModal textarea {
-    resize: vertical;
-    min-height: 80px;
+  resize: vertical;
+  min-height: 80px;
 }
 
 #editEventModal .edit-group-btn {
-    background: var(--pink);
-    color: var(--coklat);
-    border: none;
-    padding: 6px 12px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 12px;
-    font-weight: bold;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    margin: 5px 5px 0 0;
-    display: inline-block;
+  background: var(--pink);
+  color: var(--coklat);
+  border: none;
+  padding: 6px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: bold;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  margin: 5px 5px 0 0;
+  display: inline-block;
 }
 
 #editEventModal .edit-group-btn:hover {
-    background: #e8b08e;
+  background: #e8b08e;
 }
 
+/* Khusus Chat */
+/* Layout Full Chat */
+.chat-full-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 80px); /* Mengurangi padding main-content */
+  background: white;
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.chat-header {
+  background: var(--ungu);
+  color: var(--peach);
+  padding: 20px;
+  text-align: center;
+  border-bottom: 2px solid var(--pink);
+}
+
+.chat-messages {
+  flex: 1; /* Mengisi sisa ruang tengah */
+  overflow-y: auto;
+  padding: 25px;
+  background: var(--cream); /* Mengikuti palet warna dasar */
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* Bubble Chat Style */
+.bubble {
+  max-width: 70%;
+  padding: 12px 18px;
+  border-radius: 20px;
+  font-size: 14px;
+  line-height: 1.5;
+  position: relative;
+}
+
+.bubble.mine {
+  align-self: flex-end;
+  background: var(--ungu);
+  color: var(--peach);
+  border-bottom-right-radius: 2px;
+}
+
+.bubble.others {
+  align-self: flex-start;
+  background: white;
+  color: var(--coklat);
+  border-bottom-left-radius: 2px;
+  border: 1px solid var(--pink);
+}
+
+.bubble .meta {
+  font-size: 11px;
+  margin-bottom: 4px;
+  font-weight: bold;
+  display: block;
+}
+
+/* Input Area di Bawah */
+.chat-input-container {
+  padding: 20px;
+  background: white;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  border-top: 1px solid var(--pink);
+}
+
+#message-input {
+  flex: 1;
+  padding: 12px 20px;
+  border: 2px solid var(--peach);
+  border-radius: 25px;
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+#message-input:focus {
+  border-color: var(--ungu);
+}
+
+/* Tombol kirim menggunakan gaya button[type="submit"] Anda */
+#btn-send {
+  margin-top: 0; /* Reset margin top dari base style */
+}
