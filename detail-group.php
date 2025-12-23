@@ -424,7 +424,6 @@ $can_view_full_detail = $is_member ||
                         <div id="tab-content-threads" class="tab-content-item">
                             <h3>Thread Grup</h3>
                             <?php
-                            // Ganti query agar sesuai dengan nama tabel 'thread' dan kolom di database Anda
                             $query_threads = "SELECT idthread, tanggal_pembuatan, username_pembuat, status FROM thread WHERE idgrup = ? ORDER BY tanggal_pembuatan DESC";
                             $stmt_threads = $mysqli->prepare($query_threads);
                             $stmt_threads->bind_param("i", $group_id);

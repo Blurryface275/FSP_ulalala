@@ -5,20 +5,36 @@ if (!isset($_SESSION['username'])) {
     header('Location: login.php');
     exit();
 }
+
 $mysqli = new mysqli("localhost", "root", "", "fullstack");
 if ($mysqli->connect_errno) {
     die("Failed to connect to MySQL: " . $mysqli->connect_error);
 }
 
-$logged_in_username = $_SESSION['username'];
-$logged_in_role = $_SESSION['role'] ?? '';
-$is_admin = $_SESSION['isadmin'] ?? 0;
-$group_id = $_GET['id'] ?? null;
-$success_message = $_SESSION['success_message'] ?? null;
-unset($_SESSION['success_message']);
+// 1. Ambil thread_id dari URL (Parameter yang dikirim dari link 'Chat')
+$thread_id = $_GET['thread_id'] ?? null;
+$group_id = $_GET['group_id'] ?? null;
 
-$error_message = $_SESSION['error_message'] ?? null;
-unset($_SESSION['error_message']);
+// 2. (Opsional) Ambil detail status thread untuk validasi
+$status_thread = 'Open';
+if ($thread_id) {
+    $query = "SELECT status FROM thread WHERE idthread = ?";
+    $stmt = $mysqli->prepare($query);
+    $stmt->bind_param("i", $thread_id);
+    $stmt->execute();
+    $res = $stmt->get_result();
+    if ($row = $res->fetch_assoc()) {
+        $status_thread = $row['status'];
+    }
+}
+
+// Cek jika thread_id tidak ada, kembalikan ke detail grup
+if (!$thread_id) {
+    header("Location: detail-group.php?id=" . $group_id);
+    exit();
+}
+
+$logged_in_username = $_SESSION['username'];
 ?>
 
 <!DOCTYPE html>
@@ -83,8 +99,13 @@ unset($_SESSION['error_message']);
             </div>
 
             <div class="chat-input-container">
-                <input type="text" id="message-input" placeholder="Ketik pesan di sini..." autocomplete="off">
-                <button id="btn-send" type="submit">Kirim</button>
+                <?php if ($status_thread == 'Open'): ?>
+                    <input type="text" id="message-input" placeholder="Ketik pesan di sini..." autocomplete="off">
+                    <button id="btn-send" type="submit">Kirim</button>
+                <?php else: ?>
+                    <input type="text" disabled placeholder="Thread ini sudah ditutup..." style="background: #eee; cursor: not-allowed;">
+                    <button disabled style="background: #ccc; cursor: not-allowed;">Closed</button>
+                <?php endif; ?>
             </div>
         </div>
     </div>
@@ -108,23 +129,31 @@ unset($_SESSION['error_message']);
                         thread_id: threadId,
                         last_id: lastChatId
                     },
+                    dataType: 'json', // Pastikan memberitahu jQuery ini adalah JSON
                     success: function(response) {
-                        if (response.length > 0) {
+                        console.log("Data diterima:", response); // Cek di console F12
+
+                        if (response && response.length > 0) {
                             response.forEach(chat => {
                                 let isMine = (chat.username === "<?= $_SESSION['username'] ?>");
+
+                                // Perhatikan: chat.isi dan chat.tanggal_pembuatan (sesuai DB Anda)
                                 let html = `
-                            <div class="bubble ${isMine ? 'mine' : 'others'}">
-                                <span class="meta">${chat.username} • ${chat.waktu}</span>
-                                <div class="text">${chat.pesan}</div>
-                            </div>`;
+                                    <div class="bubble ${isMine ? 'mine' : 'others'}">
+                                        <span class="meta">${chat.username} • ${chat.tanggal_pembuatan}</span>
+                                        <div class="text">${chat.isi}</div> 
+                                    </div>`;
+
                                 $('#chat-window').append(html);
-                                lastChatId = chat.idchat;
+                                lastChatId = parseInt(chat.idchat);
                             });
-                            // Auto scroll ke bawah setiap ada chat baru
-                            $('#chat-window').animate({
-                                scrollTop: $('#chat-window')[0].scrollHeight
-                            }, 500);
+
+                            // Auto scroll ke paling bawah
+                            $('#chat-window').scrollTop($('#chat-window')[0].scrollHeight);
                         }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("Ajax Error:", error);
                     }
                 });
             }

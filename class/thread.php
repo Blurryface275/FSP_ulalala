@@ -40,4 +40,17 @@ class thread
         $stmt->execute();
         return $stmt->get_result();
     }
+
+    public function checkThread($idthread)
+    {
+        $query = "SELECT status FROM thread WHERE idthread = ?";
+        $stmt = $this->mysqli->prepare($query);
+        $stmt->bind_param("i", $idthread);
+        $stmt->execute();
+        $res = $stmt->get_result();
+        if ($row = $res->fetch_assoc()) {
+            $status_thread = $row['status'];
+        }
+        return $stmt->get_result();
+    }
 }
