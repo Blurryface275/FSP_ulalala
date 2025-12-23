@@ -305,8 +305,10 @@ $can_view_full_detail = $is_member ||
                     <div class="tab-menu" id="tab-menu">
                         <button data-tab="member" class="active">Anggota</button>
                         <button data-tab="activities">Aktivitas</button>
+                        <button data-tab="threads">Thread</button>
                     </div>
 
+                    <!-- Tab Anggota Menu -->
                     <div class="tab-content" id="tab-content">
                         <div id="tab-content-member" class="tab-content-item active">
                             <h3>Daftar Anggota</h3>
@@ -363,6 +365,7 @@ $can_view_full_detail = $is_member ||
                             ?>
                         </div>
 
+                        <!-- Tab Event Menu -->
                         <div id="tab-content-activities" class="tab-content-item">
                             <h3>Event Grup</h3>
 
@@ -415,6 +418,76 @@ $can_view_full_detail = $is_member ||
                             <?php
                             endif;
                             ?>
+                        </div>
+
+                        <!-- Thread Menu Tab -->
+                        <div id="tab-content-threads" class="tab-content-item">
+                            <h3>Thread Grup</h3>
+                            <?php
+                            // Ganti query agar sesuai dengan nama tabel 'thread' dan kolom di database Anda
+                            $query_threads = "SELECT idthread, tanggal_pembuatan, username_pembuat, status FROM thread WHERE idgrup = ? ORDER BY tanggal_pembuatan DESC";
+                            $stmt_threads = $mysqli->prepare($query_threads);
+                            $stmt_threads->bind_param("i", $group_id);
+                            $stmt_threads->execute();
+                            $result_threads = $stmt_threads->get_result();
+
+                            if ($result_threads && $result_threads->num_rows > 0) {
+                                echo "<table border='1' cellspacing='0' style='width:100%; border-collapse: collapse;'>";
+                                echo "<thead><tr><th>Thread ID / Pembuat</th><th>Tanggal Pembuatan</th><th>Status</th><th colspan='2'>Aksi</th></tr></thead><tbody>";
+
+                                while ($thread = $result_threads->fetch_assoc()) {
+                                    $thread_id = $thread['idthread']; // Sesuai kolom 'idthread'
+                                    $tanggal = $thread['tanggal_pembuatan']; // Sesuai kolom 'tanggal_pembuatan'
+                                    $pembuat = $thread['username_pembuat']; // Sesuai kolom 'username_pembuat'
+                                    $status_thread = $thread['status']; // Sesuai kolom 'status'
+
+                                    echo "<tr>";
+                                    // Menampilkan ID Thread dan Pembuat karena kolom judul tidak ada di gambar DB Anda
+                                    echo "<td>Thread #" . htmlspecialchars($thread_id) . " by " . htmlspecialchars($pembuat) . "</td>";
+                                    echo "<td>" . htmlspecialchars($tanggal) . "</td>";
+                                    echo "<td>" . htmlspecialchars($status_thread) . "</td>";
+                                    echo "<td>";
+
+                                    // Tombol Chat (Hanya muncul jika status Open)
+                                    if ($status_thread == 'Open') {
+                                        echo "<a href='chatting.php?thread_id=" . urlencode($thread_id) . "&group_id=" . urlencode($group_id) . "' class='detail-event-btn'>Chat</a>";
+                                    } else {
+                                        echo "<span style='color: gray;'>Closed</span>";
+                                    }
+
+                                    echo "</td>";
+
+                                    // Tombol Hapus/Tutup (Hanya muncul untuk pembuat thread)
+                                    if ($pembuat == $logged_in_username) {
+                                        echo "<td>
+                    <button class='delete-event-btn' type='button' 
+                    onclick=\"if(confirm('Yakin ingin menutup thread ini?')) {
+                        window.location.href='close-thread.php?thread_id=" . urlencode($thread_id) . "&group_id={$group_id}';
+                    }\">
+                    Tutup
+                    </button>
+                  </td>";
+                                    } else {
+                                        echo "<td></td>";
+                                    }
+
+                                    echo "</tr>";
+                                }
+                                echo "</tbody></table>";
+                            } else {
+                                echo "<p>Belum ada thread dalam grup ini.</p>";
+                            }
+
+                            if ($group_id > 0 && $can_edit_group):
+                            ?>
+                                <form action='insert-thread.php' method='get' style="margin-top: 15px;">
+                                    <input type='hidden' name='idgrup' value='<?= htmlspecialchars($group_id) ?>'>
+                                    <button type='submit'>Tambah Thread</button>
+                                </form>
+                            <?php
+                            endif;
+                            ?>
+
                         </div>
                     </div>
 
