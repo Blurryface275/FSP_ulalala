@@ -9,24 +9,19 @@ class thread
         $this->mysqli = $mysqli;
     }
 
-    // Fungsi untuk membuat thread baru
     public function createThread($username, $idgrup, $status)
     {
-        // Query disesuaikan dengan kolom: username_pembuat, idgrup, tanggal_pembuatan, status
         $query = "INSERT INTO thread (username_pembuat, idgrup, tanggal_pembuatan, status) 
-              VALUES (?, ?, NOW(), ?)";
+                  VALUES (?, ?, NOW(), ?)";
 
         $stmt = $this->mysqli->prepare($query);
-
-        // "sis" -> string (username), integer (idgrup), string (status)
         $stmt->bind_param("sis", $username, $idgrup, $status);
-
         return $stmt->execute();
     }
-    // Fungsi untuk mengubah status menjadi 'Close'
+
+    // Fungsi untuk mengubah status thread menjadi 'Close'
     public function closeThread($idthread, $username_login)
     {
-        // Pastikan hanya pembuat yang bisa menutup (security check di level query)
         $stmt = $this->mysqli->prepare("UPDATE thread SET status = 'Close' WHERE idthread = ? AND username_pembuat = ?");
         $stmt->bind_param("is", $idthread, $username_login);
         return $stmt->execute();
@@ -41,6 +36,7 @@ class thread
         return $stmt->get_result();
     }
 
+    // fungsi untuk mengecek isi thread dalam grup
     public function checkThread($idthread)
     {
         $query = "SELECT status FROM thread WHERE idthread = ?";
@@ -52,5 +48,22 @@ class thread
             $status_thread = $row['status'];
         }
         return $stmt->get_result();
+    }
+
+    public function getStatusThread($thread_id)
+    {
+        $sql = "SELECT status FROM thread WHERE idthread = ?";
+        $stmt = $this->mysqli->prepare($sql);
+        $stmt->bind_param("i", $thread_id);
+        $stmt->execute();
+
+        $res = $stmt->get_result();
+        if ($row = $res->fetch_assoc()) {
+            // Langsung kembalikan string status-nya (misal: 'Open')
+            return $row['status'];
+        }
+
+        // defaultnya jika thread tidak ditemukan
+        return 'Closed';
     }
 }

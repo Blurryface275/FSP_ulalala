@@ -11,21 +11,16 @@ if ($mysqli->connect_errno) {
     die("Failed to connect to MySQL: " . $mysqli->connect_error);
 }
 
-// 1. Ambil thread_id dari URL (Parameter yang dikirim dari link 'Chat')
-$thread_id = $_GET['thread_id'] ?? null;
-$group_id = $_GET['group_id'] ?? null;
+require_once("class/thread.php");
+$threadObj = new thread($mysqli);
 
-// 2. (Opsional) Ambil detail status thread untuk validasi
+// Ambil thread_id dari URL (Parameter yang dikirim dari link 'Chat')
+$thread_id = $_GET['thread_id'] ?? null;
+
+// Ambil detail status thread untuk validasi
 $status_thread = 'Open';
 if ($thread_id) {
-    $query = "SELECT status FROM thread WHERE idthread = ?";
-    $stmt = $mysqli->prepare($query);
-    $stmt->bind_param("i", $thread_id);
-    $stmt->execute();
-    $res = $stmt->get_result();
-    if ($row = $res->fetch_assoc()) {
-        $status_thread = $row['status'];
-    }
+    $status_thread = $threadObj->getStatusThread($thread_id);
 }
 
 // Cek jika thread_id tidak ada, kembalikan ke detail grup

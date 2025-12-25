@@ -30,29 +30,29 @@ class akun extends classParent
         $result = $stmt->get_result();
         $row = $result->fetch_assoc();
         $stmt->close();
-        
+
         if ($row && password_verify($password, $row['password'])) {
             return $row; // Login berhasil
         }
         return null; // Login gagal
     }
 
-    public function updatePassword($username, $oldPassword, $newPassword) 
+    public function updatePassword($username, $oldPassword, $newPassword)
     {
         // ngambil hash password lama
         $stmt = $this->mysqli->prepare("SELECT password FROM akun WHERE username = ?");
         $stmt->bind_param("s", $username);
         $stmt->execute();
         $result = $stmt->get_result();
-        
+
         if ($result->num_rows === 0) {
-            return false; 
+            return false;
         }
-        
+
         $row = $result->fetch_assoc();
         $hashed_old_password = $row['password'];
         $stmt->close();
-        
+
         // verifikasi password lama
         if (!password_verify($oldPassword, $hashed_old_password)) {
             return false; // ini kalo password lama salah
@@ -60,11 +60,11 @@ class akun extends classParent
 
         // hash password baru
         $hashed_new_password = password_hash($newPassword, PASSWORD_BCRYPT);
-        
+
         // update password baru di database
         $stmt_update = $this->mysqli->prepare("UPDATE akun SET password = ? WHERE username = ?");
         $stmt_update->bind_param("ss", $hashed_new_password, $username);
-        
+
         return $stmt_update->execute();
     }
 
@@ -86,5 +86,18 @@ class akun extends classParent
         $stmt->bind_param("sssi", $npk, $encrypt_pwd, $npk, $isadmin);
         return $stmt->execute();
     }
-}
 
+    public function getUsernameByNRP($nrp)
+    {
+        $sql = "SELECT username FROM akun WHERE nrp_mahasiswa = ?";
+        $stmt = $this->mysqli->prepare($sql);
+        $stmt->bind_param("s", $nrp);
+        $stmt->execute();
+
+        $result = $stmt->get_result();
+        $userRow = $result->fetch_assoc();
+
+        // Mengembalikan username jika ditemukan, atau null jika tidak ada
+        return $userRow ? $userRow['username'] : null;
+    }
+}

@@ -122,14 +122,13 @@ $res = $group->displayGroup($limit, $offset, $user_role);
         echo "<a href=\"detail-group.php?id=" . $idgrup . "\">Kelola Grup</a>";
     } elseif ($user_role == 'mahasiswa') {
         if ($is_member) {
-            // JIKA SUDAH BERGABUNG
+            // JIKA SUDAH BERGABUNG DLM GRUP
             echo "<a href=\"detail-group.php?id=" . $idgrup . "\">Lihat Grup</a>";
         } else {
-            // JIKA BELUM BERGABUNG
+            // JIKA BELUM BERGABUNG DLM GRUP
             echo "<a href=\"detail-group.php?id=" . $idgrup . "\">Masuk Grup</a>"; 
         }
     } else {
-        // Fallback: Default Detail
         echo "<a href=\"detail-group.php?id=" . $idgrup . "\">Detail</a>";
     }
 

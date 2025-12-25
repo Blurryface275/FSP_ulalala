@@ -17,6 +17,8 @@ if ($mysqli->connect_errno) {
 }
 
 require_once("class/group.php");
+require_once("class/akun.php");
+
 
 // Validasi request
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -39,20 +41,18 @@ if ($group_id <= 0 || $nrp === "") {
 
 // Jalankan insert
 $groupManager = new group($mysqli);
+$akunObj = new akun($mysqli);
 
 try {
     $result = $groupManager->insertMemberGrup($group_id, $nrp);
 
     if ($result) {
-        // ambil username untuk response
-        $stmt = $mysqli->prepare("SELECT username FROM akun WHERE nrp_mahasiswa = ?");
-        $stmt->bind_param("s", $nrp);
-        $stmt->execute();
-        $userRow = $stmt->get_result()->fetch_assoc();
+        $username = $akunObj->getUsernameByNRP($nrp);
+
         echo json_encode([
             'success' => true,
             'message' => "Mahasiswa ($nrp) berhasil ditambahkan.",
-            'username' => $userRow['username']
+            'username' => $username
         ]);
     } else {
         echo json_encode([

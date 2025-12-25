@@ -1,18 +1,18 @@
 <?php
-     session_start();
-if (!isset($_SESSION['username'])) { 
+session_start();
+if (!isset($_SESSION['username'])) {
     $_SESSION['error_message'] = "Anda harus login dahulu!";
     header('Location: login.php');
-    exit(); 
+    exit();
 }
-$user_role = $_SESSION['role'] ?? ''; 
+$user_role = $_SESSION['role'] ?? '';
 $is_admin = $_SESSION['isadmin'] ?? 0;
 ?>
 <!DOCTYPE html>
 <?php
-    if (isset($_SESSION['success_message'])) {
+if (isset($_SESSION['success_message'])) {
     $success_message = $_SESSION['success_message'] ?? '';
-    
+
 
     unset($_SESSION['success_message']);
 }
@@ -31,6 +31,7 @@ $is_admin = $_SESSION['isadmin'] ?? 0;
         .foto {
             max-width: 150px;
         }
+
         #error-warning {
             color: red;
             border: 1px solid red;
@@ -45,102 +46,102 @@ $is_admin = $_SESSION['isadmin'] ?? 0;
 
 <body>
     <div id="sidebar" class="sidebar">
-    <div style="display: flex; align-items: center; gap: 10px; padding: 0 20px; margin-bottom: 20px;">
-        <div class="toggle-btn" id="toggle-btn">☰</div>
+        <div style="display: flex; align-items: center; gap: 10px; padding: 0 20px; margin-bottom: 20px;">
+            <div class="toggle-btn" id="toggle-btn">☰</div>
+        </div>
+        <ul>
+            <?php
+            // Admin
+            if ($is_admin == 1): ?>
+                <li><a href="data-dosen.php">Data Dosen</a></li>
+                <li><a href="data-mahasiswa.php">Data Mahasiswa</a></li>
+                <li><a href="insert-dosen.php">Tambah Dosen</a></li>
+                <li><a href="insert-mahasiswa.php">Tambah Mahasiswa</a></li>
+                <li><a href="data-group.php">Data Group</a></li>
+                <li><a href="insert-group.php">Tambah Group</a></li>
+
+
+            <?php endif; ?>
+
+            <li><a href="change-password.php">Ubah Password</a></li>
+            <li><a href="logout.php">Logout</a></li>
+        </ul>
     </div>
-    <ul>
-        <?php
-        // Admin
-        if ($is_admin == 1): ?>
-            <li><a href="data-dosen.php">Data Dosen</a></li>
-            <li><a href="data-mahasiswa.php">Data Mahasiswa</a></li>
-            <li><a href="insert-dosen.php">Tambah Dosen</a></li>
-            <li><a href="insert-mahasiswa.php">Tambah Mahasiswa</a></li>
-            <li><a href="data-group.php">Data Group</a></li>
-            <li><a href="insert-group.php">Tambah Group</a></li>
-
-
-        <?php endif; ?>
-
-        <li><a href="change-password.php">Ubah Password</a></li>
-        <li><a href="logout.php">Logout</a></li>
-    </ul>
-</div>
 
     <div class="content-box">
-    <h1>Data Mahasiswa</h1>
-    <?php
-    $mysqli = new mysqli("localhost", "root", "", "fullstack");
-    if ($mysqli->connect_errno) {
-        die("Failed to connect to MySQL: " . $mysqli->connect_error);
-    } 
-    
-
-    require_once("class/mahasiswa.php");
-    $mahasiswa = new mahasiswa($mysqli);
-
-    if(!empty($success_message)){
-        echo "<div id='error-warning'>",$success_message,"</div>";
-    }
-    $limit = 5; // jumlah mahasiswa per page
-    $page = isset($_GET['page']) && is_numeric($_GET['page']) ? (int)$_GET['page'] : 1; //supaya fix angka
-    $offset = ($page - 1) * $limit;
-    $totalMahasiswa = $mahasiswa->getTotalMahasiswa();
-    $totalPages = ceil($totalMahasiswa / $limit);
-
-    $res = $mahasiswa->displayMahasiswa($limit, $offset);
-    $success_message = $_SESSION['success_message'] ?? '';
-    echo "<table border=1 cell-spacing=0><th>Foto</th> <th>Nama</th> <th>NRP</th> <th>Angkatan</th> <th colspan='2'>Aksi</th>";
-
-    while ($row = $res->fetch_assoc()) {
-        echo "<tr>";
-        echo "<td>";
-
-        $fotoMhs = "uploads/" . $row['nrp'] . "." . $row['foto_extention'];
-
-        if (file_exists($fotoMhs)) {
-            echo "<img class='foto' src='" . $fotoMhs . "' alt='poster'>";
-        } else {
-            echo "<span class='teks-merah'>Poster tidak ditemukan</span>";
+        <h1>Data Mahasiswa</h1>
+        <?php
+        $mysqli = new mysqli("localhost", "root", "", "fullstack");
+        if ($mysqli->connect_errno) {
+            die("Failed to connect to MySQL: " . $mysqli->connect_error);
         }
 
-        echo "</td>";
 
-        echo "<td>" . $row['nama'] . "</td>";
-        echo "<td>" . $row['nrp'] . "</td>";
-        echo "<td>" . $row['angkatan'] . "</td>";
-        echo "<td><a href='edit-mahasiswa.php?nrp=" . $row['nrp'] . "'>Edit</a></td>";
-        echo "<td><a href='delete-mahasiswa.php?nrp=" . $row['nrp'] . "' onclick='return confirm(\"Yakin ingin menghapus mahasiswa ini?\");'>Delete</a></td>";
-        
-        echo "</tr>";
-    }
-    echo "</table>";
+        require_once("class/mahasiswa.php");
+        $mahasiswa = new mahasiswa($mysqli);
 
-    echo "<div class='pagination'>";
+        if (!empty($success_message)) {
+            echo "<div id='error-warning'>", $success_message, "</div>";
+        }
+        $limit = 5; // jumlah mahasiswa per page
+        $page = isset($_GET['page']) && is_numeric($_GET['page']) ? (int)$_GET['page'] : 1; //supaya fix angka
+        $offset = ($page - 1) * $limit;
+        $totalMahasiswa = $mahasiswa->getTotalMahasiswa();
+        $totalPages = ceil($totalMahasiswa / $limit);
 
-    if ($page > 1) {
-        echo "<a href='data-mahasiswa.php?page=" . ($page - 1) . "'>Prev</a>"; // kalo udah lebih dari 1 biar ada prev button
-    }
+        $res = $mahasiswa->displayMahasiswa($limit, $offset);
+        $success_message = $_SESSION['success_message'] ?? '';
+        echo "<table border=1 cell-spacing=0><th>Foto</th> <th>Nama</th> <th>NRP</th> <th>Angkatan</th> <th colspan='2'>Aksi</th>";
 
-    for ($i = 1; $i <= $totalPages; $i++) {
-        echo "<a href='data-mahasiswa.php?page=$i'>$i</a>"; // sellau generate link sesuai dengan julah offset
-    }
+        while ($row = $res->fetch_assoc()) {
+            echo "<tr>";
+            echo "<td>";
 
-    if ($page < $totalPages) {
-        echo "<a href='data-mahasiswa.php?page=" . ($page + 1) . "'>Next</a>"; // nambahin button next selama blom last apge
+            $fotoMhs = "uploads/" . $row['nrp'] . "." . $row['foto_extention'];
 
-    }
-    echo "</div>";
-    ?>
+            if (file_exists($fotoMhs)) {
+                echo "<img class='foto' src='" . $fotoMhs . "' alt='poster'>";
+            } else {
+                echo "<span class='teks-merah'>Poster tidak ditemukan</span>";
+            }
+
+            echo "</td>";
+
+            echo "<td>" . $row['nama'] . "</td>";
+            echo "<td>" . $row['nrp'] . "</td>";
+            echo "<td>" . $row['angkatan'] . "</td>";
+            echo "<td><a href='edit-mahasiswa.php?nrp=" . $row['nrp'] . "'>Edit</a></td>";
+            echo "<td><a href='delete-mahasiswa.php?nrp=" . $row['nrp'] . "' onclick='return confirm(\"Yakin ingin menghapus mahasiswa ini?\");'>Delete</a></td>";
+
+            echo "</tr>";
+        }
+        echo "</table>";
+
+        echo "<div class='pagination'>";
+
+        if ($page > 1) {
+            echo "<a href='data-mahasiswa.php?page=" . ($page - 1) . "'>Prev</a>"; // kalo udah lebih dari 1 biar ada prev button
+        }
+
+        for ($i = 1; $i <= $totalPages; $i++) {
+            echo "<a href='data-mahasiswa.php?page=$i'>$i</a>"; // sellau generate link sesuai dengan julah offset
+        }
+
+        if ($page < $totalPages) {
+            echo "<a href='data-mahasiswa.php?page=" . ($page + 1) . "'>Next</a>"; // nambahin button next selama blom last apge
+
+        }
+        echo "</div>";
+        ?>
     </div>
 </body>
 
 </html>
 <script>
-        $(function() {
-            $("#toggle-btn").on("click", function() {
-                $("#sidebar").toggleClass("collapsed");
-                $(".main-content").toggleClass("expanded");
-            });
+    $(function() {
+        $("#toggle-btn").on("click", function() {
+            $("#sidebar").toggleClass("collapsed");
+            $(".main-content").toggleClass("expanded");
         });
-    </script>
+    });
+</script>
