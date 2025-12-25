@@ -66,4 +66,21 @@ class thread
         // defaultnya jika thread tidak ditemukan
         return 'Closed';
     }
+
+    // Di dalam class thread
+    public function getThreads($group_id)
+    {
+        $query = "SELECT idthread, tanggal_pembuatan, username_pembuat, status 
+              FROM thread 
+              WHERE idgrup = ? 
+              ORDER BY tanggal_pembuatan DESC";
+
+        $stmt = $this->mysqli->prepare($query);
+        $stmt->bind_param("i", $group_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        // Mengembalikan data dalam bentuk array asosiatif
+        return $result->fetch_all(MYSQLI_ASSOC);
+    }
 }

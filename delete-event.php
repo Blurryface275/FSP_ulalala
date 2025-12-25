@@ -23,25 +23,25 @@
         die("Failed to connect to MySQL: " . $mysqli->connect_error);
     }
 
-    if (!isset($_GET['event_id'])) {
-        die("Event ID tidak ditemukan!");
+    require_once("class/event.php");
+    $eventObj = new Event($mysqli);
+
+    // Validasi input
+    $event_id = $_GET['event_id'] ?? null;
+    $group_id = $_GET['group_id'] ?? null;
+
+    if (!$event_id || !$group_id) {
+        die("Parameter tidak lengkap!");
     }
-    if ($_SERVER['REQUEST_METHOD'] == 'GET')
-        $event_id =  $_GET['event_id'];
-    $group_id = $_GET['group_id'];
 
-    $stmt = $mysqli->prepare("DELETE FROM event WHERE idevent=? AND idgrup=?");
-    $stmt->bind_param("ii", $event_id, $group_id);
-
-    if ($stmt->execute()) {
-        header("Location: detail-group.php?id=" . urlencode($_GET['group_id'])); // kembali ke halaman utama
+    // Panggil fungsi dari class
+    if ($eventObj->deleteEvent($event_id, $group_id)) {
+        // Redirect dilakukan di sini
+        header("Location: detail-group.php?id=" . urlencode($group_id));
         exit;
     } else {
-        echo "Error: " . $stmt->error;
+        echo "Gagal menghapus event.";
     }
-
-    $stmt->close();
-    $mysqli->close();
     ?>
 </body>
 

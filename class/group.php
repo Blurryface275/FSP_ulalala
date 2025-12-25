@@ -1,5 +1,5 @@
 <?php
- require_once("parent.php"); 
+require_once("parent.php");
 class group
 {
     private $mysqli;
@@ -19,7 +19,7 @@ class group
         $stmt->execute();
         $result = $stmt->get_result();
         $stmt->close();
-        
+
         // Kalo jumlah baris > 0, berarti user sudah member
         return $result->num_rows > 0;
     }
@@ -27,7 +27,7 @@ class group
     /*
       Namipilin grup publik aja kalau Mahasiswa
      */
-    public function displayGroup($limit, $offset, $role = 'unknown') 
+    public function displayGroup($limit, $offset, $role = 'unknown')
     {
         $filter_clause = "";
         if ($role === 'mahasiswa') {
@@ -35,7 +35,7 @@ class group
         }
 
         $sql = "SELECT idgrup, nama FROM grup " . $filter_clause . " ORDER BY nama asc LIMIT ? OFFSET ?";
-        
+
         $stmt = $this->mysqli->prepare($sql);
         $stmt->bind_param("ii", $limit, $offset);
         $stmt->execute();
@@ -51,15 +51,15 @@ class group
         if ($role === 'mahasiswa') {
             $filter_clause = " WHERE jenis = 'Publik' ";
         }
-        
+
         $sql = "SELECT COUNT(*) as total FROM grup" . $filter_clause;
         $result = $this->mysqli->query($sql);
-        
+
         if (!$result) {
             // Menangani error query
             return 0;
         }
-        
+
         $row = $result->fetch_assoc();
         return $row['total'];
     }
@@ -198,6 +198,48 @@ class group
 
         // Mengembalikan TRUE jika ada 1 baris atau lebih yang kehapus
         return $stmt->affected_rows > 0;
+    }
+
+    // Di dalam class group
+    public function getCreatorUsername($group_id)
+    {
+        $query = "SELECT username_pembuat FROM grup WHERE idgrup = ?";
+        $stmt = $this->mysqli->prepare($query);
+        $stmt->bind_param("i", $group_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if ($row = $result->fetch_assoc()) {
+            return $row['username_pembuat'];
+        }
+        return null;
+    }
+
+    public function getGroupMembers($group_id)
+    {
+        $query = "SELECT 
+                COALESCE(d.nama, m.nama, a.username) AS nama_member,
+                CASE 
+                    WHEN d.npk IS NOT NULL THEN 'Dosen'
+                    WHEN m.nrp IS NOT NULL THEN 'Mahasiswa'
+                    ELSE 'Tidak diketahui'
+                END AS role,
+                a.username AS username_login,
+                COALESCE(d.npk, m.nrp, a.username) AS id_anggota
+              FROM member_grup mg
+              JOIN akun a ON mg.username = a.username
+              LEFT JOIN dosen d ON a.npk_dosen = d.npk
+              LEFT JOIN mahasiswa m ON a.nrp_mahasiswa = m.nrp
+              WHERE mg.idgrup = ?
+              ORDER BY nama_member ASC";
+
+        $stmt = $this->mysqli->prepare($query);
+        $stmt->bind_param("i", $group_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        // Mengambil semua baris sekaligus sebagai array asosiatif
+        return $result->fetch_all(MYSQLI_ASSOC);
     }
 
 

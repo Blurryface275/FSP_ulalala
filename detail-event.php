@@ -10,72 +10,35 @@ if ($mysqli->connect_errno) {
     die("Failed to connect to MySQL: " . $mysqli->connect_error);
 }
 
-// Proses edit event
+require_once("class/event.php");
+require_once("class/group.php");
+$eventObj = new event($mysqli);
+$groupObj = new group($mysqli);
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['event_id'])) {
-    // Ambil data dari form (yang dikirim lewat JS)
-    $update_event_id = $_POST['event_id'];
-    $update_group_id = $_POST['idgrup']; // Untuk redirect kembali
-    $update_judul = $_POST['judul'];
-    $update_tanggal = $_POST['tanggal'];
-    $update_keterangan = $_POST['keterangan'];
-    $update_jenis = $_POST['jenis'];
+    $success = $eventObj->updateEvent(
+        $_POST['judul'],
+        $_POST['tanggal'],
+        $_POST['keterangan'],
+        $_POST['jenis'],
+        $_POST['event_id']
+    );
 
-    // Validasi sederhana (opsional: pastikan tidak kosong)
-    if (!empty($update_judul) && !empty($update_tanggal)) {
-        $stmt_update = $mysqli->prepare("UPDATE event SET judul=?, tanggal=?, keterangan=?, jenis=? WHERE idevent=?");
-        $stmt_update->bind_param("ssssi", $update_judul, $update_tanggal, $update_keterangan, $update_jenis, $update_event_id);
-
-        if ($stmt_update->execute()) {
-            header("Location: detail-event.php?event_id=" . $update_event_id . "&group_id=" . $update_group_id);
-            exit();
-        } else {
-            echo "<script>alert('Gagal mengupdate data: " . $mysqli->error . "');</script>";
-        }
-        $stmt_update->close();
+    if ($success) {
+        header("Location: detail-event.php?event_id=" . $_POST['event_id'] . "&group_id=" . $_POST['idgrup']);
+        exit();
+    } else {
+        echo "<script>alert('Gagal mengupdate data');</script>";
     }
 }
 
-$logged_in_username = $_SESSION['username'];
-$logged_in_role = $_SESSION['role'];
-$is_admin = $_SESSION['isadmin'] ?? 0;
-
-if (!isset($_GET['event_id'])) {
-    die("Event ID tidak ditemukan!");
-}
-if ($_SERVER['REQUEST_METHOD'] == 'GET')
-    $event_id =  $_GET['event_id'];
+$event_id = $_GET['event_id'] ?? die("Event ID tidak ditemukan!");
 $group_id = $_GET['group_id'] ?? null;
-
-// cari username pembuat grup
-$query_username = "select username_pembuat from grup where idgrup = ?";
-$stmt_username = $mysqli->prepare($query_username);
-$stmt_username->bind_param("i", $group_id);
-$stmt_username->execute();
-$result_username = $stmt_username->get_result();
-if ($result_username && $result_username->num_rows > 0) {
-    $row = $result_username->fetch_assoc();
-    $username_pembuat = $row['username_pembuat'];
-}
-
-$stmt = $mysqli->prepare("SELECT * FROM event WHERE idevent=?");
-$stmt->bind_param("i", $event_id);
-$stmt->execute();
-$result = $stmt->get_result();
-if ($result && $result->num_rows > 0) {
-    $event = $result->fetch_assoc();
-    $judul = $event['judul'];
-    $tanggal = $event['tanggal'];
-    $keterangan = $event['keterangan'];
-    $jenis = $event['jenis'];
-    $poster_extension = $event['poster_extension'];
-} else {
-    die("Event tidak ditemukan!");
-}
-
-
-$stmt->close();
-$mysqli->close();
+$event = $eventObj->getEventById($event_id);
+if (!$event) die("Event tidak ditemukan!");
+$username_pembuat = $groupObj->getCreatorUsername($group_id);
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 

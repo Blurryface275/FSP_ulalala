@@ -21,6 +21,18 @@ class mahasiswa
         return $stmt->get_result();
     }
 
+    public function deleteMahasiswa($nrp)
+    {
+        $sql = "DELETE FROM mahasiswa WHERE nrp = ?";
+        $stmt = $this->mysqli->prepare($sql);
+        $stmt->bind_param("s", $nrp);
+
+        $success = $stmt->execute();
+        $stmt->close();
+
+        return $success; // Mengembalikan true jika sukses, false jika gagal
+    }
+
     public function insertMahasiswaBaru($nrp, $nama, $gender, $tgl_lahir, $angkatan)
     {
         $valid_extension = ['jpg', 'jpeg', 'png'];
@@ -169,5 +181,23 @@ class mahasiswa
         $stmt->close();
 
         return $count > 0;
+    }
+
+    public function getNonMembers($group_id)
+    {
+        $query = "SELECT m.nrp, m.nama, a.username 
+              FROM mahasiswa m 
+              JOIN akun a ON m.nrp = a.nrp_mahasiswa 
+              LEFT JOIN member_grup mg ON a.username = mg.username AND mg.idgrup = ? 
+              WHERE mg.username IS NULL 
+              ORDER BY m.nama ASC 
+              LIMIT 10";
+
+        $stmt = $this->mysqli->prepare($query);
+        $stmt->bind_param("i", $group_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        return $result->fetch_all(MYSQLI_ASSOC);
     }
 }

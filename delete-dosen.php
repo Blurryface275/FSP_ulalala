@@ -24,24 +24,22 @@
         die("Failed to connect to MySQL: " . $mysqli->connect_error);
     }
 
+    require_once("class/dosen.php");
+    $dosenObj = new dosen($mysqli);
+
     if (!isset($_GET['npk'])) {
         die("NPK tidak ditemukan!");
     }
-    if ($_SERVER['REQUEST_METHOD'] == 'GET')
-        $npk =  $_GET['npk'];
 
-    $stmt = $mysqli->prepare("DELETE FROM dosen WHERE npk=?");
-    $stmt->bind_param("s", $npk);
+    $npk = $_GET['npk'];
 
-    if ($stmt->execute()) {
-        header("Location: data-dosen.php"); // kembali ke halaman utama
+    // Panggil fungsi dari class
+    if ($dosenObj->deleteDosen($npk)) {
+        header("Location: data-dosen.php");
         exit;
     } else {
-        echo "Error: " . $stmt->error;
+        echo "Gagal menghapus data dosen.";
     }
-
-    $stmt->close();
-    $mysqli->close();
     ?>
 
 </body>

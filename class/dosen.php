@@ -21,6 +21,19 @@ class dosen
         return $stmt->get_result();
     }
 
+    // delete dosen
+    public function deleteDosen($npk)
+    {
+        $sql = "DELETE FROM dosen WHERE npk = ?";
+        $stmt = $this->mysqli->prepare($sql);
+        $stmt->bind_param("s", $npk);
+
+        $success = $stmt->execute();
+        $stmt->close();
+
+        return $success; // Mengembalikan true atau false
+    }
+
     // Insert dosen baru
     public function insertDosenBaru($npk, $nama, $foto)
     {
