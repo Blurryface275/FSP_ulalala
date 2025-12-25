@@ -137,13 +137,12 @@ $logged_in_username = $_SESSION['username'];
                             response.forEach(chat => {
                                 let isMine = (chat.username === "<?= $_SESSION['username'] ?>");
 
-                                // Perhatikan: chat.isi dan chat.tanggal_pembuatan (sesuai DB Anda)
                                 let html = `
-                                    <div class="bubble ${isMine ? 'mine' : 'others'}">
-                                        <span class="meta">${chat.username} • ${chat.tanggal_pembuatan}</span>
-                                        <div class="text">${chat.isi}</div> 
-                                    </div>`;
-
+                                <div class="bubble ${isMine ? 'mine' : 'others'}">
+                                    <span class="meta">${chat.nama_asli} • ${chat.tanggal_pembuatan}</span>
+                                    <div class="text">${chat.isi}</div> 
+                                </div>`;
+                                
                                 $('#chat-window').append(html);
                                 lastChatId = parseInt(chat.idchat);
                             });

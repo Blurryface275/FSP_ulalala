@@ -22,11 +22,20 @@ class chat
 
     public function getChat($thread_id, $last_id = 0)
     {
-        // Sesuaikan nama kolom
-        $query = "SELECT idchat, idthread, username_pembuat as username, isi, tanggal_pembuatan 
-              FROM chat 
-              WHERE idthread = ? AND idchat > ? 
-              ORDER BY tanggal_pembuatan ASC";
+        $query = "SELECT 
+                c.idchat, 
+                c.idthread, 
+                c.username_pembuat AS username, 
+                -- Mengambil nama dari mahasiswa atau dosen
+                COALESCE(m.nama, d.nama) AS nama_asli, 
+                c.isi, 
+                c.tanggal_pembuatan 
+              FROM chat c
+              INNER JOIN akun a ON c.username_pembuat = a.username
+              LEFT JOIN mahasiswa m ON a.nrp_mahasiswa = m.nrp
+              LEFT JOIN dosen d ON a.npk_dosen = d.npk
+              WHERE c.idthread = ? AND c.idchat > ? 
+              ORDER BY c.tanggal_pembuatan ASC";
 
         $stmt = $this->mysqli->prepare($query);
         $stmt->bind_param("ii", $thread_id, $last_id);
