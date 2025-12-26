@@ -27,9 +27,9 @@ body {
   background: var(--cream);
   min-height: 100vh;
   display: flex;
+  justify-content: flex-start;
+  align-items: stretch;
   overflow-x: hidden;
-  justify-content: center;
-  align-items: center;
   transition: background 0.3s;
 }
 
@@ -44,12 +44,14 @@ body {
   color: var(--cream);
   padding: 20px 0;
   z-index: 1000;
-  transition: width 0.3s ease-in-out;
+  transition: all 0.3s ease-in-out; /* Menggunakan 'all' agar transisi lebar halus */
 }
 
+/* Desktop: Saat collapsed, sidebar mengecil menjadi 70px */
 .sidebar.collapsed {
   width: 70px;
 }
+
 .sidebar ul {
   list-style: none;
 }
@@ -65,12 +67,15 @@ body {
   padding: 10px 20px;
   border-radius: 6px;
   transition: 0.3s;
+  white-space: nowrap; /* Mencegah teks turun saat sidebar mengecil */
 }
 
 .sidebar ul li a:hover {
   background: var(--ungu);
   color: var(--peach);
 }
+
+/* Sembunyikan teks saat sidebar mengecil di desktop */
 .sidebar.collapsed ul li a span {
   display: none;
 }
@@ -79,32 +84,58 @@ body {
   font-size: 22px;
   cursor: pointer;
   color: var(--cream);
-  padding: 20px 20px 0;
+  padding: 0 20px 20px;
+  display: inline-block;
 }
 
 /* 4. Layout Main Content */
 .main-content {
-  flex-grow: 1;
+  flex: 1;
   padding: 40px;
-  margin-left: 250px;
-  min-height: 100vh;
-  transition: 0.3s;
+  margin-left: 220px; /* Default margin mengikuti lebar sidebar */
+  transition: margin-left 0.3s ease-in-out;
+  text-align: left;
 }
 
-.main-content.expanded {
-  margin-left: 150px;
-}
-.sidebar.collapsed ~ .detail-group {
-  margin-left: 90px !important;
-  padding: 40px !important;
+/* Desktop: Saat sidebar mengecil, konten bergeser ke kiri */
+.sidebar.collapsed ~ .main-content {
+  margin-left: 70px;
 }
 
-/* 5. UI Components (Cards & Tables) */
-.content-box,
-.box,
-.form-container,
-.add-member-box,
-.detail-event {
+/* Header Dashboard */
+header {
+  margin-bottom: 30px;
+  text-align: left;
+  width: 100%;
+}
+
+header h1 {
+  color: var(--coklat);
+  font-size: 28px;
+}
+
+.greeting {
+  background: var(--pink);
+  color: var(--coklat);
+  padding: 15px 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+  width: 100%;
+}
+
+section p {
+  background: var(--peach);
+  color: var(--coklat);
+  padding: 15px 20px;
+  border-radius: 8px;
+  font-size: 16px;
+  line-height: 1.6;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* 5. UI Components (Diringkas sesuai instruksi sebelumnya) */
+.content-box, .box, .form-container, .add-member-box, .detail-event {
   background: var(--peach);
   padding: 20px;
   border-radius: 10px;
@@ -113,173 +144,52 @@ body {
   width: 100%;
 }
 
-.content-box {
-  width: 50%;
-} /* Spesifik untuk content-box */
+.content-box { width: 50%; }
 
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin: 20px 0;
-  background: #fff;
-  border-radius: 10px;
-  overflow: hidden;
-}
-
-th,
-td {
-  padding: 12px 15px;
-  text-align: center;
-  border-bottom: 1px solid var(--peach);
-}
-th {
-  background: var(--ungu);
-  color: var(--cream);
-  text-transform: uppercase;
-}
-tr:nth-child(even) {
-  background: var(--peach);
-}
-tr:hover {
-  background: var(--pink);
-  color: var(--coklat);
-}
-
-/* 6. Form Elements */
-input,
-textarea,
-select {
-  width: 100%;
-  margin: 5px 0 15px;
-  padding: 10px;
-  border: 1px solid var(--pink);
-  border-radius: 6px;
-  background: white;
-  color: var(--coklat);
-  font-family: inherit;
-}
-
-label {
-  font-weight: bold;
-  color: var(--coklat);
-  display: block;
-  margin: 5px;
-}
-
-/* 7. Buttons */
-.btn,
-button[type="submit"],
-.btn-modal,
-.edit-group-btn,
-.detail-event-btn {
-  padding: 8px 16px;
-  border: none;
-  border-radius: 20px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: 0.3s;
-  text-decoration: none;
-  display: inline-block;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
-}
-
-button[type="submit"],
-.btn-delete,
-.delete-event-btn {
-  background: var(--pink);
-  color: var(--coklat);
-}
-.btn-edit,
-.detail-event-btn,
-.btn-modal {
-  background: var(--ungu);
-  color: var(--cream);
-}
-
-button:hover,
-.btn:hover {
-  filter: brightness(0.9);
-  transform: translateY(-1px);
-}
-
-/* 8. Chat System */
-.chat-full-wrapper {
-  display: flex;
-  flex-direction: column;
-  height: 80vh;
-  background: white;
-  border-radius: 15px;
-}
-.chat-header {
-  background: var(--ungu);
-  color: var(--peach);
-  padding: 20px;
-  text-align: center;
-}
-.chat-messages {
-  flex: 1;
-  overflow-y: auto;
-  padding: 25px;
-  background: var(--cream);
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-}
-
-.bubble {
-  max-width: 70%;
-  padding: 12px 18px;
-  border-radius: 20px;
-  font-size: 14px;
-}
-.bubble.mine {
-  align-self: flex-end;
-  background: var(--ungu);
-  color: var(--peach);
-  border-bottom-right-radius: 2px;
-}
-.bubble.others {
-  align-self: flex-start;
-  background: white;
-  border: 1px solid var(--pink);
-  border-bottom-left-radius: 2px;
-}
-
-/* 9. Header Group & Tabs */
-.header-group {
-  background: var(--ungu);
-  color: var(--cream);
-  padding: 20px;
-  border-radius: 10px;
-}
-.tab-menu {
-  display: flex;
-  gap: 10px;
-  border-bottom: 2px solid var(--coklat);
-}
-.tab-menu button.active {
-  background: var(--peach);
-  color: var(--ungu);
-  border: 1px solid var(--ungu);
-  border-bottom: none;
-}
-
-/* 10. Responsive */
+/* 10. Responsive (RWD Adjustment) */
 @media (max-width: 768px) {
+  /* Paksa Body menjadi satu kolom vertikal sesuai gambar RWD Anda */
+  body {
+    flex-direction: column;
+  }
+
   .sidebar {
-    width: 0;
+    width: 250px; /* Lebar saat terbuka */
+    left: -250px; /* Sembunyi total di kiri luar layar */
+    position: fixed;
+    z-index: 2000; /* Harus lebih tinggi dari elemen lain agar bisa diklik */
+    transition: left 0.3s ease-in-out;
   }
+
+  /* Class .show untuk membuka sidebar di mobile */
   .sidebar.show {
-    width: 220px;
+    left: 0;
   }
+
   .main-content {
-    margin-left: 0 !important;
+    margin-left: 0 !important; /* Di mobile konten harus full width */
+    width: 100%;
+    padding: 80px 20px 20px; /* Ruang untuk tombol hamburger tetap terlihat */
   }
+
+  /* Elemen box/card menjadi 100% (RWD yang baik sesuai foto Anda) */
+  .content-box, .box, .form-container {
+    width: 100% !important;
+  }
+
+  /* Pastikan tombol toggle berada paling atas agar bisa diklik */
   .toggle-btn {
     position: fixed;
-    top: 10px;
-    left: 10px;
-    z-index: 1001;
+    top: 15px;
+    left: 15px;
+    z-index: 2100; /* Di atas sidebar */
     background: var(--coklat);
+    color: var(--cream);
+    padding: 10px 15px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 }

@@ -103,11 +103,26 @@ if (isset($_SESSION['isadmin']) && $_SESSION['isadmin'] == 1) {
     </div>
 
     <script>
-        $(function() {
-            $("#toggle-btn").on("click", function() {
-                $("#sidebar").toggleClass("collapsed");
-                $(".main-content").toggleClass("expanded");
-            });
+        const toggleBtn = document.getElementById('toggle-btn');
+        const sidebar = document.getElementById('sidebar');
+
+        toggleBtn.addEventListener('click', function() {
+            if (window.innerWidth > 768) {
+                // Mode Desktop: Mengecilkan sidebar (Collapsed)
+                sidebar.classList.toggle('collapsed');
+            } else {
+                // Mode Mobile: Memunculkan/Menyembunyikan sidebar (Show)
+                sidebar.classList.toggle('show');
+            }
+        });
+
+        // Tambahan: Klik di luar sidebar untuk menutup saat di mobile
+        document.addEventListener('click', function(event) {
+            const isClickInside = sidebar.contains(event.target) || toggleBtn.contains(event.target);
+
+            if (!isClickInside && window.innerWidth <= 768 && sidebar.classList.contains('show')) {
+                sidebar.classList.remove('show');
+            }
         });
 
         const themeToggle = document.getElementById('theme-toggle');
