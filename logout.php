@@ -1,5 +1,5 @@
 <?php
-session_start(); // wajib sebelum manipulasi session
+session_start(); 
 
 
 $_SESSION = []; // kosongin array session

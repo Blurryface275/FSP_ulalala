@@ -1,13 +1,11 @@
 <?php
 session_start();
 
-// Pastikan user sudah login
 if (!isset($_SESSION['username'])) {
     die("Akses ditolak. Silakan login terlebih dahulu.");
 }
 
 $mysqli = new mysqli("localhost", "root", "", "fullstack"); 
-// ... (cek koneksi)
 
 require_once("class/thread.php"); 
 $threadManager = new thread($mysqli);

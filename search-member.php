@@ -24,48 +24,30 @@ if ($group_id <= 0) {
     exit;
 }
 
-$search_nrp = $nrp . '%';
+require_once("class/mahasiswa.php");
+$mhsObj = new mahasiswa($mysqli);
 
-$query = "SELECT m.nrp, m.nama, a.username 
-          FROM mahasiswa m 
-          JOIN akun a ON m.nrp = a.nrp_mahasiswa 
-          LEFT JOIN member_grup mg ON a.username = mg.username AND mg.idgrup = ? 
-          WHERE mg.username IS NULL 
-          AND m.nrp LIKE ? 
-          ORDER BY m.nama ASC 
-          LIMIT 10";
+// Panggil fungsi dari class
+$results = $mhsObj->searchNonMember($group_id, $nrp);
 
-$stmt = $mysqli->prepare($query);
-if ($stmt) {
-    $stmt->bind_param("is", $group_id, $search_nrp);
-    $stmt->execute();
-    $result = $stmt->get_result();
+if (!empty($results)) {
+    echo "<ul class='member-default-list'>";
+    foreach ($results as $student) {
+        $valNrp = htmlspecialchars($student['nrp']);
+        $valNama = htmlspecialchars($student['nama']);
+        $valUser = htmlspecialchars($student['username']);
 
-    if ($result->num_rows > 0) {
-        echo "<ul class='member-default-list'>";
-        while ($student = $result->fetch_assoc()) {
-            echo "<li id='student-" . htmlspecialchars($student['nrp']) . "'>";
-            echo "<div class='member-item-flex'>";
-
-            // Tampilan Nama (NRP)
-            echo htmlspecialchars($student['nama']) . " (" . htmlspecialchars($student['nrp']) . ")";
-
-            // Tombol Tambah
-            echo "<button class='add-member-btn' 
-                        data-nrp='" . htmlspecialchars($student['nrp']) . "' 
-                        data-nama='" . htmlspecialchars($student['nama']) . "' 
-                        data-username='" . htmlspecialchars($student['username']) . "'>Tambah</button>";
-
-            echo "</div>";
-            echo "</li>";
-        }
-        echo "</ul>";
-    } else {
-        echo "<p>Tidak ada mahasiswa ditemukan.</p>";
+        echo "<li id='student-$valNrp'>";
+        echo "<div class='member-item-flex'>";
+        echo "$valNama ($valNrp)";
+        echo "<button class='add-member-btn' 
+                data-nrp='$valNrp' 
+                data-nama='$valNama' 
+                data-username='$valUser'>Tambah</button>";
+        echo "</div>";
+        echo "</li>";
     }
-    $stmt->close();
+    echo "ul>";
 } else {
-    echo "<p>Terjadi kesalahan query.</p>";
+    echo "<p>Tidak ada mahasiswa ditemukan.</p>";
 }
-
-$mysqli->close();

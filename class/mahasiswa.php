@@ -200,4 +200,27 @@ class mahasiswa
 
         return $result->fetch_all(MYSQLI_ASSOC);
     }
+
+    public function searchNonMember($group_id, $keyword)
+    {
+        // Tambahkan wildcard % untuk pencarian LIKE
+        $search_term = $keyword . '%';
+
+        $query = "SELECT m.nrp, m.nama, a.username 
+              FROM mahasiswa m 
+              JOIN akun a ON m.nrp = a.nrp_mahasiswa 
+              LEFT JOIN member_grup mg ON a.username = mg.username AND mg.idgrup = ? 
+              WHERE mg.username IS NULL 
+              AND m.nrp LIKE ? 
+              ORDER BY m.nama ASC 
+              LIMIT 10";
+
+        $stmt = $this->mysqli->prepare($query);
+        $stmt->bind_param("is", $group_id, $search_term);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        // Mengembalikan array data
+        return $result->fetch_all(MYSQLI_ASSOC);
+    }
 }

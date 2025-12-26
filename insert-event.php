@@ -53,22 +53,18 @@ if (!$idgrup_aktif || !is_numeric($idgrup_aktif) || $idgrup_aktif <= 0) {
     <div class="box">
         <h2>Tambah Event untuk Grup : <?= $idgrup_aktif ? htmlspecialchars($idgrup_aktif) : '' ?></h2>
 
-        <!-- 🔴 ALERT: ID Grup Tidak Valid -->
         <?php if (!$idgrup_aktif): ?>
             <div class="alert-danger">
                 <?= $error_message_form ?>
             </div>
         <?php endif; ?>
 
-
-        <!-- 🟩 ALERT SUKSES -->
         <?php if ($success_message): ?>
             <div class="alert-success">
                 <?= htmlspecialchars($success_message) ?>
             </div>
         <?php endif; ?>
 
-        <!-- 🔴 ALERT ERROR -->
         <?php if ($error_message): ?>
             <div class="alert-danger">
                 <?= htmlspecialchars($error_message) ?>

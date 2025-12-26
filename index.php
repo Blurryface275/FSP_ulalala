@@ -92,7 +92,7 @@ if (isset($_SESSION['isadmin']) && $_SESSION['isadmin'] == 1) {
 
         <section>
             <?php if ($isAdmin): ?>
-                <p>Selamat datang di dashboard admin. Gunakan menu di samping untuk mengelola data dosen dan mahasiswa.</p>
+                <p>Selamat datang di dashboard admin. Gunakan menu di samping untuk mengelola semua data kecuali group.</p>
             <?php else: ?>
                 <p>Selamat datang di halaman pengguna. Anda hanya dapat mengubah kata sandi Anda.</p>
             <?php endif; ?>
