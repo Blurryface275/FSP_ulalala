@@ -101,26 +101,26 @@ body.dark-mode .sidebar ul li a:hover {
 body.dark-mode th {
   color: #d6cfcf;
 }
-/* 2. Mengubah warna teks menu (Data Group, Logout, dll)*/
+/*ubah warna teks*/
 body.dark-mode .sidebar ul li a {
   color: #d6cfcf !important;
 }
 
-/* 3. Mengubah warna ikon Hamburger (☰) dan Ikon Matahari/Bulan */
+/*ubah ikon hamburger warnanya */
 body.dark-mode #toggle-btn,
 body.dark-mode #theme-icon {
   color: #d6cfcf;
 }
 
-/* 1. Mengubah warna teks ID Group ($idgrup) di dalam tabel */
+/* ubah warna teks */
 body.dark-mode td {
   color: #d6cfcf; /* Menjadi putih saat dark mode */
 }
 
-/* 2. Mengubah warna Link (Kelola Grup, Lihat Grup, dll) */
+/* ubah warna Link (Kelola Grup, Lihat Grup, dll) */
 body.dark-mode td a {
   color: #d6cfcf; /* Link jadi putih */
-  text-decoration: underline; /* Tetap kasih garis bawah supaya user tahu itu bisa diklik */
+  text-decoration: underline; /* Tetap kasih garis bawah */
 }
 
 /* Mutihin tulisan "Data Group" (H1) */
