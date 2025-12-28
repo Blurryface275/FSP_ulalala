@@ -56,7 +56,7 @@ $is_admin = $_SESSION['isadmin'] ?? 0;
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ubah Password</title>
-    <link rel="stylesheet" href="login-style.css">
+    <link rel="stylesheet" href="style.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 
@@ -129,11 +129,51 @@ $is_admin = $_SESSION['isadmin'] ?? 0;
 </body>
 
 </html>
-<script>
-    $(function() {
-        $("#toggle-btn").on("click", function() {
-            $("#sidebar").toggleClass("collapsed");
-            $(".main-content").toggleClass("expanded");
+ <script>
+        const toggleBtn = document.getElementById('toggle-btn');
+        const sidebar = document.getElementById('sidebar');
+
+        toggleBtn.addEventListener('click', function() {
+            if (window.innerWidth > 768) {
+                // Mode Desktop ngecilin sidebar
+                sidebar.classList.toggle('collapsed');
+            } else {
+                // Mode Mobile Memunculkan/Menyembunyikan sidebar 
+                sidebar.classList.toggle('show');
+            }
         });
-    });
-</script>
+
+        // Klik di luar sidebar untuk nutup saat di mobile
+        document.addEventListener('click', function(event) {
+            const isClickInside = sidebar.contains(event.target) || toggleBtn.contains(event.target);
+
+            if (!isClickInside && window.innerWidth <= 768 && sidebar.classList.contains('show')) {
+                sidebar.classList.remove('show');
+            }
+        });
+
+        const themeToggle = document.getElementById('theme-toggle');
+        const themeIcon = document.getElementById('theme-icon');
+        const body = document.body;
+
+        // Cek posisi terakhir mode gelap/terang 
+        if (localStorage.getItem('theme') === 'dark') {
+            body.classList.add('dark-mode');
+            themeIcon.innerText = '☀️'; 
+        }
+
+        // Event Listener Klik
+        themeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+
+            // Update icon trs disimpen
+            if (body.classList.contains('dark-mode')) {
+                themeIcon.innerText = '☀️';
+                localStorage.setItem('theme', 'dark');
+            } else {
+                themeIcon.innerText = '🌙';
+                localStorage.setItem('theme', 'light');
+            }
+        });
+    </script>
+</body>
