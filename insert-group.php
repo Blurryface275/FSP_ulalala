@@ -18,7 +18,7 @@ $is_admin = $_SESSION['isadmin'] ?? 0;
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tambah Group</title>
-    <link rel="stylesheet" href="login-style.css">
+    <link rel="stylesheet" href="style.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
         .alert {

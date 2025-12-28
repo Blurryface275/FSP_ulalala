@@ -123,17 +123,7 @@ body.dark-mode td a {
   text-decoration: underline; /* Tetap kasih garis bawah supaya user tahu itu bisa diklik */
 }
 
-/* 3. Mencegah link berubah jadi ungu setelah diklik (visited) */
-body.dark-mode td a:visited {
-  color: #d6cfcf;
-}
-
-/* 4. Opsional: Warna saat kursor di atas link (hover) agar ada efek interaksi */
-body.dark-mode td a:hover {
-  color: var(--pink); /* Misal jadi pink kalau disentuh kursor */
-}
-
-/* 1. Memutihkan tulisan "Data Group" (H1) */
+/* Mutihin tulisan "Data Group" (H1) */
 body.dark-mode .content-box h1 {
   color: #ede7e7;
 }
@@ -145,6 +135,11 @@ body.dark-mode .content-box h1 {
   margin-left: 250px;
   min-height: 100vh;
   width: calc(100%-250px);
+  /* ---UNTUK GESER KE TENGAH --- */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
 }
 
 .main-content .content-box {

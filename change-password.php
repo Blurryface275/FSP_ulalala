@@ -61,10 +61,12 @@ $is_admin = $_SESSION['isadmin'] ?? 0;
 </head>
 
 <body>
-
-    <div id="sidebar" class="sidebar">
+<div id="sidebar" class="sidebar">
         <div style="display: flex; align-items: center; gap: 10px; padding: 0 20px; margin-bottom: 20px;">
             <div class="toggle-btn" id="toggle-btn">☰</div>
+            <div id="theme-toggle" style="cursor: pointer; font-size: 18px;">
+                <span id="theme-icon">🌙</span>
+            </div>
         </div>
         <ul>
             <?php
