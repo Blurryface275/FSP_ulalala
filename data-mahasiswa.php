@@ -48,6 +48,9 @@ if (isset($_SESSION['success_message'])) {
     <div id="sidebar" class="sidebar">
         <div style="display: flex; align-items: center; gap: 10px; padding: 0 20px; margin-bottom: 20px;">
             <div class="toggle-btn" id="toggle-btn">☰</div>
+            <div id="theme-toggle" style="cursor: pointer; font-size: 18px;">
+                <span id="theme-icon">🌙</span>
+            </div>
         </div>
         <ul>
             <?php
@@ -134,14 +137,53 @@ if (isset($_SESSION['success_message'])) {
         echo "</div>";
         ?>
     </div>
+    <script>
+        const toggleBtn = document.getElementById('toggle-btn');
+        const sidebar = document.getElementById('sidebar');
+
+        toggleBtn.addEventListener('click', function() {
+            if (window.innerWidth > 768) {
+                // Mode Desktop: Mengecilkan sidebar (Collapsed)
+                sidebar.classList.toggle('collapsed');
+            } else {
+                // Mode Mobile: Memunculkan/Menyembunyikan sidebar (Show)
+                sidebar.classList.toggle('show');
+            }
+        });
+
+        // Tambahan: Klik di luar sidebar untuk menutup saat di mobile
+        document.addEventListener('click', function(event) {
+            const isClickInside = sidebar.contains(event.target) || toggleBtn.contains(event.target);
+
+            if (!isClickInside && window.innerWidth <= 768 && sidebar.classList.contains('show')) {
+                sidebar.classList.remove('show');
+            }
+        });
+
+        const themeToggle = document.getElementById('theme-toggle');
+        const themeIcon = document.getElementById('theme-icon');
+        const body = document.body;
+
+        // 1. Cek simpanan preferensi user di local storage saat halaman dimuat
+        if (localStorage.getItem('theme') === 'dark') {
+            body.classList.add('dark-mode');
+            themeIcon.innerText = '☀️'; // Ganti jadi matahari jika mode dark
+        }
+
+        // 2. Event Listener Klik
+        themeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+
+            // Update icon dan simpan ke Local Storage
+            if (body.classList.contains('dark-mode')) {
+                themeIcon.innerText = '☀️';
+                localStorage.setItem('theme', 'dark');
+            } else {
+                themeIcon.innerText = '🌙';
+                localStorage.setItem('theme', 'light');
+            }
+        });
+    </script>
 </body>
 
 </html>
-<script>
-    $(function() {
-        $("#toggle-btn").on("click", function() {
-            $("#sidebar").toggleClass("collapsed");
-            $(".main-content").toggleClass("expanded");
-        });
-    });
-</script>

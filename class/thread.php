@@ -70,17 +70,20 @@ class thread
     // Di dalam class thread
     public function getThreads($group_id)
     {
-        $query = "SELECT idthread, tanggal_pembuatan, username_pembuat, status 
-              FROM thread 
-              WHERE idgrup = ? 
+        $query = "SELECT idthread, tanggal_pembuatan, username_pembuat, status
+              FROM `thread`
+              WHERE idgrup = ?
               ORDER BY tanggal_pembuatan DESC";
 
         $stmt = $this->mysqli->prepare($query);
+        if (!$stmt) {
+            die("Prepare error: " . $this->mysqli->error);
+        }
+
         $stmt->bind_param("i", $group_id);
         $stmt->execute();
         $result = $stmt->get_result();
 
-        // Mengembalikan data dalam bentuk array asosiatif
         return $result->fetch_all(MYSQLI_ASSOC);
     }
 }

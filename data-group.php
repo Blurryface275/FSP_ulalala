@@ -49,7 +49,7 @@ $res = $group->displayGroup($limit, $offset, $user_role);
         }
 
         #error-warning {
-            color: green; 
+            color: green;
             border: 1px solid green;
             padding: 10px;
             margin-bottom: 20px;
@@ -64,6 +64,9 @@ $res = $group->displayGroup($limit, $offset, $user_role);
     <div id="sidebar" class="sidebar">
         <div style="display: flex; align-items: center; gap: 10px; padding: 0 20px; margin-bottom: 20px;">
             <div class="toggle-btn" id="toggle-btn">☰</div>
+            <div id="theme-toggle" style="cursor: pointer; font-size: 18px;">
+                <span id="theme-icon">🌙</span>
+            </div>
         </div>
 
         <ul>
@@ -100,14 +103,14 @@ $res = $group->displayGroup($limit, $offset, $user_role);
 
     <div class="content-box">
         <h1>Data Group</h1>
-        
+
         <?php if (!empty($success_message)): ?>
             <div id='error-warning'><?= htmlspecialchars($success_message) ?></div>
         <?php endif; ?>
 
         <?php
         echo "<table border=1 cell-spacing=0><th>ID Group</th> <th>Nama Group</th> <th>Aksi</th>";
-        
+
         // --- Tampilan tabel sama tombol ---
         while ($row = $res->fetch_assoc()) {
             $idgrup = $row['idgrup'];
@@ -118,23 +121,23 @@ $res = $group->displayGroup($limit, $offset, $user_role);
             echo "<td>" . $row['nama'] . "</td>";
             echo "<td>";
 
-           if ($is_admin == 1 || $user_role == 'dosen') {
-        echo "<a href=\"detail-group.php?id=" . $idgrup . "\">Kelola Grup</a>";
-    } elseif ($user_role == 'mahasiswa') {
-        if ($is_member) {
-            // JIKA SUDAH BERGABUNG DLM GRUP
-            echo "<a href=\"detail-group.php?id=" . $idgrup . "\">Lihat Grup</a>";
-        } else {
-            // JIKA BELUM BERGABUNG DLM GRUP
-            echo "<a href=\"detail-group.php?id=" . $idgrup . "\">Masuk Grup</a>"; 
-        }
-    } else {
-        echo "<a href=\"detail-group.php?id=" . $idgrup . "\">Detail</a>";
-    }
+            if ($is_admin == 1 || $user_role == 'dosen') {
+                echo "<a href=\"detail-group.php?id=" . $idgrup . "\">Kelola Grup</a>";
+            } elseif ($user_role == 'mahasiswa') {
+                if ($is_member) {
+                    // JIKA SUDAH BERGABUNG DLM GRUP
+                    echo "<a href=\"detail-group.php?id=" . $idgrup . "\">Lihat Grup</a>";
+                } else {
+                    // JIKA BELUM BERGABUNG DLM GRUP
+                    echo "<a href=\"detail-group.php?id=" . $idgrup . "\">Masuk Grup</a>";
+                }
+            } else {
+                echo "<a href=\"detail-group.php?id=" . $idgrup . "\">Detail</a>";
+            }
 
-    echo "</td>";
-    echo "</tr>";
-}
+            echo "</td>";
+            echo "</tr>";
+        }
         echo "</table>";
 
         // --- Tampilan ---
@@ -150,18 +153,57 @@ $res = $group->displayGroup($limit, $offset, $user_role);
             }
         }
         if ($page < $totalPages) {
-             echo "<a href='data-group.php?page=" . ($page + 1) . "'>Next &raquo;</a>";
+            echo "<a href='data-group.php?page=" . ($page + 1) . "'>Next &raquo;</a>";
         }
         echo "</div>";
         ?>
     </div>
-    
+
     <script>
-        $(function() {
-            $("#toggle-btn").on("click", function() {
-                $("#sidebar").toggleClass("collapsed");
-                $(".content-box").toggleClass("expanded"); // ini kalo content-boxnya perlu diperluas
-            });
+        const toggleBtn = document.getElementById('toggle-btn');
+        const sidebar = document.getElementById('sidebar');
+
+        toggleBtn.addEventListener('click', function() {
+            if (window.innerWidth > 768) {
+                // Mode Desktop: Mengecilkan sidebar (Collapsed)
+                sidebar.classList.toggle('collapsed');
+            } else {
+                // Mode Mobile: Memunculkan/Menyembunyikan sidebar (Show)
+                sidebar.classList.toggle('show');
+            }
+        });
+
+        // Tambahan: Klik di luar sidebar untuk menutup saat di mobile
+        document.addEventListener('click', function(event) {
+            const isClickInside = sidebar.contains(event.target) || toggleBtn.contains(event.target);
+
+            if (!isClickInside && window.innerWidth <= 768 && sidebar.classList.contains('show')) {
+                sidebar.classList.remove('show');
+            }
+        });
+
+        const themeToggle = document.getElementById('theme-toggle');
+        const themeIcon = document.getElementById('theme-icon');
+        const body = document.body;
+
+        // 1. Cek simpanan preferensi user di local storage saat halaman dimuat
+        if (localStorage.getItem('theme') === 'dark') {
+            body.classList.add('dark-mode');
+            themeIcon.innerText = '☀️'; // Ganti jadi matahari jika mode dark
+        }
+
+        // 2. Event Listener Klik
+        themeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+
+            // Update icon dan simpan ke Local Storage
+            if (body.classList.contains('dark-mode')) {
+                themeIcon.innerText = '☀️';
+                localStorage.setItem('theme', 'dark');
+            } else {
+                themeIcon.innerText = '🌙';
+                localStorage.setItem('theme', 'light');
+            }
         });
     </script>
 </body>

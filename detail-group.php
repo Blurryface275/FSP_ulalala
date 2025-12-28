@@ -168,6 +168,9 @@ $can_view_full_detail = $is_member ||
     <div id="sidebar" class="sidebar">
         <div style="display: flex; align-items: center; gap: 10px; padding: 0 20px; margin-bottom: 20px;">
             <div class="toggle-btn" id="toggle-btn">☰</div>
+            <div id="theme-toggle" style="cursor: pointer; font-size: 18px;">
+                <span id="theme-icon">🌙</span>
+            </div>
         </div>
 
         <ul>
@@ -422,14 +425,14 @@ $can_view_full_detail = $is_member ||
                                 if (!empty($threads)) {
                                     echo "<table border='1' cellspacing='0' style='width:100%; border-collapse: collapse;'>";
                                     echo "<thead>
-            <tr>
-                <th>Thread ID / Pembuat</th>
-                <th>Tanggal Pembuatan</th>
-                <th>Status</th>
-                <th colspan='2'>Aksi</th>
-            </tr>
-          </thead>
-          <tbody>";
+                                            <tr>
+                                                <th>Thread ID / Pembuat</th>
+                                                <th>Tanggal Pembuatan</th>
+                                                <th>Status</th>
+                                                <th colspan='2'>Aksi</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>";
 
                                     foreach ($threads as $thread) {
                                         $thread_id = $thread['idthread'];
@@ -454,13 +457,13 @@ $can_view_full_detail = $is_member ||
                                         // Tombol Tutup (Hanya untuk pembuat thread)
                                         if ($pembuat == $logged_in_username) {
                                             echo "<td>
-                    <button class='delete-event-btn' type='button' 
-                    onclick=\"if(confirm('Yakin ingin menutup thread ini?')) {
-                        window.location.href='close-thread.php?thread_id=" . urlencode($thread_id) . "&group_id={$group_id}';
-                    }\">
-                    Tutup
-                    </button>
-                  </td>";
+                                            <button class='delete-event-btn' type='button' 
+                                            onclick=\"if(confirm('Yakin ingin menutup thread ini?')) {
+                                                window.location.href='close-thread.php?thread_id=" . urlencode($thread_id) . "&group_id={$group_id}';
+                                            }\">
+                                            Tutup
+                                            </button>
+                                        </td>";
                                         } else {
                                             echo "<td></td>";
                                         }
@@ -585,9 +588,50 @@ $can_view_full_detail = $is_member ||
             $(function() {
 
                 // Sidebar toggle
-                $("#toggle-btn").on("click", function() {
-                    $("#sidebar").toggleClass("collapsed");
-                    $(".content-box").toggleClass("expanded");
+                const toggleBtn = document.getElementById('toggle-btn');
+                const sidebar = document.getElementById('sidebar');
+
+                toggleBtn.addEventListener('click', function() {
+                    if (window.innerWidth > 768) {
+                        // Mode Desktop: Mengecilkan sidebar (Collapsed)
+                        sidebar.classList.toggle('collapsed');
+                    } else {
+                        // Mode Mobile: Memunculkan/Menyembunyikan sidebar (Show)
+                        sidebar.classList.toggle('show');
+                    }
+                });
+
+                // Tambahan: Klik di luar sidebar untuk menutup saat di mobile
+                document.addEventListener('click', function(event) {
+                    const isClickInside = sidebar.contains(event.target) || toggleBtn.contains(event.target);
+
+                    if (!isClickInside && window.innerWidth <= 768 && sidebar.classList.contains('show')) {
+                        sidebar.classList.remove('show');
+                    }
+                });
+
+                const themeToggle = document.getElementById('theme-toggle');
+                const themeIcon = document.getElementById('theme-icon');
+                const body = document.body;
+
+                // 1. Cek simpanan preferensi user di local storage saat halaman dimuat
+                if (localStorage.getItem('theme') === 'dark') {
+                    body.classList.add('dark-mode');
+                    themeIcon.innerText = '☀️'; // Ganti jadi matahari jika mode dark
+                }
+
+                // 2. Event Listener Klik
+                themeToggle.addEventListener('click', () => {
+                    body.classList.toggle('dark-mode');
+
+                    // Update icon dan simpan ke Local Storage
+                    if (body.classList.contains('dark-mode')) {
+                        themeIcon.innerText = '☀️';
+                        localStorage.setItem('theme', 'dark');
+                    } else {
+                        themeIcon.innerText = '🌙';
+                        localStorage.setItem('theme', 'light');
+                    }
                 });
 
                 // Tab switching
