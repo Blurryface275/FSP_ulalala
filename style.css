@@ -101,45 +101,52 @@ body.dark-mode .sidebar ul li a:hover {
 body.dark-mode th {
   color: #d6cfcf;
 }
-/*ubah warna teks*/
+/* 2. Mengubah warna teks menu (Data Group, Logout, dll)*/
 body.dark-mode .sidebar ul li a {
   color: #d6cfcf !important;
 }
 
-/*ubah ikon hamburger warnanya */
+/* 3. Mengubah warna ikon Hamburger (☰) dan Ikon Matahari/Bulan */
 body.dark-mode #toggle-btn,
 body.dark-mode #theme-icon {
   color: #d6cfcf;
 }
 
-/* ubah warna teks */
+/* 1. Mengubah warna teks ID Group ($idgrup) di dalam tabel */
 body.dark-mode td {
   color: #d6cfcf; /* Menjadi putih saat dark mode */
 }
 
-/* ubah warna Link (Kelola Grup, Lihat Grup, dll) */
+/* 2. Mengubah warna Link (Kelola Grup, Lihat Grup, dll) */
 body.dark-mode td a {
   color: #d6cfcf; /* Link jadi putih */
-  text-decoration: underline; /* Tetap kasih garis bawah */
+  text-decoration: underline; /* Tetap kasih garis bawah supaya user tahu itu bisa diklik */
 }
 
-/* Mutihin tulisan "Data Group" (H1) */
+/* 3. Mencegah link berubah jadi ungu setelah diklik (visited) */
+body.dark-mode td a:visited {
+  color: #d6cfcf;
+}
+
+/* 4. Opsional: Warna saat kursor di atas link (hover) agar ada efek interaksi */
+body.dark-mode td a:hover {
+  color: var(--pink); /* Misal jadi pink kalau disentuh kursor */
+}
+
+/* 1. Memutihkan tulisan "Data Group" (H1) */
 body.dark-mode .content-box h1 {
   color: #ede7e7;
 }
 /* Main Content */
 .main-content {
+  display: flex;
+  flex-direction: column;
   flex-grow: 1;
   padding: 40px;
   transition: margin-left 0.3s ease-in-out;
-  margin-left: 250px;
+  margin-left: 220px;
   min-height: 100vh;
-  width: calc(100%-250px);
-  /* ---UNTUK GESER KE TENGAH --- */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
+  width: calc(100% - 220px);
 }
 
 .main-content .content-box {
@@ -346,6 +353,7 @@ input {
   border-radius: 10px;
   text-align: center;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  margin: 20px auto;
 }
 .box h2 {
   color: var(--coklat);
