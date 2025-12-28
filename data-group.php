@@ -165,15 +165,15 @@ $res = $group->displayGroup($limit, $offset, $user_role);
 
         toggleBtn.addEventListener('click', function() {
             if (window.innerWidth > 768) {
-                // Mode Desktop: Mengecilkan sidebar (Collapsed)
+                // Mode Desktop ngecilin sidebar
                 sidebar.classList.toggle('collapsed');
             } else {
-                // Mode Mobile: Memunculkan/Menyembunyikan sidebar (Show)
+                // Mode Mobile Memunculkan/Menyembunyikan sidebar 
                 sidebar.classList.toggle('show');
             }
         });
 
-        // Tambahan: Klik di luar sidebar untuk menutup saat di mobile
+        // Klik di luar sidebar untuk nutup saat di mobile
         document.addEventListener('click', function(event) {
             const isClickInside = sidebar.contains(event.target) || toggleBtn.contains(event.target);
 
@@ -186,17 +186,17 @@ $res = $group->displayGroup($limit, $offset, $user_role);
         const themeIcon = document.getElementById('theme-icon');
         const body = document.body;
 
-        // 1. Cek simpanan preferensi user di local storage saat halaman dimuat
+        // Cek posisi terakhir mode gelap/terang 
         if (localStorage.getItem('theme') === 'dark') {
             body.classList.add('dark-mode');
-            themeIcon.innerText = '☀️'; // Ganti jadi matahari jika mode dark
+            themeIcon.innerText = '☀️'; 
         }
 
-        // 2. Event Listener Klik
+        // Event Listener Klik
         themeToggle.addEventListener('click', () => {
             body.classList.toggle('dark-mode');
 
-            // Update icon dan simpan ke Local Storage
+            // Update icon trs disimpen
             if (body.classList.contains('dark-mode')) {
                 themeIcon.innerText = '☀️';
                 localStorage.setItem('theme', 'dark');
