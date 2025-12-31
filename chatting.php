@@ -99,7 +99,7 @@ $is_admin = $_SESSION['isadmin'] ?? 0;
             <div class="chat-input-container">
                 <?php if ($status_thread == 'Open'): ?>
                     <input type="text" id="message-input" placeholder="Ketik pesan..." autocomplete="off">
-                    <button id="btn-send" class="btn">Kirim</button>
+                    <button id="btn-send" class="btn-chat">Kirim</button>
                 <?php else: ?>
                     <input type="text" disabled placeholder="Thread ini telah ditutup." style="background: #f0f0f0; cursor: not-allowed; color: #999;">
                     <button disabled style="background: #ccc; cursor: not-allowed;">Closed</button>

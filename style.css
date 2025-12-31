@@ -293,7 +293,7 @@ table td a:hover {
 
 body.dark-mode table td a {
   background-color: var(--ungu); 
-  color: var(--cream) !important;
+  color: var(--pink) !important;
   text-decoration: none !important;
 }
 
@@ -311,7 +311,7 @@ body.dark-mode table td a:hover {
   cursor: pointer;
   transition: all 0.3s;
   text-decoration: none;
-  color: white;
+  color: var(--pink);
   font-weight: bold;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
   display: inline-block;
@@ -320,9 +320,10 @@ body.dark-mode table td a:hover {
 
 .btn--edit,
 .edit-event-btn,
-.detail-event-btn {
+.detail-event-btn,
+.btn-chat {
   background: var(--ungu);
-  color: var(--cream);
+  color: var(--pink);
 }
 
 .btn--edit:hover,
