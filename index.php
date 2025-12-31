@@ -53,7 +53,6 @@ if (isset($_SESSION['isadmin']) && $_SESSION['isadmin'] == 1) {
             <?php
             // Admin
             if (isset($_SESSION['isadmin']) && $_SESSION['isadmin'] == 1): ?>
-
                 <li><a href="data-dosen.php">Data Dosen</a></li>
                 <li><a href="data-mahasiswa.php">Data Mahasiswa</a></li>
                 <li><a href="insert-dosen.php">Tambah Dosen</a></li>
@@ -64,42 +63,40 @@ if (isset($_SESSION['isadmin']) && $_SESSION['isadmin'] == 1) {
             <?php
             // Dosen
             elseif (isset($_SESSION['role']) && $_SESSION['role'] == 'dosen'): ?>
-
                 <li><a href="data-group.php">Data Group</a></li>
                 <li><a href="insert-group.php">Tambah Group</a></li>
 
             <?php
             // Mahasiswa
             elseif (isset($_SESSION['role']) && $_SESSION['role'] == 'mahasiswa'): ?>
-
                 <li><a href="data-group.php">Data Group</a></li>
-
             <?php endif; ?>
 
-            <!-- Semua role dapat ubah password & logout -->
             <li><a href="change-password.php">Ubah Password</a></li>
             <li><a href="logout.php">Logout</a></li>
         </ul>
-
     </div>
 
+    <div class="page-container">
+        <main class="content-main">
+            <div class="content-box">
+                <header style="margin-bottom: 20px;">
+                    <h1>Homepage Project</h1>
+                </header>
 
-    <div class="main-content">
-        <header>
-            <h1>Homepage Project</h1>
-        </header>
+                <div class="greeting" style="text-align: center;">
+                    <h2><?= htmlspecialchars($greeting); ?></h2>
+                </div>
 
-        <div class="greeting">
-            <h2><?= $greeting; ?></h2>
-        </div>
-
-        <section>
-            <?php if ($isAdmin): ?>
-                <p>Selamat datang di dashboard admin. Gunakan menu di samping untuk mengelola semua data kecuali group.</p>
-            <?php else: ?>
-                <p>Selamat datang di halaman pengguna. Anda hanya dapat mengubah kata sandi Anda.</p>
-            <?php endif; ?>
-        </section>
+                <section style="margin-top: 20px; text-align: center;">
+                    <?php if ($isAdmin): ?>
+                        <p>Selamat datang di dashboard admin. Gunakan menu di samping untuk mengelola semua data.</p>
+                    <?php else: ?>
+                        <p>Selamat datang di halaman pengguna. Gunakan menu di samping untuk mengakses fitur yang tersedia.</p>
+                    <?php endif; ?>
+                </section>
+            </div>
+        </main>
     </div>
 
     <script>
@@ -129,13 +126,11 @@ if (isset($_SESSION['isadmin']) && $_SESSION['isadmin'] == 1) {
         const themeIcon = document.getElementById('theme-icon');
         const body = document.body;
 
-        // 1. Cek simpanan preferensi user di local storage saat halaman dimuat
         if (localStorage.getItem('theme') === 'dark') {
             body.classList.add('dark-mode');
-            themeIcon.innerText = '☀️'; // Ganti jadi matahari jika mode dark
+            themeIcon.innerText = '☀️'; 
         }
 
-        // 2. Event Listener Klik
         themeToggle.addEventListener('click', () => {
             body.classList.toggle('dark-mode');
 

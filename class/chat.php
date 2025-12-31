@@ -10,10 +10,8 @@ class chat
         $this->mysqli = $mysqli;
     }
 
-    // Di dalam class chat
     public function insertChat($thread_id, $username, $pesan)
     {
-        // Gunakan kolom 'isi' dan 'tanggal_pembuatan'
         $query = "INSERT INTO chat (idthread, username_pembuat, isi, tanggal_pembuatan) VALUES (?, ?, ?, NOW())";
         $stmt = $this->mysqli->prepare($query);
         $stmt->bind_param("iss", $thread_id, $username, $pesan);
@@ -26,7 +24,6 @@ class chat
                 c.idchat, 
                 c.idthread, 
                 c.username_pembuat AS username, 
-                -- Mengambil nama dari mahasiswa atau dosen
                 COALESCE(m.nama, d.nama) AS nama_asli, 
                 c.isi, 
                 c.tanggal_pembuatan 

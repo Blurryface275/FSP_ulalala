@@ -27,20 +27,16 @@
     require_once("class/mahasiswa.php");
     $mhsObj = new mahasiswa($mysqli);
 
-    // 1. Ambil data dari URL
     $nrp = $_GET['nrp'] ?? null;
 
     if (!$nrp) {
         die("NRP tidak ditemukan!");
     }
 
-    // 2. Panggil fungsi dari class
     if ($mhsObj->deleteMahasiswa($nrp)) {
-        // 3. Navigasi jika berhasil
         header("Location: data-mahasiswa.php");
         exit;
     } else {
-        // 4. Penanganan jika gagal
         echo "Gagal menghapus data mahasiswa.";
     }
     ?>

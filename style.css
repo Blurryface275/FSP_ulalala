@@ -5,14 +5,19 @@
   --pink: #efa3a0;
   --peach: #ffdce7;
   --cream: #ffe2db;
+  --white: #ffffff;
+  --gray-light: #f4f4f4;
+  --shadow: rgba(0, 0, 0, 0.15);
 }
 
 body.dark-mode {
-  --coklat: #120903; /* navbar kiri */
-  --ungu: #34172c; /* header (dusty mauve) */
-  --pink: #784341; /* ini muncul waktu hover */
-  --peach: #785b64; /* ini kotak wadah tabele */
-  --cream: #4e3c3c; /* background paling belakang */
+  --coklat: #120903;
+  --ungu: #34172c;
+  --pink: #784341;
+  --peach: #785b64;
+  --cream: #1e1e1e;
+  --white: #2c2c2c;
+  --gray-light: #3a3a3a;
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
 }
 
@@ -35,7 +40,7 @@ body {
 
 /* Sidebar */
 .sidebar {
-  width: 220px;
+  width: 240px;
   background: var(--coklat);
   color: var(--cream);
   padding: 20px 0;
@@ -43,12 +48,14 @@ body {
   position: fixed;
   top: 0;
   left: 0;
-  transition: width 0.3s ease-in-out;
+  transition: width 0.3s ease;
   z-index: 1000;
+  overflow-y: auto;
 }
 
 .sidebar.collapsed {
   width: 70px;
+  overflow-x: hidden;
 }
 
 .sidebar ul {
@@ -67,6 +74,7 @@ body {
   padding: 10px 20px;
   border-radius: 6px;
   transition: background 0.3s, color 0.3s;
+  white-space: nowrap;
 }
 
 .sidebar ul li a i {
@@ -79,17 +87,14 @@ body {
   background: var(--ungu);
   color: var(--peach);
 }
+
 body.dark-mode .sidebar ul li a:hover {
   background-color: #333333;
   color: #c3c2c2;
 }
+
 .sidebar.collapsed ul li a span {
   display: none;
-}
-
-.sidebar.collapsed ~ .detail-group {
-  margin-left: 90px !important;
-  padding: 40px !important;
 }
 
 .toggle-btn {
@@ -98,69 +103,91 @@ body.dark-mode .sidebar ul li a:hover {
   color: var(--cream);
   padding: 20px 20px 0;
 }
+
 body.dark-mode th {
   color: #d6cfcf;
 }
-/* 2. Mengubah warna teks menu (Data Group, Logout, dll)*/
+
 body.dark-mode .sidebar ul li a {
   color: #d6cfcf !important;
 }
 
-/* 3. Mengubah warna ikon Hamburger (☰) dan Ikon Matahari/Bulan */
 body.dark-mode #toggle-btn,
 body.dark-mode #theme-icon {
   color: #d6cfcf;
 }
 
-/* 1. Mengubah warna teks ID Group ($idgrup) di dalam tabel */
 body.dark-mode td {
-  color: #d6cfcf; /* Menjadi putih saat dark mode */
-}
-
-/* 2. Mengubah warna Link (Kelola Grup, Lihat Grup, dll) */
-body.dark-mode td a {
-  color: #d6cfcf; /* Link jadi putih */
-  text-decoration: underline; /* Tetap kasih garis bawah supaya user tahu itu bisa diklik */
-}
-
-/* 3. Mencegah link berubah jadi ungu setelah diklik (visited) */
-body.dark-mode td a:visited {
   color: #d6cfcf;
 }
 
-/* 4. Opsional: Warna saat kursor di atas link (hover) agar ada efek interaksi */
-body.dark-mode td a:hover {
-  color: var(--pink); /* Misal jadi pink kalau disentuh kursor */
+body.dark-mode td a {
+  color: #d6cfcf;
 }
 
-/* 1. Memutihkan tulisan "Data Group" (H1) */
 body.dark-mode .content-box h1 {
   color: #ede7e7;
 }
+
 /* Main Content */
+.page-container,
 .main-content {
   display: flex;
-  flex-direction: column;
-  flex-grow: 1;
-  padding: 40px;
-  transition: margin-left 0.3s ease-in-out;
-  margin-left: 220px;
+  width: 100%;
   min-height: 100vh;
-  width: calc(100% - 220px);
+  background: var(--cream);
+  padding: 0;
+  padding-left: 240px;
+  transition: padding-left 0.3s ease;
+  flex-direction: column;
 }
 
-.main-content .content-box {
+.sidebar.collapsed ~ .page-container,
+.sidebar.collapsed ~ .main-content {
+  padding-left: 70px;
+}
+
+.content-main {
+  flex-grow: 1;
+  padding: 40px 20px;
+  transition: margin-left 0.3s ease;
+  min-height: 100vh;
+  display: flex;
+  gap: 20px;
+  flex-direction: column;
+  align-items: center;
+}
+
+.main-content-wrapper {
+  display: flex;
+  gap: 20px;
+  padding: 40px 20px;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.content-box {
   margin: 0;
   padding: 20px;
   background: var(--peach);
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   width: 100%;
+  max-width: 1000px;
+  margin-bottom: 20px;
 }
 
-.main-content.expanded {
-  margin-left: 150px;
-  width: calc(100% - 150px);
+body.dark-mode .content-box {
+  background: #2a2a2a;
+  color: #fff;
+}
+
+.detail-group, 
+.add-member-box {
+  flex: 1;
+  width: auto !important;
+  margin: 0 !important;
+  max-width: none !important;
 }
 
 header {
@@ -186,15 +213,6 @@ header h1 {
   font-weight: bold;
   box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
   width: 100%;
-}
-
-.content-box {
-  padding: 20px;
-  background: var(--peach);
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  margin: 20px auto;
-  width: 50%;
 }
 
 .content-box h1 {
@@ -225,7 +243,8 @@ th,
 td {
   padding: 12px 15px;
   text-align: center;
-  border-bottom: 1px solid var(--peach);
+  border-bottom: 1px solid var(--pink);
+  vertical-align: middle;
 }
 
 th {
@@ -234,8 +253,8 @@ th {
   text-transform: uppercase;
 }
 
-tr:nth-child(even) {
-  background: var(--peach);
+tr:last-child td {
+  border-bottom: none;
 }
 
 tr:hover {
@@ -243,46 +262,46 @@ tr:hover {
   color: var(--coklat);
 }
 
-.foto {
-  max-width: 100px;
-  border-radius: 6px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+body.dark-mode table {
+  background: #333;
 }
 
-.teks-merah {
-  color: red;
+body.dark-mode tr:hover {
+  background-color: #444;
+}
+
+table td a {
+  display: inline-block;
+  padding: 6px 12px;
+  text-decoration: none;
+  background-color: var(--ungu);
+  color: var(--cream);
+  border-radius: 15px;
+  font-size: 13px;
   font-weight: bold;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  transition: all 0.3s ease;
+  white-space: nowrap;
 }
 
-.foto {
-  max-width: 15px;
-}
-
-/* Styling Khusus untuk Elemen Button */
-button[type="submit"] {
-  /* Mengikuti gaya tombol yang sudah kita sepakati */
-  background: var(--pink);
-  color: var(--coklat); /* Warna teks tombol */
-  font-weight: bold;
-  border: none;
-  cursor: pointer;
-
-  /* Properti Layout */
-  padding: 10px 20px;
-  border-radius: 20px;
-  margin-top: 10px;
-
-  /* Transisi & Hover */
-  transition: background 0.3s;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15); /* Tambahkan shadow agar mirip tombol .btn */
-}
-
-button[type="submit"]:hover {
-  background: #e26b67; /* Warna pink sedikit lebih gelap saat hover */
+table td a:hover {
+  background-color: #6d4463;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px rgba(0,0,0,0.2);
   color: white;
 }
 
-/* Button Styles (for aksi) */
+body.dark-mode table td a {
+  background-color: var(--ungu); 
+  color: var(--cream) !important;
+  text-decoration: none !important;
+}
+
+body.dark-mode table td a:hover {
+  background-color: #a87697;
+}
+
+/* Unified Button System */
 .btn {
   padding: 8px 12px;
   margin: 0 3px;
@@ -296,24 +315,61 @@ button[type="submit"]:hover {
   font-weight: bold;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
   display: inline-block;
+  text-align: center;
 }
 
-.btn-edit {
+.btn--edit,
+.edit-event-btn,
+.detail-event-btn {
   background: var(--ungu);
+  color: var(--cream);
 }
 
-.btn-edit:hover {
+.btn--edit:hover,
+.edit-event-btn:hover,
+.detail-event-btn:hover {
   background: #6d4463;
 }
 
-.btn-delete {
+.btn--delete,
+.delete-event-btn,
+.delete-group-btn,
+.leave-group-btn {
   background: var(--pink);
   color: var(--coklat);
 }
 
-.btn-delete:hover {
-  background: #e26b67;
+.btn--delete:hover,
+.delete-event-btn:hover,
+.delete-group-btn:hover,
+.leave-group-btn:hover,
+table td a[href*="delete"]:hover {
+  background: #e26b67 !important;
   color: white;
+}
+
+table td a[href*="delete"] {
+  background-color: var(--pink);
+  color: var(--coklat);
+}
+
+.edit-group-btn,
+.delete-group-btn,
+.leave-group-btn,
+.detail-event-btn,
+.edit-event-btn,
+.delete-event-btn {
+  padding: 8px 12px;
+  margin: 0 3px;
+  border: none;
+  border-radius: 20px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s;
+  text-decoration: none;
+  font-weight: bold;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+  display: inline-block;
 }
 
 /* Form & Box */
@@ -338,6 +394,14 @@ select {
   color: var(--coklat);
 }
 
+body.dark-mode input,
+body.dark-mode textarea,
+body.dark-mode select {
+  background-color: #444;
+  color: #fff;
+  border: 1px solid #666;
+}
+
 input {
   margin: 5px;
   padding: 8px 12px;
@@ -355,10 +419,12 @@ input {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   margin: 20px auto;
 }
+
 .box h2 {
   color: var(--coklat);
   margin-bottom: 20px;
 }
+
 .gender-options {
   display: flex;
   gap: 20px;
@@ -367,46 +433,57 @@ input {
   padding: 5px 0;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-  .sidebar {
-    width: 0;
-    overflow: hidden;
-  }
-
-  .sidebar.collapsed {
-    width: 70px;
-  }
-
-  .sidebar.show {
-    width: 220px;
-  }
-
-  .main-content {
-    margin-left: 0;
-    padding-top: 20px;
-  }
-
-  .main-content.expanded {
-    margin-left: 0;
-  }
-
-  .toggle-btn {
-    position: fixed;
-    top: 10px;
-    left: 10px;
-    z-index: 1001;
-    background: var(--coklat);
-    color: var(--cream);
-    padding: 5px 10px;
-    border-radius: 5px;
-  }
-}
-
+/* Pagination */
 .pagination {
   display: flex;
   padding: 20px;
-  gap: 10px;
+  gap: 8px;
+  justify-content: center;
+  align-items: center;
+}
+
+.pagination a {
+  display: inline-block;
+  padding: 8px 14px;
+  text-decoration: none;
+  color: var(--coklat);
+  background-color: rgba(255,255,255, 0.5);
+  border: 1px solid var(--pink);
+  border-radius: 20px;
+  font-weight: bold;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.pagination a:hover {
+  background-color: var(--pink);
+  color: white;
+  border-color: var(--pink);
+  transform: translateY(-2px);
+}
+
+.pagination a.active {
+  background-color: var(--ungu);
+  color: var(--cream);
+  border-color: var(--ungu);
+  pointer-events: none;
+}
+
+body.dark-mode .pagination a {
+  background-color: #3a2e2e;
+  color: #d6cfcf;
+  border-color: #785b64;
+}
+
+body.dark-mode .pagination a:hover {
+  background-color: var(--pink);
+  color: white;
+}
+
+body.dark-mode .pagination a.active {
+  background-color: var(--ungu);
+  color: white;
+  border-color: var(--ungu);
 }
 
 .form-container {
@@ -418,6 +495,11 @@ input {
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   text-align: left;
+}
+
+body.dark-mode .form-container {
+  background: #2a2a2a;
+  color: #fff;
 }
 
 .form-container h2 {
@@ -476,141 +558,51 @@ input {
   text-align: right;
 }
 
-/* Anda perlu memastikan variabel CSS --ungu, --cream, --peach sudah terdefinisi di tempat lain (misalnya :root) */
-
 .header-group {
-  background: var(
-    --ungu,
-    #5c3b69
-  ); /* Menggunakan nilai default jika variabel tidak ada */
+  background: var(--ungu, #5c3b69);
   color: var(--cream, #f4f3ee);
   padding: 20px;
   border-radius: 10px;
   margin-bottom: 30px;
   width: 100%;
-  /* Gunakan Flexbox untuk mengatur konten internal */
   display: flex;
-  flex-direction: column; /* Konten disusun vertikal */
+  flex-direction: column;
 }
 
-/* Bagian Atas: Judul dan Tombol */
 .header-top {
   display: flex;
-  justify-content: space-between; /* Judul di kiri, Tombol di kanan */
+  justify-content: space-between;
   align-items: center;
   margin-bottom: 10px;
 }
 
 .group-title {
   margin: 0;
-  font-size: 28px; /* Sedikit lebih besar untuk judul */
+  font-size: 28px;
   font-weight: bold;
   color: var(--cream, #f4f3ee);
 }
 
-/* Area Tombol */
 .group-buttons {
   display: flex;
   gap: 10px;
 }
 
-/* Gaya Tombol */
-.edit-group-btn,
-.delete-group-btn,
-.leave-group-btn {
-  background-color: #efa3a0;
-  padding: 8px 16px;
-  border: none;
-  cursor: pointer;
-  border-radius: 8px; /* Sedikit lebih melengkung */
-  font-size: 14px;
-  font-weight: 600;
-  transition: background-color 0.2s;
-}
-
-.edit-group-btn {
-  background-color: #f0c3a3; /* Warna pink/peach lembut */
-  color: #444; /* Teks gelap */
-}
-
-.delete-group-btn {
-  background-color: #f08080; /* Warna merah muda lembut */
-  color: white;
-}
-
-.delete-event-btn {
-  background: #f08080;
-  color: white;
-  border: none;
-  padding: 5px 10px;
-  border-radius: 20px;
-  font-weight: 600;
-  cursor: pointer;
-  font-size: 14px;
-}
-
-.detail-event-btn {
-  background-color: #8b597b;
-  color: white;
-  text-decoration: none;
-  font-weight: 600;
-  padding: 5px 10px;
-  border-radius: 20px;
-  border: none;
-  cursor: pointer;
-  font-size: 14px;
-}
-
-.edit-event-btn {
-  background-color: #8b597b;
-  color: white;
-  text-decoration: none;
-  font-weight: 600;
-  padding: 5px 10px;
-  border-radius: 20px;
-  border: none;
-  cursor: pointer;
-  font-size: 14px;
-}
-
-/* Hover effect */
-.edit-group-btn:hover {
-  background-color: #e8b08e;
-}
-
-.delete-group-btn:hover {
-  background-color: #e56b6b;
-}
-
-.delete-event-btn:hover {
-  background: #e56b6b;
-  text-decoration: underline;
-  cursor: pointer;
-}
-
-.detail-event-btn:hover {
-  background-color: #6d4463;
-  text-decoration: underline;
-  cursor: pointer;
-}
-
-/* Garis Pemisah */
 .separator {
   border: 0;
-  border-top: 1px solid rgba(255, 255, 255, 0.2); /* Garis tipis, semi-transparan */
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
   margin: 10px 0 20px 0;
 }
 
-/* Bagian Bawah: Informasi Group dan Kode Registrasi */
 .header-info-body {
   display: flex;
-  justify-content: space-between; /* Untuk memisahkan Info Group dan Kode Registrasi */
-  align-items: flex-start; /* Agar kode registrasi tidak terlalu tinggi jika info panjang */
+  justify-content: space-between;
+  align-items: flex-start;
   gap: 20px;
 }
 
 .group-info {
-  flex-grow: 1; /* Memberi ruang lebih pada info */
+  flex-grow: 1;
   color: var(--cream, #f4f3ee);
   font-size: 16px;
 }
@@ -620,20 +612,17 @@ input {
   line-height: 1.5;
 }
 
-/* Style untuk teks tebal pada label */
 .group-info strong,
 .code-label strong {
   font-weight: bold;
-  /* Optional: warna berbeda sedikit */
   color: var(--peach, #f0c3a3);
 }
 
-/* Area Kode Registrasi */
 .registration-code-area {
   display: flex;
   flex-direction: column;
-  align-items: center; /* Untuk menengahkan kode registrasi */
-  min-width: 150px; /* Lebar minimum agar kode terlihat */
+  align-items: center;
+  min-width: 150px;
 }
 
 .code-label {
@@ -644,9 +633,8 @@ input {
 }
 
 .registration-code {
-  /* Gaya untuk membuat kotak Kode Registrasi seperti di gambar */
   background-color: var(--peach, #f0c3a3);
-  color: #444; /* Teks gelap di dalam kotak terang */
+  color: #444;
   font-size: 18px;
   font-weight: bold;
   padding: 10px 15px;
@@ -662,6 +650,7 @@ input {
   margin-bottom: 20px;
   border-bottom: 2px solid var(--coklat);
 }
+
 .tab-menu button {
   padding: 10px 15px;
   text-decoration: none;
@@ -695,26 +684,32 @@ input {
 .tab-content-item {
   display: none;
 }
+
 .tab-content-item.active {
   display: block;
 }
 
-/* Buat list awal member */
 .member-default-list {
   list-style: none;
   margin: 10px 10px;
 }
+
 .member-default-list li {
   padding: 8px 12px;
   border-bottom: 1px solid var(--pink);
 }
+
 .member-default-list li:last-child {
   border-bottom: none;
 }
+
 .member-default-list li:hover {
   background: var(--pink);
   color: var(--coklat);
 }
+
+.member-item-flex .btn,
+.member-list .remove-member-btn,
 .member-item-flex button {
   background: var(--ungu);
   color: var(--cream);
@@ -727,13 +722,15 @@ input {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   white-space: nowrap;
 }
+
 .remove-member-btn:hover {
   background: #6d4463;
 }
-/* Member list */
+
 .member-list {
   margin: 10px 10px;
 }
+
 .member-item {
   padding: 8px 12px;
   border-bottom: 1px solid var(--pink);
@@ -741,34 +738,16 @@ input {
   justify-content: space-between;
   align-items: center;
 }
+
 .member-item:last-child {
   border-bottom: none;
 }
-.member-list .remove-member-btn {
+
+.add-member-btn {
   background: var(--ungu);
   color: var(--cream);
-  border: none;
-  padding: 5px 10px;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 12px;
-  font-weight: bold;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  white-space: nowrap;
 }
 
-.edit-group-btn {
-  background: var(--pink);
-  color: var(--coklat);
-  border: none;
-  padding: 5px 10px;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 12px;
-  font-weight: bold;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  white-space: nowrap;
-}
 .member-item-flex {
   display: flex;
   justify-content: space-between;
@@ -777,28 +756,15 @@ input {
   width: 100%;
 }
 
-.main-content-wrapper {
-  display: flex;
-  gap: 20px;
-  padding: 40px 20px;
-  margin-left: 220px;
-  width: calc(100% - 220px);
-  justify-content: center;
-  align-items: flex-start;
-}
-
 .add-member-box {
   flex: 1;
   min-width: 300px;
-  max-width: 500px;
   background: var(--peach);
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   padding: 20px;
 }
 
-/* untuk pop up  */
-/* BAGIAN BACKDROP */
 #editGroupModal {
   display: none;
   position: fixed;
@@ -807,13 +773,11 @@ input {
   width: 100%;
   height: 100%;
   background: rgba(0, 0, 0, 0.5);
-  display: flex;
   justify-content: center;
   align-items: center;
   z-index: 9999;
 }
 
-/* BOX MODAL */
 #editGroupModal .modal-content {
   background: #ffdce7;
   padding: 20px;
@@ -821,7 +785,6 @@ input {
   width: 350px;
 }
 
-/* BUTTON STYLE */
 .btn-modal {
   background: #8b597b;
   color: #ffe2db;
@@ -835,7 +798,7 @@ input {
   white-space: nowrap;
   margin-right: 5px;
 }
-/* Untuk halaman detail event */
+
 .detail-event {
   text-align: left;
   margin: 0 auto;
@@ -857,11 +820,13 @@ input {
   justify-content: center;
   align-items: center;
 }
+
 .detail-event .event-poster {
   max-width: 100%;
   border-radius: 6px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
 }
+
 .detail-event .event-poster-placeholder {
   width: 100%;
   max-width: 300px;
@@ -874,7 +839,6 @@ input {
   align-items: center;
 }
 
-/* === MODAL EDIT EVENT === */
 #editEventModal {
   display: none;
   position: fixed;
@@ -948,92 +912,254 @@ input {
   background: #e8b08e;
 }
 
-/* Khusus Chat */
-/* Layout Full Chat */
+/* Chat Styles */
 .chat-full-wrapper {
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 80px); /* Mengurangi padding main-content */
-  background: white;
+  height: calc(100vh - 40px);
+  background: var(--white);
   border-radius: 15px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 15px var(--shadow);
   overflow: hidden;
+  position: relative;
 }
 
 .chat-header {
   background: var(--ungu);
-  color: var(--peach);
-  padding: 20px;
-  text-align: center;
-  border-bottom: 2px solid var(--pink);
+  color: #fff;
+  padding: 15px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  z-index: 10;
+}
+
+.chat-header h2 {
+  margin: 0;
+  font-size: 18px;
+  color: #fff !important;
 }
 
 .chat-messages {
-  flex: 1; /* Mengisi sisa ruang tengah */
+  flex: 1;
   overflow-y: auto;
-  padding: 25px;
-  background: var(--cream); /* Mengikuti palet warna dasar */
+  padding: 20px;
+  background-color: var(--gray-light);
   display: flex;
   flex-direction: column;
   gap: 15px;
 }
 
-/* Bubble Chat Style */
+.chat-messages::-webkit-scrollbar {
+  width: 6px;
+}
+
+.chat-messages::-webkit-scrollbar-thumb {
+  background-color: #ccc;
+  border-radius: 3px;
+}
+
 .bubble {
-  max-width: 70%;
-  padding: 12px 18px;
-  border-radius: 20px;
+  max-width: 75%;
+  padding: 12px 16px;
+  border-radius: 15px;
   font-size: 14px;
   line-height: 1.5;
   position: relative;
+  word-wrap: break-word;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
 }
 
 .bubble.mine {
   align-self: flex-end;
   background: var(--ungu);
-  color: var(--peach);
+  color: #fff;
   border-bottom-right-radius: 2px;
+}
+
+.bubble.mine .meta {
+  color: rgba(255,255,255, 0.8);
+  text-align: right;
 }
 
 .bubble.others {
   align-self: flex-start;
-  background: white;
+  background: #fff;
   color: var(--coklat);
   border-bottom-left-radius: 2px;
-  border: 1px solid var(--pink);
+}
+
+.bubble.others .meta {
+  color: #888;
 }
 
 .bubble .meta {
   font-size: 11px;
   margin-bottom: 4px;
-  font-weight: bold;
   display: block;
+  font-weight: 600;
 }
 
-/* Input Area di Bawah */
 .chat-input-container {
-  padding: 20px;
-  background: white;
+  padding: 15px;
+  background: var(--white);
+  border-top: 1px solid rgba(0,0,0,0.1);
   display: flex;
   gap: 10px;
   align-items: center;
-  border-top: 1px solid var(--pink);
 }
 
 #message-input {
   flex: 1;
-  padding: 12px 20px;
-  border: 2px solid var(--peach);
+  margin-bottom: 0;
   border-radius: 25px;
+  padding: 12px 20px;
+  border: 1px solid #ccc;
   outline: none;
-  transition: border-color 0.3s;
 }
 
 #message-input:focus {
   border-color: var(--ungu);
+  box-shadow: 0 0 0 2px rgba(139, 89, 123, 0.2);
 }
 
-/* Tombol kirim menggunakan gaya button[type="submit"] Anda */
 #btn-send {
-  margin-top: 0; /* Reset margin top dari base style */
+  width: auto;
+  padding: 10px 25px;
+  border-radius: 25px;
+  margin-bottom: 0;
+  cursor: pointer;
+}
+
+body.dark-mode .chat-full-wrapper {
+  background: #2c2c2c;
+  box-shadow: none;
+  border: 1px solid #444;
+}
+
+body.dark-mode .chat-messages {
+  background-color: #1a1a1a;
+}
+
+body.dark-mode .bubble.others {
+  background: #333;
+  color: #e0e0e0;
+}
+
+body.dark-mode .chat-input-container {
+  background: #2c2c2c;
+  border-top: 1px solid #444;
+}
+
+body.dark-mode #message-input {
+  background: #333;
+  color: #fff;
+  border-color: #555;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .sidebar {
+    width: 0;
+    overflow: hidden;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    z-index: 1001;
+    transition: all 0.3s ease;
+  }
+
+  .sidebar.show {
+    width: 220px;
+    overflow-y: auto;
+  }
+
+  .page-container {
+    padding-left: 0;
+  }
+
+  .content-main {
+    margin-left: 0;
+    padding: 20px 15px;
+    width: 100%;
+    transition: none;
+    flex-direction: column;
+  }
+
+  .content-box {
+    width: 100% !important;
+    margin: 10px 0;
+  }
+
+  .toggle-btn {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    z-index: 1002;
+    background: var(--coklat);
+    color: var(--cream);
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 20px;
+  }
+
+  .header-group {
+    width: 100%;
+    padding: 15px;
+    margin-bottom: 20px;
+  }
+
+  .tab-menu {
+    overflow-x: auto;
+    white-space: nowrap;
+    justify-content: start;
+    padding: 0 10px;
+    margin-bottom: 15px;
+  }
+
+  .tab-menu button {
+    padding: 8px 12px;
+    font-size: 13px;
+    margin-right: 8px;
+  }
+
+  .detail-group,
+  .add-member-box {
+    flex: none;
+    width: 100% !important;
+    min-width: unset;
+    margin-bottom: 20px !important;
+  }
+
+  table {
+    display: block;
+    width: 100%;
+    font-size: 14px;
+    overflow-x: auto;
+  }
+
+  th, td {
+    padding: 8px 6px;
+    font-size: 13px;
+    white-space: nowrap;
+  }
+
+  .detail-event {
+    max-width: 100%;
+    padding: 15px;
+  }
+
+  #editGroupModal .modal-content,
+  #editEventModal .modal-content {
+    width: 90%;
+    max-width: 350px;
+    padding: 15px;
+  }
+
+  .chat-full-wrapper {
+    height: calc(100vh - 80px);
+  }
 }

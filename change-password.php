@@ -5,6 +5,8 @@ $mysqli = new mysqli("localhost", "root", "", "fullstack");
 if ($mysqli->connect_errno) {
     die("Koneksi gagal: " . $mysqli->connect_error);
 }
+
+// Cek session login
 if (!isset($_SESSION['username'])) {
     $_SESSION['error_message'] = "Anda harus login dahulu!";
     header('Location: login.php');
@@ -61,7 +63,7 @@ $is_admin = $_SESSION['isadmin'] ?? 0;
 </head>
 
 <body>
-<div id="sidebar" class="sidebar">
+    <div id="sidebar" class="sidebar">
         <div style="display: flex; align-items: center; gap: 10px; padding: 0 20px; margin-bottom: 20px;">
             <div class="toggle-btn" id="toggle-btn">☰</div>
             <div id="theme-toggle" style="cursor: pointer; font-size: 18px;">
@@ -81,69 +83,57 @@ $is_admin = $_SESSION['isadmin'] ?? 0;
             <?php
             // Dosen
             elseif ($user_role == 'dosen'): ?>
-
                 <li><a href="data-group.php">Data Group</a></li>
                 <li><a href="insert-group.php">Tambah Group</a></li>
-
             <?php
             // Mahasiswa
             elseif ($user_role == 'mahasiswa'): ?>
-
                 <li><a href="data-group.php">Data Group</a></li>
-
             <?php endif; ?>
 
             <li><a href="change-password.php">Ubah Password</a></li>
             <li><a href="logout.php">Logout</a></li>
         </ul>
-
-
     </div>
-    <div class="main-content">
-        <div class="box">
-            <h2>Ubah Kata Sandi</h2>
-            <!-- Tampilkan pesan error/sukses -->
-            <?php if (!empty($message)) echo $message; ?>
 
-            <form method="POST">
-                <p>
+    <div class="page-container">
+        <main class="content-main">
+            <div class="form-container">
+                <h2>Ubah Kata Sandi</h2>
+
+                <?php if (!empty($message)) echo $message; ?>
+
+                <form method="POST">
                     <label for="old_password">Kata Sandi Lama:</label>
                     <input type="password" id="old_password" name="old_password" required>
-                </p>
-                <p>
+
                     <label for="new_password">Kata Sandi Baru:</label>
                     <input type="password" id="new_password" name="new_password" required>
-                </p>
-                <p>
+
                     <label for="confirm_password">Konfirmasi Kata Sandi Baru:</label>
                     <input type="password" id="confirm_password" name="confirm_password" required>
-                </p>
-                <button type="submit">Ubah Password</button>
-            </form>
 
-            <p style="text-align: center; margin-top: 15px;">
-                <a href="index.php">Kembali ke Homepage</a>
-            </p>
-        </div>
+                    <button type="submit" class="btn btn--edit" style="width: 100%; margin-top: 15px;">Ubah Password</button>
+                </form>
+            </div>
+        </main>
     </div>
-</body>
 
-</html>
- <script>
+    <script>
         const toggleBtn = document.getElementById('toggle-btn');
         const sidebar = document.getElementById('sidebar');
 
         toggleBtn.addEventListener('click', function() {
             if (window.innerWidth > 768) {
-                // Mode Desktop ngecilin sidebar
+                // Mode Desktop
                 sidebar.classList.toggle('collapsed');
             } else {
-                // Mode Mobile Memunculkan/Menyembunyikan sidebar 
+                // Mode Mobile
                 sidebar.classList.toggle('show');
             }
         });
 
-        // Klik di luar sidebar untuk nutup saat di mobile
+        // Klik di luar sidebar untuk menutup saat di mobile
         document.addEventListener('click', function(event) {
             const isClickInside = sidebar.contains(event.target) || toggleBtn.contains(event.target);
 
@@ -159,14 +149,13 @@ $is_admin = $_SESSION['isadmin'] ?? 0;
         // Cek posisi terakhir mode gelap/terang 
         if (localStorage.getItem('theme') === 'dark') {
             body.classList.add('dark-mode');
-            themeIcon.innerText = '☀️'; 
+            themeIcon.innerText = '☀️';
         }
 
-        // Event Listener Klik
+        // Event Listener Klik Theme
         themeToggle.addEventListener('click', () => {
             body.classList.toggle('dark-mode');
 
-            // Update icon trs disimpen
             if (body.classList.contains('dark-mode')) {
                 themeIcon.innerText = '☀️';
                 localStorage.setItem('theme', 'dark');
@@ -177,3 +166,5 @@ $is_admin = $_SESSION['isadmin'] ?? 0;
         });
     </script>
 </body>
+
+</html>

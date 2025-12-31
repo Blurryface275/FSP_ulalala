@@ -136,15 +136,14 @@ if (isset($_SESSION['success_message'])) {
 
         toggleBtn.addEventListener('click', function() {
             if (window.innerWidth > 768) {
-                // Mode Desktop: Mengecilkan sidebar (Collapsed)
+                // Mode desktop : mengecilkan sidebar
                 sidebar.classList.toggle('collapsed');
             } else {
-                // Mode Mobile: Memunculkan/Menyembunyikan sidebar (Show)
+                // Mode mobile : munculin sidebar
                 sidebar.classList.toggle('show');
             }
         });
 
-        // Tambahan: Klik di luar sidebar untuk menutup saat di mobile
         document.addEventListener('click', function(event) {
             const isClickInside = sidebar.contains(event.target) || toggleBtn.contains(event.target);
 
@@ -157,13 +156,13 @@ if (isset($_SESSION['success_message'])) {
         const themeIcon = document.getElementById('theme-icon');
         const body = document.body;
 
-        // 1. Cek simpanan preferensi user di local storage saat halaman dimuat
+        // Cek simpanan preferensi user di local storage saat halaman dimuat
         if (localStorage.getItem('theme') === 'dark') {
             body.classList.add('dark-mode');
-            themeIcon.innerText = '☀️'; // Ganti jadi matahari jika mode dark
+            themeIcon.innerText = '☀️';
         }
 
-        // 2. Event Listener Klik
+
         themeToggle.addEventListener('click', () => {
             body.classList.toggle('dark-mode');
 

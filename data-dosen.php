@@ -8,16 +8,14 @@ if (!isset($_SESSION['username'])) {
 
 $user_role = $_SESSION['role'] ?? '';
 $is_admin = $_SESSION['isadmin'] ?? 0;
-?>
-<!DOCTYPE html>
-<?php
+
+// Ambil pesan sukses jika ada
 if (isset($_SESSION['success_message'])) {
     $success_message = $_SESSION['success_message'] ?? '';
-
-
     unset($_SESSION['success_message']);
 }
 ?>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -26,21 +24,27 @@ if (isset($_SESSION['success_message'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Data Dosen</title>
     <link rel="stylesheet" href="style.css">
-    <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
         .foto {
             max-width: 150px;
+            border-radius: 8px;
+            /* Tambahan sedikit agar foto lebih rapi */
         }
 
         #error-warning {
-            color: red;
-            border: 1px solid red;
+            color: green;
+            border: 1px solid green;
             padding: 10px;
             margin-bottom: 20px;
-            background-color: #ffeaea;
+            background-color: #e9ffea;
             border-radius: 5px;
             text-align: center;
+        }
+
+        .teks-merah {
+            color: red;
+            font-style: italic;
         }
     </style>
 </head>
@@ -81,128 +85,149 @@ if (isset($_SESSION['success_message'])) {
 
             <?php endif; ?>
 
-            <!-- Semua role dapat ubah password & logout -->
             <li><a href="change-password.php">Ubah Password</a></li>
             <li><a href="logout.php">Logout</a></li>
         </ul>
 
     </div>
-    <div class="content-box">
-        <h1>Data Dosen</h1>
-        <?php
-        $mysqli = new mysqli("localhost", "root", "", "fullstack");
-        if ($mysqli->connect_errno) {
-            die("Failed to connect to MySQL :" . $mysqli->connect_error);
-        }
 
-        require_once("class/dosen.php");
-        $dosen = new dosen($mysqli);
+    <div class="page-container">
+        <main class="content-main">
+            <div class="content-box">
+                <h1>Data Dosen</h1>
 
-        if (!empty($success_message)) {
-            echo "<div id='error-warning'>", $success_message, "</div>";
-        }
+                <?php
+                $mysqli = new mysqli("localhost", "root", "", "fullstack");
+                if ($mysqli->connect_errno) {
+                    die("Failed to connect to MySQL :" . $mysqli->connect_error);
+                }
 
-        $limit = 5; // jumlah dosen per page
-        $page = isset($_GET['page']) && is_numeric($_GET['page']) ? (int)$_GET['page'] : 1; //supaya fix angka
-        $offset = ($page - 1) * $limit;
-        $totalMahasiswa = $dosen->getTotalDosen();
-        $totalPages = ceil($totalMahasiswa / $limit);
+                require_once("class/dosen.php");
+                $dosen = new dosen($mysqli);
 
-        $res = $dosen->displayDosen($limit, $offset);
-        $success_message = $_SESSION['success_message'] ?? '';
-        echo "<table border=1 cell-spacing=0><th>Foto</th> <th>Nama</th> <th>NPK</th> <th colspan='2'>Aksi</th>";
+                if (!empty($success_message)) {
+                    echo "<div id='error-warning'>", htmlspecialchars($success_message), "</div>";
+                }
 
-        while ($row = $res->fetch_assoc()) {
-            echo "<tr>";
-            echo "<td>";
+                $limit = 5; // jumlah dosen per page
+                $page = isset($_GET['page']) && is_numeric($_GET['page']) ? (int)$_GET['page'] : 1;
+                $offset = ($page - 1) * $limit;
+                $totalMahasiswa = $dosen->getTotalDosen();
+                $totalPages = ceil($totalMahasiswa / $limit);
 
-            $fotoDosen = "uploads/" . $row['nama'] . "_" . $row['npk'] . "." . $row['foto_extension'];
+                $res = $dosen->displayDosen($limit, $offset);
 
-            // cek apakah file benar-benar ada di folder
-            if (file_exists($fotoDosen)) {
-                echo "<img class='foto' src='" . $fotoDosen . "' alt='poster'>";
-            } else {
-                echo "<span class='teks-merah'>Poster tidak ditemukan</span>";
-            }
+                // Hapus border=1, gunakan struktur thead tbody
+                echo "<table>
+                        <thead>
+                            <tr>
+                                <th>Foto</th> 
+                                <th>Nama</th> 
+                                <th>NPK</th> 
+                                <th colspan='2'>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>";
 
-            echo "</td>";
+                while ($row = $res->fetch_assoc()) {
+                    echo "<tr>";
+                    echo "<td>";
 
-            echo "<td>" . $row['nama'] . "</td>";
-            echo "<td>" . $row['npk'] . "</td>";
+                    $fotoDosen = "uploads/" . $row['nama'] . "_" . $row['npk'] . "." . $row['foto_extension'];
 
-            echo "<td><a href='edit-dosen.php?npk=" . $row['npk'] . "'>Edit</a></td>";
-            echo "<td><a href='delete-dosen.php?npk=" . $row['npk'] . "' onclick='return confirm(\"Yakin ingin menghapus dosen ini?\");'>Delete</a></td>";
+                    // cek apakah file benar-benar ada di folder
+                    if (file_exists($fotoDosen)) {
+                        echo "<img class='foto' src='" . $fotoDosen . "' alt='poster'>";
+                    } else {
+                        echo "<span class='teks-merah'>Poster tidak ditemukan</span>";
+                    }
 
-            echo "</tr>";
-        }
+                    echo "</td>";
 
-        echo "</table>";
+                    echo "<td>" . htmlspecialchars($row['nama']) . "</td>";
+                    echo "<td>" . htmlspecialchars($row['npk']) . "</td>";
 
+                    // Link ini otomatis jadi tombol karena CSS table td a
+                    echo "<td><a href='edit-dosen.php?npk=" . $row['npk'] . "'>Edit</a></td>";
+                    echo "<td><a href='delete-dosen.php?npk=" . $row['npk'] . "' onclick='return confirm(\"Yakin ingin menghapus dosen ini?\");' class='btn--delete'>Delete</a></td>";
 
-        echo "<div class='pagination'>";
+                    echo "</tr>";
+                }
 
-        if ($page > 1) {
-            echo "<a href='data-dosen.php?page=" . ($page - 1) . "'>Prev</a>";
-        }
+                echo "</tbody></table>";
 
-        for ($i = 1; $i <= $totalPages; $i++) {
-            echo "<a href='data-dosen.php?page=$i'>$i</a>";
-        }
+                // Pagination
+                echo "<div class='pagination'>";
 
-        if ($page < $totalPages) {
-            echo "<a href='data-dosen.php?page=" . ($page + 1) . "'>Next</a>";
-        }
+                if ($page > 1) {
+                    echo "<a href='data-dosen.php?page=" . ($page - 1) . "'>&laquo; Previous</a>";
+                }
 
-        echo "</div>";
-        ?>
+                for ($i = 1; $i <= $totalPages; $i++) {
+                    if ($i == $page) {
+                        echo "<a class='active' href='data-dosen.php?page=$i'>$i</a>";
+                    } else {
+                        echo "<a href='data-dosen.php?page=$i'>$i</a>";
+                    }
+                }
+
+                if ($page < $totalPages) {
+                    echo "<a href='data-dosen.php?page=" . ($page + 1) . "'>Next &raquo;</a>";
+                }
+
+                echo "</div>";
+                ?>
+            </div>
+        </main>
     </div>
+
+    <script>
+        const toggleBtn = document.getElementById('toggle-btn');
+        const sidebar = document.getElementById('sidebar');
+
+        toggleBtn.addEventListener('click', function() {
+            if (window.innerWidth > 768) {
+                // Mode Desktop: Mengecilkan sidebar (Collapsed)
+                sidebar.classList.toggle('collapsed');
+            } else {
+                // Mode Mobile: Memunculkan/Menyembunyikan sidebar (Show)
+                sidebar.classList.toggle('show');
+            }
+        });
+
+        // Tambahan: Klik di luar sidebar untuk menutup saat di mobile
+        document.addEventListener('click', function(event) {
+            const isClickInside = sidebar.contains(event.target) || toggleBtn.contains(event.target);
+
+            if (!isClickInside && window.innerWidth <= 768 && sidebar.classList.contains('show')) {
+                sidebar.classList.remove('show');
+            }
+        });
+
+        const themeToggle = document.getElementById('theme-toggle');
+        const themeIcon = document.getElementById('theme-icon');
+        const body = document.body;
+
+        // 1. Cek simpanan preferensi user di local storage saat halaman dimuat
+        if (localStorage.getItem('theme') === 'dark') {
+            body.classList.add('dark-mode');
+            themeIcon.innerText = '☀️'; // Ganti jadi matahari jika mode dark
+        }
+
+        // 2. Event Listener Klik
+        themeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+
+            // Update icon dan simpan ke Local Storage
+            if (body.classList.contains('dark-mode')) {
+                themeIcon.innerText = '☀️';
+                localStorage.setItem('theme', 'dark');
+            } else {
+                themeIcon.innerText = '🌙';
+                localStorage.setItem('theme', 'light');
+            }
+        });
+    </script>
 </body>
 
 </html>
-<script>
-    const toggleBtn = document.getElementById('toggle-btn');
-    const sidebar = document.getElementById('sidebar');
-
-    toggleBtn.addEventListener('click', function() {
-        if (window.innerWidth > 768) {
-            // Mode Desktop: Mengecilkan sidebar (Collapsed)
-            sidebar.classList.toggle('collapsed');
-        } else {
-            // Mode Mobile: Memunculkan/Menyembunyikan sidebar (Show)
-            sidebar.classList.toggle('show');
-        }
-    });
-
-    // Tambahan: Klik di luar sidebar untuk menutup saat di mobile
-    document.addEventListener('click', function(event) {
-        const isClickInside = sidebar.contains(event.target) || toggleBtn.contains(event.target);
-
-        if (!isClickInside && window.innerWidth <= 768 && sidebar.classList.contains('show')) {
-            sidebar.classList.remove('show');
-        }
-    });
-
-    const themeToggle = document.getElementById('theme-toggle');
-    const themeIcon = document.getElementById('theme-icon');
-    const body = document.body;
-
-    // 1. Cek simpanan preferensi user di local storage saat halaman dimuat
-    if (localStorage.getItem('theme') === 'dark') {
-        body.classList.add('dark-mode');
-        themeIcon.innerText = '☀️'; // Ganti jadi matahari jika mode dark
-    }
-
-    // 2. Event Listener Klik
-    themeToggle.addEventListener('click', () => {
-        body.classList.toggle('dark-mode');
-
-        // Update icon dan simpan ke Local Storage
-        if (body.classList.contains('dark-mode')) {
-            themeIcon.innerText = '☀️';
-            localStorage.setItem('theme', 'dark');
-        } else {
-            themeIcon.innerText = '🌙';
-            localStorage.setItem('theme', 'light');
-        }
-    });
-</script>
