@@ -167,13 +167,12 @@
     const themeIcon = document.getElementById('theme-icon');
     const body = document.body;
 
-    // 1. Cek simpanan preferensi user di local storage saat halaman dimuat
+    // Cek simpanan preferensi user di local storage saat halaman dimuat
     if (localStorage.getItem('theme') === 'dark') {
         body.classList.add('dark-mode');
         themeIcon.innerText = '☀️'; // Ganti jadi matahari jika mode dark
     }
 
-    // 2. Event Listener Klik
     themeToggle.addEventListener('click', () => {
         body.classList.toggle('dark-mode');
 
